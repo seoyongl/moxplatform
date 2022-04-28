@@ -12,6 +12,6 @@ abstract class BackgroundService {
   /// data.
   void init(
     Future<void> Function() entrypoint,
-    void Function(Map<String, dynamic>? data) handleEvent
+    Future<void> Function(Map<String, dynamic>? data) handleEvent
   );
 }

@@ -12,24 +12,25 @@ flutter:
     implements: moxplatform
     platforms:
       android:
-        package: com.example.my_plugin
-        pluginClass: MyPluginPlugin
+        package: me.polynom.moxplatform_android
+        pluginClass: MoxplatformAndroidPlugin
         dartPluginClass: MoxplatformAndroidPlugin
 
 dependencies:
   flutter:
     sdk: flutter
   moxplatform_platform_interface:
-    git:
-      url: https://codeberg.org/moxxy/moxplatform.git
-      rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
-      path: src/moxplatform_platform_interface
+   #git:
+   #  url: https://codeberg.org/moxxy/moxplatform.git
+   #  rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
+   #  path: src/moxplatform_platform_interface
+   path: ../moxplatform_platform_interface
   moxplatform:
-    git:
-      url: https://codeberg.org/moxxy/moxplatform.git
-      rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
-      path: src/moxplatform
-
+   #git:
+   #  url: https://codeberg.org/moxxy/moxplatform.git
+   #  rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
+   #  path: src/moxplatform
+    path: ../moxplatform
   moxlib:
     git:
       url: https://codeberg.org/moxxy/moxlib.git
@@ -37,12 +38,6 @@ dependencies:
   logging: 1.0.2
   get_it: 7.2.0
   uuid: 3.0.5
-  flutter_background_service:
-    git:
-      url: https://github.com/PapaTutuWawa/flutter_background_service.git
-      rev: moxxy/additional-data
-      path: packages/flutter_background_service
-
   media_scanner: 2.0.0
 
 dev_dependencies:

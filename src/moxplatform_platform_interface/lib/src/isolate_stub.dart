@@ -14,9 +14,9 @@ class StubIsolateHandler extends IsolateHandler {
   StubIsolateHandler() : _sender = StubDataSender();
 
   @override
-  void attach(
+  Future<void> attach(
     Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent
-  ) {
+  ) async {
     print("STUB ATTACHED!!!!!!");
   }
   

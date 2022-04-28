@@ -11,10 +11,11 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.1.0
   moxplatform:
-    git:
-      url: https://codeberg.org/moxxy/moxplatform.git
-      rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
-      path: src/moxplatform
+   #git:
+   #  url: https://codeberg.org/moxxy/moxplatform.git
+   #  rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
+   #  path: src/moxplatform
+    path: ../moxplatform
 
   moxlib:
     git:

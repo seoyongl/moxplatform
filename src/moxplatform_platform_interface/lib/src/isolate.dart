@@ -15,7 +15,7 @@ abstract class IsolateHandler {
   );
 
   /// Make sure that the UI event handler is registered without starting the isolate.
-  void attach(
+  Future<void> attach(
     Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent
   );
   

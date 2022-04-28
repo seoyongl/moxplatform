@@ -5,7 +5,7 @@ import "package:moxplatform_platform_interface/moxplatform_platform_interface.da
 
 class MoxplatformAndroidPlugin extends MoxplatformInterface {
   static void registerWith() {
-    print("========================================================================================");
+    print("MoxplatformAndroidPlugin: Registering implementation");
     MoxplatformInterface.handler = AndroidIsolateHandler();
     MoxplatformInterface.media = AndroidMediaScannerImplementation();
   }

@@ -1,25 +1,30 @@
+import "dart:convert";
 import "dart:ui";
 
 import "package:moxplatform_platform_interface/src/service.dart";
 import "package:moxplatform/types.dart";
 import "package:moxlib/awaitabledatasender.dart";
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:logging/logging.dart";
 import "package:uuid/uuid.dart";
-import "package:flutter_background_service_android/flutter_background_service_android.dart";
+import "package:meta/meta.dart";
 
 class AndroidBackgroundService extends BackgroundService {
+  @internal
+  static const MethodChannel channel = MethodChannel("me.polynom.moxplatform_android_bg");
   final Logger _log;
-  final AndroidServiceInstance _srv;
 
-  AndroidBackgroundService(AndroidServiceInstance srv)
-    : _srv = srv,
-      _log = Logger("AndroidBackgroundService"),
+  AndroidBackgroundService()
+    : _log = Logger("AndroidBackgroundService"),
       super();
 
   @override
   void setNotification(String title, String body) {
-    _srv.setForegroundNotificationInfo(title: title, content: body);
+    channel.invokeMethod(
+      "setNotificationBody",
+      [ body ]
+    );
   }
 
   @override
@@ -30,13 +35,13 @@ class AndroidBackgroundService extends BackgroundService {
     );
     // NOTE: *S*erver to *F*oreground
     _log.fine("S2F: ${data.toJson().toString()}");
-    _srv.invoke("event", data.toJson());
+    channel.invokeMethod("sendData", jsonEncode(data.toJson()));
   }
 
   @override
   void init(
     Future<void> Function() entrypoint,
-    void Function(Map<String, dynamic>? data) handleEvent
+    Future<void> Function(Map<String, dynamic>? data) handleEvent
   ) {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -44,7 +49,11 @@ class AndroidBackgroundService extends BackgroundService {
     // we can use path_provider, notifications, ...
     DartPluginRegistrant.ensureInitialized();
 
-    _srv.on("command").listen(handleEvent);
+    // Register the event handler
+    channel.setMethodCallHandler((MethodCall call) async {
+        await handleEvent(jsonDecode(call.arguments));
+    });
+    
     setNotification("Moxxy", "Preparing...");
 
     _log.finest("Running...");
