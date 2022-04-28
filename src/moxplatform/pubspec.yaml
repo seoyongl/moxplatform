@@ -21,9 +21,15 @@ dependencies:
       url: https://codeberg.org/moxxy/moxlib.git
       rev: 020c592d459654b7a807f115bd70809b3cf522bd
   moxplatform_android:
-    path: ../moxplatform_android
+    git:
+      url: https://codeberg.org/moxxy/moxplatform.git
+      rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
+      path: src/moxplatform_android
   moxplatform_platform_interface:
-    path: ../moxplatform_platform_interface
+    git:
+      url: https://codeberg.org/moxxy/moxplatform.git
+      rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
+      path: src/moxplatform_platform_interface
 
 dev_dependencies:
   flutter_test:
