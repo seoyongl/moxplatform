@@ -20,17 +20,17 @@ dependencies:
   flutter:
     sdk: flutter
   moxplatform_platform_interface:
-   #git:
-   #  url: https://codeberg.org/moxxy/moxplatform.git
-   #  rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
-   #  path: src/moxplatform_platform_interface
-   path: ../moxplatform_platform_interface
+    git:
+      url: https://codeberg.org/moxxy/moxplatform.git
+      rev: c3f7091e00d6ecea85c6b62061e94d63c623ec04
+      path: src/moxplatform_platform_interface
+   #path: ../moxplatform_platform_interface
   moxplatform:
-   #git:
-   #  url: https://codeberg.org/moxxy/moxplatform.git
-   #  rev: c19ae302bb8d2e2bd8db220cc6a9a488c33e05d1
-   #  path: src/moxplatform
-    path: ../moxplatform
+    git:
+      url: https://codeberg.org/moxxy/moxplatform.git
+      rev: c3f7091e00d6ecea85c6b62061e94d63c623ec04
+      path: src/moxplatform
+   #path: ../moxplatform
   moxlib:
     git:
       url: https://codeberg.org/moxxy/moxlib.git
