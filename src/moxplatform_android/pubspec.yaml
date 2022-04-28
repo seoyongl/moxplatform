@@ -1,0 +1,45 @@
+name: moxplatform_android
+description: Android implementation of moxplatform
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=2.16.0 <3.0.0"
+  flutter: ">=2.10.0"
+
+flutter:
+  plugin:
+    implements: moxplatform
+    platforms:
+      android:
+        package: com.example.my_plugin
+        pluginClass: MyPluginPlugin
+        dartPluginClass: MoxplatformAndroidPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+  moxplatform_platform_interface:
+    path: ../moxplatform_platform_interface
+  moxplatform:
+    path: ../moxplatform
+
+  moxlib:
+    git:
+      url: https://codeberg.org/moxxy/moxlib.git
+      rev: 020c592d459654b7a807f115bd70809b3cf522bd
+  logging: 1.0.2
+  get_it: 7.2.0
+  uuid: 3.0.5
+  flutter_background_service:
+    git:
+      url: https://github.com/PapaTutuWawa/flutter_background_service.git
+      rev: moxxy/additional-data
+      path: packages/flutter_background_service
+
+  media_scanner: 2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.0

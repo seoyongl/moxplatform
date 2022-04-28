@@ -1,0 +1,31 @@
+name: moxplatform
+description: Moxxy platform-specific code
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=2.16.0 <3.0.0"
+  flutter: ">=2.10.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: moxplatform_android
+
+dependencies:
+  flutter:
+    sdk: flutter
+  moxlib:
+    git:
+      url: https://codeberg.org/moxxy/moxlib.git
+      rev: 020c592d459654b7a807f115bd70809b3cf522bd
+  moxplatform_android:
+    path: ../moxplatform_android
+  moxplatform_platform_interface:
+    path: ../moxplatform_platform_interface
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.0

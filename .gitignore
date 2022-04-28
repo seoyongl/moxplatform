@@ -46,3 +46,7 @@ build/
 .project
 .classpath
 .settings
+
+
+.envrc
+.direnv
