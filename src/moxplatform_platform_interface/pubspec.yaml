@@ -13,7 +13,7 @@ dependencies:
   moxplatform:
     git:
       url: https://codeberg.org/moxxy/moxplatform.git
-      rev: cacd9eb0764236a5eb100d9c83eb1ead7f522b62
+      rev: e5daebcfc773e9951413d8a2079673aaf6126030
       path: src/moxplatform
    #path: ../moxplatform
 

@@ -23,13 +23,13 @@ dependencies:
   moxplatform_android:
     git:
       url: https://codeberg.org/moxxy/moxplatform.git
-      rev: cacd9eb0764236a5eb100d9c83eb1ead7f522b62
+      rev: e5daebcfc773e9951413d8a2079673aaf6126030
       path: src/moxplatform_android
    #path: ../moxplatform_android
   moxplatform_platform_interface:
     git:
       url: https://codeberg.org/moxxy/moxplatform.git
-      rev: cacd9eb0764236a5eb100d9c83eb1ead7f522b62
+      rev: e5daebcfc773e9951413d8a2079673aaf6126030
       path: src/moxplatform_platform_interface 
    #path: ../moxplatform_platform_interface
 
