@@ -87,11 +87,11 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
   public static void setStartAtBoot(Context c, boolean value) {
     c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE)
             .edit()
-            .putBoolean(extraDataKey, value)
+            .putBoolean(autoStartAtBootKey, value)
             .apply();
   }
   public static boolean getStartAtBoot(Context c) {
-    return c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE).getBoolean(extraDataKey, false);
+    return c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE).getBoolean(autoStartAtBootKey, false);
   }
 
   private boolean isRunning() {
