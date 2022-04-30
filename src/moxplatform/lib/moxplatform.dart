@@ -4,6 +4,7 @@ import "package:moxplatform_platform_interface/src/media.dart";
 
 export "package:moxplatform_platform_interface/src/isolate.dart" show IsolateHandler;
 export "package:moxplatform_platform_interface/src/media.dart" show MediaScannerImplementation;
+export "package:moxplatform_platform_interface/src/service.dart" show BackgroundService;
 
 class MoxplatformPlugin {
   static IsolateHandler get handler => MoxplatformInterface.handler;

@@ -13,3 +13,7 @@ Skipped for consistency
 ## 0.1.3
 
 * Update plugin_platform_interface to 2.1.0
+
+## 0.1.4
+
+Skipped for consistency

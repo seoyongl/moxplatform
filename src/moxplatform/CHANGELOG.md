@@ -13,3 +13,7 @@
 ## 0.1.3
 
 Skipped to keep consistency
+
+## 0.1.4
+
+* Expose [BackgroundService] from moxplatform_platform_interface
