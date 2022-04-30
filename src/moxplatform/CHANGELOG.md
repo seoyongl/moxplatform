@@ -9,3 +9,7 @@
 ## 0.1.2
 
 * Expose [IsolateHandler] and [MediaScannerImplementation] from moxplatform_platform_interface
+
+## 0.1.3
+
+Skipped to keep consistency

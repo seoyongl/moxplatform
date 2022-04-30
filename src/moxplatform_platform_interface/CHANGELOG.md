@@ -9,3 +9,7 @@ Skipped for consistency
 ## 0.1.2
 
 * Switched to a selfhosted pub repository
+
+## 0.1.3
+
+Skipped to keep consistency

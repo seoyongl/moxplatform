@@ -9,3 +9,7 @@ Skipped for consistency
 ## 0.1.2
 
 * Switch to selfhosted pub repository
+
+## 0.1.3
+
+* Update plugin_platform_interface to 2.1.0
