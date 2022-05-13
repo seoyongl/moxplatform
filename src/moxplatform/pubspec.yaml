@@ -23,10 +23,6 @@ dependencies:
     hosted: https://pub.polynom.me
     version: 0.1.5
    #path: ../moxplatform_android
-  moxplatform_linux:
-    hosted: https://pub.polynom.me
-    version: 0.1.5
-   #path: ../moxplatform_linux
   moxplatform_platform_interface:
    #path: ../moxplatform_platform_interface
     hosted: https://pub.polynom.me
