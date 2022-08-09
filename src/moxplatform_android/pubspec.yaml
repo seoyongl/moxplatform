@@ -2,7 +2,7 @@ name: moxplatform_android
 description: Android implementation of moxplatform
 version: 0.1.6
 homepage: https://codeberg.org/moxxy/moxplatform
-publish_to: https://pub.polynom.me
+publish_to: https://git.polynom.me/api/packages/Moxxy/pub
 
 environment:
   sdk: ">=2.16.0 <3.0.0"
@@ -21,16 +21,14 @@ dependencies:
   flutter:
     sdk: flutter
   moxplatform_platform_interface:
-    hosted: https://pub.polynom.me
+    hosted: https://git.polynom.me/api/packages/Moxxy/pub
     version: 0.1.6
-   #path: ../moxplatform_platform_interface
   moxplatform:
-   #path: ../moxplatform
-    hosted: https://pub.polynom.me
+    hosted: https://git.polynom.me/api/packages/Moxxy/pub
     version: 0.1.6
 
   moxlib:
-    hosted: https://pub.polynom.me
+    hosted: https://git.polynom.me/api/packages/Moxxy/pub
     version: 0.1.3
   logging: 1.0.2
   get_it: 7.2.0

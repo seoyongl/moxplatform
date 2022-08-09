@@ -13,7 +13,7 @@ dependencies:
 
   moxplatform:
     path: ../moxplatform
-   #hosted: https://pub.polynom.me
+   #hosted: https://git.polynom.me/api/packages/Moxxy/pub
    #version: 0.1.4
   moxplatform_generic:
     path: ../moxplatform_generic
