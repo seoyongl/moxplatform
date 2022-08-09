@@ -1,6 +1,7 @@
 import "dart:async";
 import 'package:flutter/material.dart';
 
+import "package:moxdns/moxdns.dart";
 import "package:moxplatform/moxplatform.dart";
 import "package:moxplatform_platform_interface/src/service.dart";
 import "package:moxplatform/types.dart";
@@ -42,6 +43,8 @@ Future<void> entrypoint() async {
   Timer.periodic(const Duration(seconds: 2), (_) {
       srv.sendEvent(TestEvent());
   });
+
+  final result = await MoxdnsPlugin.srvQuery("_xmpps-client._tcp.disroot.org", false);
 }
 
 class MyApp extends StatelessWidget {

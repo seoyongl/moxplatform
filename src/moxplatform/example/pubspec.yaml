@@ -41,6 +41,10 @@ dev_dependencies:
 
   moxplatform:
     path: ../
+
+  moxdns:
+    hosted: https://pub.polynom.me
+    version: 0.1.1
    
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
