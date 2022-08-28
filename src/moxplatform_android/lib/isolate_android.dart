@@ -75,13 +75,15 @@ class AndroidIsolateHandler extends IsolateHandler {
   ) async {
     _log.finest("Called start");
     WidgetsFlutterBinding.ensureInitialized();
-    
+
+    final androidEntryHandle = PluginUtilities.getCallbackHandle(androidEntrypoint)!.toRawHandle();
+    _log.finest('AndroidEntryHandle: $androidEntryHandle');
     await _channel.invokeMethod("configure", [
-        PluginUtilities.getCallbackHandle(androidEntrypoint)!.toRawHandle(),
+        androidEntryHandle,
         jsonEncode({
             "genericEntrypoint": PluginUtilities.getCallbackHandle(entrypoint)!.toRawHandle(),
             "eventHandle": PluginUtilities.getCallbackHandle(handleUIEvent)!.toRawHandle()
-        })
+        }),
     ]);
 
     await attach(handleIsolateEvent);
