@@ -1,6 +1,6 @@
 name: moxplatform_platform_interface
 description: A common platform interface for the my_plugin plugin.
-version: 0.1.7
+version: 0.1.9
 homepage: https://codeberg.org/moxxy/moxplatform
 publish_to: https://git.polynom.me/api/packages/Moxxy/pub
 
@@ -14,7 +14,7 @@ dependencies:
 
   moxplatform:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: 0.1.7
+    version: 0.1.9
 
   moxlib:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub

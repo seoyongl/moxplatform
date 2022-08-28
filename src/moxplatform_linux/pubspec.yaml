@@ -1,6 +1,6 @@
 name: moxplatform_linux
 description: Linux-specific implementation of moxplatform
-version: 0.1.5
+version: 0.1.9
 homepage: https://codeberg.org/moxxy/moxplatform
 
 environment:
