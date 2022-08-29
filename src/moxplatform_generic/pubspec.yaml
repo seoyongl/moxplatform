@@ -1,6 +1,6 @@
 name: moxplatform_generic
 description: Generic implementations of moxplatform
-version: 0.1.9
+version: 0.1.10
 homepage: https://git.polynom.me/api/packages/Moxxy/pub
 
 environment:
@@ -14,11 +14,11 @@ dependencies:
   moxplatform:
     path: ../moxplatform
    #hosted: https://git.polynom.me/api/packages/Moxxy/pub
-   #version: 0.1.4
+   #version: 0.1.10
   moxplatform_platform_interface:
     path: ../moxplatform_platform_interface
    #hosted: https://git.polynom.me/api/packages/Moxxy/pub
-   #version: 0.1.4
+   #version: 0.1.10
 
   moxlib:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
