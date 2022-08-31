@@ -35,7 +35,7 @@ import io.flutter.view.FlutterCallbackInformation;
 import io.flutter.view.FlutterMain;
 
 public class BackgroundService extends Service implements MethodChannel.MethodCallHandler {
-    private static String TAG = "BackgroundService";
+    private static final String TAG = "BackgroundService";
     private static final String manuallyStoppedKey = "manually_stopped";
     private static final String backgroundMethodChannelKey = MoxplatformAndroidPlugin.methodChannelKey + "_bg";
     /// The [FlutterEngine] executing the background service
@@ -48,12 +48,12 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
     private AtomicBoolean isRunning = new AtomicBoolean(false);
 
     private static final String WAKE_LOCK_NAME = BackgroundService.class.getName() + ".Lock";
-    private static volatile PowerManager.WakeLock wakeLock = null;
+    public static volatile PowerManager.WakeLock wakeLock = null;
     /// Notification data
     private String notificationBody = "Preparing...";
     private static final String notificationTitle = "Moxxy";
 
-    synchronized private static PowerManager.WakeLock getLock(Context context) {
+    synchronized public static PowerManager.WakeLock getLock(Context context) {
         if (wakeLock == null) {
             PowerManager mgr = (PowerManager) context
                     .getSystemService(Context.POWER_SERVICE);
@@ -137,6 +137,13 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         try {
             if (isRunning.get() || (engine != null && !engine.getDartExecutor().isExecutingDart())) return;
 
+	    if (wakeLock == null) {
+
+		Log.d(TAG, "Wakelock is null. Acquiring it...");
+		getLock(getApplicationContext()).acquire(MoxplatformConstants.WAKE_LOCK_DURATION);
+		Log.d(TAG, "Wakelock acquired...");
+	    }
+	    
             updateNotificationInfo();
 
             // Initialize Flutter if it's not already
@@ -176,6 +183,13 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+	if (wakeLock != null) {
+	    Log.d(TAG, "Wakelock is not null. Releasing it...");
+	    wakeLock.release();
+	    wakeLock = null;
+	    Log.d(TAG, "Wakelock released...");
+	}
+
         switch (call.method) {
             case "getHandler":
                 result.success(MoxplatformAndroidPlugin.getHandle(this));
@@ -255,7 +269,6 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
         setManuallyStopped(this,false);
         enqueue(this);
         runService();
-        getLock(getApplicationContext()).acquire();
 
         return START_STICKY;
     }

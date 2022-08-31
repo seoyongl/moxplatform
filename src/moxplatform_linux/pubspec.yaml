@@ -1,6 +1,6 @@
 name: moxplatform_linux
 description: Linux-specific implementation of moxplatform
-version: 0.1.10
+version: 0.1.11
 homepage: https://codeberg.org/moxxy/moxplatform
 
 environment:
@@ -14,7 +14,7 @@ dependencies:
   moxplatform:
     path: ../moxplatform
    #hosted: https://git.polynom.me/api/packages/Moxxy/pub
-   #version: 0.1.10
+   #version: 0.1.11
   moxplatform_generic:
     path: ../moxplatform_generic
 

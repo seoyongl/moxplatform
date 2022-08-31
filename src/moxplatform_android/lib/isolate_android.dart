@@ -23,6 +23,7 @@ class BackgroundServiceDataSender extends AwaitableDataSender<BackgroundCommand,
   }
 }
 
+@pragma('vm:entry-point')
 Future<void> androidEntrypoint() async {
   print("androidEntrypoint: Called on new FlutterEngine");
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,10 +77,10 @@ class AndroidIsolateHandler extends IsolateHandler {
     _log.finest("Called start");
     WidgetsFlutterBinding.ensureInitialized();
 
-    final androidEntryHandle = PluginUtilities.getCallbackHandle(androidEntrypoint)!.toRawHandle();
-    _log.finest('AndroidEntryHandle: $androidEntryHandle');
+    final androidEntrypointHandle = PluginUtilities.getCallbackHandle(androidEntrypoint)!.toRawHandle();
+    _log.finest('androidEntrypointHandle: $androidEntrypointHandle');
     await _channel.invokeMethod("configure", [
-        androidEntryHandle,
+        androidEntrypointHandle,
         jsonEncode({
             "genericEntrypoint": PluginUtilities.getCallbackHandle(entrypoint)!.toRawHandle(),
             "eventHandle": PluginUtilities.getCallbackHandle(handleUIEvent)!.toRawHandle()
