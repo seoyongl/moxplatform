@@ -1,3 +1,7 @@
+## 0.1.11+2
+
+ - **REFACTOR**: Make version constraints looser.
+
 ## 0.1.11+1
 
  - **REFACTOR**: Make version constraints looser.
