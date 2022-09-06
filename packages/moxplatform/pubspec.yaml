@@ -21,17 +21,17 @@ dependencies:
 
   moxlib:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: 0.1.4
+    version: ^0.1.4
     
   moxplatform_android:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: 0.1.11
+    version: ^0.1.11
   moxplatform_platform_interface:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: 0.1.11
+    version: ^0.1.11
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  plugin_platform_interface: 2.1.2
-  very_good_analysis: 2.4.0
+  plugin_platform_interface: ^2.1.2
+  very_good_analysis: ^2.4.0
