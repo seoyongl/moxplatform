@@ -12,9 +12,8 @@ dependencies:
     sdk: flutter
 
   moxplatform:
-    path: ../moxplatform
-   #hosted: https://git.polynom.me/api/packages/Moxxy/pub
-   #version: 0.1.11
+    hosted: https://git.polynom.me/api/packages/Moxxy/pub
+    version: 0.1.11
   moxplatform_generic:
     path: ../moxplatform_generic
 
@@ -22,6 +21,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  very_good_analysis: 2.4.0
 
 flutter:
   plugin:

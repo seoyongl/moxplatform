@@ -1,15 +1,6 @@
-import "package:moxplatform_android/isolate_android.dart";
-import "package:moxplatform_android/media_android.dart";
+library moxplatform_android;
 
-import "package:moxplatform_platform_interface/moxplatform_platform_interface.dart";
-
-class MoxplatformAndroidPlugin extends MoxplatformInterface {
-  static void registerWith() {
-    print("MoxplatformAndroidPlugin: Registering implementation");
-    MoxplatformInterface.handler = AndroidIsolateHandler();
-    MoxplatformInterface.media = AndroidMediaScannerImplementation();
-  }
-
-  @override
-  Future<String> getPlatformName() async => "Android";
-}
+export 'src/isolate_android.dart';
+export 'src/media_android.dart';
+export 'src/plugin_android.dart';
+export 'src/service_android.dart';

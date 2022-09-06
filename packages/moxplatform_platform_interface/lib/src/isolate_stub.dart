@@ -1,5 +1,5 @@
-import "package:moxlib/awaitabledatasender.dart";
-import "package:moxplatform_platform_interface/src/isolate.dart";
+import 'package:moxlib/awaitabledatasender.dart';
+import 'package:moxplatform_platform_interface/src/isolate.dart';
 
 class StubDataSender extends AwaitableDataSender {
   StubDataSender() : super();
@@ -9,24 +9,25 @@ class StubDataSender extends AwaitableDataSender {
 }
 
 class StubIsolateHandler extends IsolateHandler {
-  final StubDataSender _sender;
-
   StubIsolateHandler() : _sender = StubDataSender();
+  final StubDataSender _sender;
 
   @override
   Future<void> attach(
-    Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent
+    Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
   ) async {
-    print("STUB ATTACHED!!!!!!");
+    // ignore: avoid_print
+    print('STUB ATTACHED!!!!!!');
   }
   
   @override
   Future<void> start(
     Future<void> Function() entrypoint,
     Future<void> Function(Map<String, dynamic>? data) handleUIEvent,
-    Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent
+    Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
   ) async {
-    print("STUB STARTED!!!!!!");
+    // ignore: avoid_print
+    print('STUB STARTED!!!!!!');
   }
 
   @override

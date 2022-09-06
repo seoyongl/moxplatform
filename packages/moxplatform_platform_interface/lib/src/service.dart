@@ -1,4 +1,4 @@
-import "package:moxplatform/types.dart";
+import 'package:moxplatform/moxplatform.dart';
 
 abstract class BackgroundService {
   /// Set the notification of the background service, if available
@@ -12,6 +12,6 @@ abstract class BackgroundService {
   /// data.
   void init(
     Future<void> Function() entrypoint,
-    Future<void> Function(Map<String, dynamic>? data) handleEvent
+    Future<void> Function(Map<String, dynamic>? data) handleEvent,
   );
 }
