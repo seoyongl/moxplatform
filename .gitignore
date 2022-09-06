@@ -50,3 +50,5 @@ build/
 
 .envrc
 .direnv
+
+packages/**/pubspec_overrides.yaml
