@@ -1,3 +1,4 @@
+import 'package:moxplatform_android/src/crypto_android.dart';
 import 'package:moxplatform_android/src/isolate_android.dart';
 import 'package:moxplatform_android/src/media_android.dart';
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
@@ -8,6 +9,7 @@ class MoxplatformAndroidPlugin extends MoxplatformInterface {
     print('MoxplatformAndroidPlugin: Registering implementation');
     MoxplatformInterface.handler = AndroidIsolateHandler();
     MoxplatformInterface.media = AndroidMediaScannerImplementation();
+    MoxplatformInterface.crypto = AndroidCryptographyImplementation();
   }
 
   @override

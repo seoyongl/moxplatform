@@ -6,14 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.service.ServiceAware;
@@ -136,6 +144,38 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
         }
         result.success(true);
         break;
+      case "encryptFile":
+        Thread encryptionThread = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            ArrayList args = (ArrayList) call.arguments;
+            String src = (String) args.get(0);
+            String dest = (String) args.get(1);
+            byte[] key = (byte[]) args.get(2);
+            byte[] iv = (byte[]) args.get(3);
+            int algorithm = (int) args.get(4);
+
+            result.success(encryptFile(src, dest, key, iv, algorithm));
+          }
+        });
+        encryptionThread.start();
+        break;
+      case "decryptFile":
+        Thread decryptionThread = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            ArrayList args = (ArrayList) call.arguments;
+            String src = (String) args.get(0);
+            String dest = (String) args.get(1);
+            byte[] key = (byte[]) args.get(2);
+            byte[] iv = (byte[]) args.get(3);
+            int algorithm = (int) args.get(4);
+
+            result.success(decryptFile(src, dest, key, iv, algorithm));
+          }
+        });
+        decryptionThread.start();
+        break;
       default:
         result.notImplemented();
         break;
@@ -174,5 +214,85 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
   public void onDetachedFromService() {
     Log.d(TAG, "Detached from service");
     this.service = null;
+  }
+
+  private String getCipherSpecFromInteger(int algorithm) {
+    switch (algorithm) {
+      case 0: return "AES_128/GCM/NoPadding";
+      case 1: return "AES_256/GCM/NoPadding";
+      case 2: return "AES_256/CBC/PKCS7PADDING";
+      default:
+        Log.d(TAG, "INVALID ALGORITHM");
+        return "";
+    }
+  }
+
+  public boolean encryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm) {
+    String spec = getCipherSpecFromInteger(algorithm);
+    if (spec.isEmpty()) {
+      return false;
+    }
+
+    // Shamelessly stolen from https://github.com/hugo-pcl/native-crypto-flutter/pull/3
+    byte[] buffer = new byte[8096];
+    SecretKeySpec sk = new SecretKeySpec(key, spec);
+    try {
+      Cipher cipher = Cipher.getInstance(spec);
+      cipher.init(Cipher.ENCRYPT_MODE, sk, new IvParameterSpec(iv));
+      FileInputStream fin = new FileInputStream(src);
+      FileOutputStream fout = new FileOutputStream(dest);
+      CipherOutputStream cout = new CipherOutputStream(fout, cipher);
+      int len = 0;
+      while (true) {
+        len = fin.read(buffer);
+        if (len != 0 && len > 0) {
+          cout.write(buffer, 0, len);
+        } else {
+          break;
+        }
+      }
+      cout.flush();
+      cout.close();
+      fin.close();
+      return true;
+    } catch (Exception ex) {
+      Log.d(TAG, "ENC: " + ex.getMessage());
+      return false;
+    }
+  }
+
+  public boolean decryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm) {
+    String spec = getCipherSpecFromInteger(algorithm);
+    if (spec.isEmpty()) {
+      return false;
+    }
+
+    // Shamelessly stolen from https://github.com/hugo-pcl/native-crypto-flutter/pull/3
+    byte[] buffer = new byte[8096];
+    SecretKeySpec sk = new SecretKeySpec(key, spec);
+    try {
+      Cipher cipher = Cipher.getInstance(spec);
+      cipher.init(Cipher.DECRYPT_MODE, sk, new IvParameterSpec(iv));
+      FileInputStream fin = new FileInputStream(src);
+      FileOutputStream fout = new FileOutputStream(dest);
+      CipherOutputStream cout = new CipherOutputStream(fout, cipher);
+      Log.d(TAG, "Reading from " + src + ", writing to " + dest);
+      int len = 0;
+      while (true) {
+        len = fin.read(buffer);
+        if (len != 0 && len > 0) {
+          cout.write(buffer, 0, len);
+        } else {
+          break;
+        }
+      }
+      cout.flush();
+      cout.close();
+      fin.close();
+      return true;
+    } catch (Exception ex) {
+      Log.d(TAG, "DEC: " + ex.getMessage());
+      return false;
+    }
   }
 }
