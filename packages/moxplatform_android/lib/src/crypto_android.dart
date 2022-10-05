@@ -17,10 +17,11 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
     ]);
     if (resultRaw == null) return null;
 
-    final result = Map<String, Uint8List>.from(resultRaw as Map<String, dynamic>);
+    // ignore: argument_type_not_assignable
+    final result = Map<String, dynamic>.from(resultRaw);
     return CryptographyResult(
-      result['plaintext_hash']!,
-      result['ciphertext_hash']!,
+      result['plaintext_hash']! as Uint8List,
+      result['ciphertext_hash']! as Uint8List,
     );
   }
 
@@ -36,10 +37,11 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
     ]);
     if (resultRaw == null) return null;
 
-    final result = Map<String, Uint8List>.from(resultRaw as Map<String, dynamic>);
+    // ignore: argument_type_not_assignable
+    final result = Map<String, dynamic>.from(resultRaw);
     return CryptographyResult(
-      result['plaintext_hash']!,
-      result['ciphertext_hash']!,
+      result['plaintext_hash']! as Uint8List,
+      result['ciphertext_hash']! as Uint8List,
     );
   }
 
