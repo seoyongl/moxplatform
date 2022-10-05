@@ -1,6 +1,6 @@
 name: moxplatform
 description: Moxxy platform-specific code
-version: 0.1.13
+version: 0.1.14
 publish_to: https://git.polynom.me/api/packages/Moxxy/pub
 homepage: https://codeberg.org/moxxy/moxplatform
 
@@ -26,10 +26,10 @@ dependencies:
     
   moxplatform_android:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: ^0.1.12
+    version: ^0.1.14
   moxplatform_platform_interface:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: ^0.1.12
+    version: ^0.1.14
 
 dev_dependencies:
   flutter_test:
