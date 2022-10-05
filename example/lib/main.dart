@@ -61,15 +61,21 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
+    final start = DateTime.now();
     final path = result.files.single.path;
-    await MoxplatformPlugin.crypto.encryptFile(
+    final enc = await MoxplatformPlugin.crypto.encryptFile(
       path!,
       path + '.enc',
       Uint8List.fromList(List.filled(32, 1)),
       Uint8List.fromList(List.filled(16, 2)),
       CipherAlgorithm.aes256CbcPkcs7,
+      'SHA-256',
     );
-    print('DONE');
+    final end = DateTime.now();
+
+    final diff = end.millisecondsSinceEpoch - start.millisecondsSinceEpoch;
+    print('TIME: ${diff / 1000}s');
+    print('DONE (${enc != null})');
     final lengthEnc = await File(path + ".enc").length();
     final lengthOrig = await File(path).length();
     print('Encrypted file is $lengthEnc Bytes large (Orig $lengthOrig)');
@@ -80,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Uint8List.fromList(List.filled(32, 1)),
       Uint8List.fromList(List.filled(16, 2)),
       CipherAlgorithm.aes256CbcPkcs7,
+      'SHA-256',
     );
     print('DONE');
 

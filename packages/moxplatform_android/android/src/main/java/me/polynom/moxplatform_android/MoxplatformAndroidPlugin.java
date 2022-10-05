@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,8 +13,9 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -154,8 +154,9 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
             byte[] key = (byte[]) args.get(2);
             byte[] iv = (byte[]) args.get(3);
             int algorithm = (int) args.get(4);
+            String hashSpec = (String) args.get(5);
 
-            result.success(encryptFile(src, dest, key, iv, algorithm));
+            result.success(encryptFile(src, dest, key, iv, algorithm, hashSpec));
           }
         });
         encryptionThread.start();
@@ -170,11 +171,25 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
             byte[] key = (byte[]) args.get(2);
             byte[] iv = (byte[]) args.get(3);
             int algorithm = (int) args.get(4);
+            String hashSpec = (String) args.get(5);
 
-            result.success(decryptFile(src, dest, key, iv, algorithm));
+            result.success(decryptFile(src, dest, key, iv, algorithm, hashSpec));
           }
         });
         decryptionThread.start();
+        break;
+      case "hashFile":
+        Thread hashingThread = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            ArrayList args = (ArrayList) call.arguments;
+            String src = (String) args.get(0);
+            String hashSpec = (String) args.get(1);
+
+            result.success(hashFile(src, hashSpec));
+          }
+        });
+        hashingThread.start();
         break;
       default:
         result.notImplemented();
@@ -227,25 +242,28 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     }
   }
 
-  public boolean encryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm) {
+  public HashMap<String, byte[]> encryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm, String hashSpec) {
     String spec = getCipherSpecFromInteger(algorithm);
     if (spec.isEmpty()) {
-      return false;
+      return null;
     }
 
     // Shamelessly stolen from https://github.com/hugo-pcl/native-crypto-flutter/pull/3
     byte[] buffer = new byte[8096];
     SecretKeySpec sk = new SecretKeySpec(key, spec);
     try {
+      MessageDigest md = MessageDigest.getInstance(hashSpec);
       Cipher cipher = Cipher.getInstance(spec);
       cipher.init(Cipher.ENCRYPT_MODE, sk, new IvParameterSpec(iv));
       FileInputStream fin = new FileInputStream(src);
-      FileOutputStream fout = new FileOutputStream(dest);
+      HashedFileOutputStream fout = new HashedFileOutputStream(dest, hashSpec);
       CipherOutputStream cout = new CipherOutputStream(fout, cipher);
       int len = 0;
+      int bufLen = 0;
       while (true) {
         len = fin.read(buffer);
         if (len != 0 && len > 0) {
+          md.update(buffer, 0, len);
           cout.write(buffer, 0, len);
         } else {
           break;
@@ -254,17 +272,21 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
       cout.flush();
       cout.close();
       fin.close();
-      return true;
+
+      return new HashMap<String, byte[]>() {{
+        put("plaintext_hash", md.digest());
+        put("ciphertext_hash", fout.getHash());
+      }};
     } catch (Exception ex) {
       Log.d(TAG, "ENC: " + ex.getMessage());
-      return false;
+      return null;
     }
   }
 
-  public boolean decryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm) {
+  public HashMap<String, byte[]> decryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm, String hashSpec) {
     String spec = getCipherSpecFromInteger(algorithm);
     if (spec.isEmpty()) {
-      return false;
+      return null;
     }
 
     // Shamelessly stolen from https://github.com/hugo-pcl/native-crypto-flutter/pull/3
@@ -274,14 +296,16 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
       Cipher cipher = Cipher.getInstance(spec);
       cipher.init(Cipher.DECRYPT_MODE, sk, new IvParameterSpec(iv));
       FileInputStream fin = new FileInputStream(src);
-      FileOutputStream fout = new FileOutputStream(dest);
+      HashedFileOutputStream fout = new HashedFileOutputStream(dest, hashSpec);
       CipherOutputStream cout = new CipherOutputStream(fout, cipher);
+      MessageDigest md = MessageDigest.getInstance(hashSpec);
       Log.d(TAG, "Reading from " + src + ", writing to " + dest);
       int len = 0;
       while (true) {
         len = fin.read(buffer);
         if (len != 0 && len > 0) {
           cout.write(buffer, 0, len);
+          md.update(buffer, 0, len);
         } else {
           break;
         }
@@ -289,10 +313,36 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
       cout.flush();
       cout.close();
       fin.close();
-      return true;
+
+      return new HashMap<String, byte[]>() {{
+        put("plaintext_hash", md.digest());
+        put("ciphertext_hash", fout.getHash());
+      }};
     } catch (Exception ex) {
       Log.d(TAG, "DEC: " + ex.getMessage());
-      return false;
+      return null;
+    }
+  }
+
+  public byte[] hashFile(String src, String algorithm) {
+    byte[] buffer = new byte[8096];
+    try {
+      MessageDigest md = MessageDigest.getInstance(algorithm);
+      FileInputStream fin = new FileInputStream(src);
+      int len = 0;
+      while (true) {
+        len = fin.read(buffer);
+        if (len != 0 && len > 0) {
+          md.update(buffer, 0, len);
+        } else {
+          break;
+        }
+      }
+
+      return md.digest();
+    } catch (Exception ex) {
+      Log.d(TAG, "Hash: " + ex.getMessage());
+      return null;
     }
   }
 }

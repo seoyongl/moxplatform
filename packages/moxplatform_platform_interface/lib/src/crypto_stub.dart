@@ -3,12 +3,17 @@ import 'package:moxplatform_platform_interface/src/crypto.dart';
 
 class StubCryptographyImplementation extends CryptographyImplementation {
   @override
-  Future<bool> encryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm) async {
-    return false;
+  Future<CryptographyResult?> encryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec) async {
+    return null;
   }
 
   @override
-  Future<bool> decryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm) async {
-    return false;
+  Future<CryptographyResult?> decryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec) async {
+    return null;
+  }
+
+  @override
+  Future<Uint8List?> hashFile(String path, String hashSpec) async {
+    return null;
   }
 }
