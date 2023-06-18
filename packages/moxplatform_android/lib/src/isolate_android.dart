@@ -4,18 +4,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart';
-import 'package:moxlib/awaitabledatasender.dart';
+import 'package:moxlib/moxlib.dart';
 import 'package:moxplatform/moxplatform.dart';
 import 'package:moxplatform_android/src/service_android.dart';
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
 
 /// An [AwaitableDataSender] that uses flutter_background_service.
-class BackgroundServiceDataSender extends AwaitableDataSender<BackgroundCommand, BackgroundEvent> {
-
+class BackgroundServiceDataSender
+    extends AwaitableDataSender<BackgroundCommand, BackgroundEvent> {
   BackgroundServiceDataSender()
-    : _channel = const MethodChannel('me.polynom.moxplatform_android'), super();
+      : _channel = const MethodChannel('me.polynom.moxplatform_android'),
+        super();
   final MethodChannel _channel;
- 
+
   @override
   Future<void> sendDataImpl(DataWrapper data) async {
     await _channel.invokeMethod<void>('sendData', jsonEncode(data.toJson()));
@@ -39,11 +40,15 @@ Future<void> androidEntrypoint() async {
   );
   final data = jsonDecode(result!) as Map<String, dynamic>;
   final entrypointHandle = data['genericEntrypoint']! as int;
-  final entrypointCallbackHandle = CallbackHandle.fromRawHandle(entrypointHandle);
-  final entrypoint = PluginUtilities.getCallbackFromHandle(entrypointCallbackHandle);
+  final entrypointCallbackHandle =
+      CallbackHandle.fromRawHandle(entrypointHandle);
+  final entrypoint =
+      PluginUtilities.getCallbackFromHandle(entrypointCallbackHandle);
   final handleUIEventHandle = data['eventHandle']! as int;
-  final handleUIEventCallbackHandle = CallbackHandle.fromRawHandle(handleUIEventHandle);
-  final handleUIEvent = PluginUtilities.getCallbackFromHandle(handleUIEventCallbackHandle);
+  final handleUIEventCallbackHandle =
+      CallbackHandle.fromRawHandle(handleUIEventHandle);
+  final handleUIEvent =
+      PluginUtilities.getCallbackFromHandle(handleUIEventCallbackHandle);
 
   final srv = AndroidBackgroundService();
   GetIt.I.registerSingleton<BackgroundService>(srv);
@@ -55,24 +60,25 @@ Future<void> androidEntrypoint() async {
 
 /// The Android specific implementation of the [IsolateHandler].
 class AndroidIsolateHandler extends IsolateHandler {
-
   AndroidIsolateHandler()
-    : _channel = const MethodChannel('me.polynom.moxplatform_android'),
-      _dataSender = BackgroundServiceDataSender(),
-      _log = Logger('AndroidIsolateHandler'),
-      super();
+      : _channel = const MethodChannel('me.polynom.moxplatform_android'),
+        _dataSender = BackgroundServiceDataSender(),
+        _log = Logger('AndroidIsolateHandler'),
+        super();
   final BackgroundServiceDataSender _dataSender;
   final MethodChannel _channel;
   final Logger _log;
 
   @override
-  Future<void> attach(Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent) async {
+  Future<void> attach(
+    Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
+  ) async {
     _channel.setMethodCallHandler((MethodCall call) async {
       final args = call.arguments as String;
       await handleIsolateEvent(jsonDecode(args) as Map<String, dynamic>);
     });
   }
-      
+
   @override
   Future<void> start(
     Future<void> Function() entrypoint,
@@ -82,13 +88,16 @@ class AndroidIsolateHandler extends IsolateHandler {
     _log.finest('Called start');
     WidgetsFlutterBinding.ensureInitialized();
 
-    final androidEntrypointHandle = PluginUtilities.getCallbackHandle(androidEntrypoint)!.toRawHandle();
+    final androidEntrypointHandle =
+        PluginUtilities.getCallbackHandle(androidEntrypoint)!.toRawHandle();
     _log.finest('androidEntrypointHandle: $androidEntrypointHandle');
     await _channel.invokeMethod<void>('configure', <dynamic>[
       androidEntrypointHandle,
       jsonEncode({
-        'genericEntrypoint': PluginUtilities.getCallbackHandle(entrypoint)!.toRawHandle(),
-        'eventHandle': PluginUtilities.getCallbackHandle(handleUIEvent)!.toRawHandle()
+        'genericEntrypoint':
+            PluginUtilities.getCallbackHandle(entrypoint)!.toRawHandle(),
+        'eventHandle':
+            PluginUtilities.getCallbackHandle(handleUIEvent)!.toRawHandle()
       }),
     ]);
 

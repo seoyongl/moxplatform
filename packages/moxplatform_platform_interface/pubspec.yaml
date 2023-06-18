@@ -1,11 +1,11 @@
 name: moxplatform_platform_interface
 description: A common platform interface for the my_plugin plugin.
-version: 0.1.15
+version: 0.1.16
 homepage: https://codeberg.org/moxxy/moxplatform
 publish_to: https://git.polynom.me/api/packages/Moxxy/pub
 
 environment:
-  sdk: ">=2.16.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
   flutter: ">=2.10.0"
 
 dependencies:
@@ -14,14 +14,14 @@ dependencies:
 
   moxlib:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: ^0.1.4
+    version: ^0.2.0
   moxplatform:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: ^0.1.15
+    version: ^0.1.16
 
   plugin_platform_interface: ^2.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: ^2.4.0
+  very_good_analysis: ^3.0.1

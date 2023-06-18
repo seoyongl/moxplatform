@@ -1,4 +1,4 @@
-import 'package:moxlib/awaitabledatasender.dart';
+import 'package:moxlib/moxlib.dart';
 import 'package:moxplatform_platform_interface/src/isolate.dart';
 
 class StubDataSender extends AwaitableDataSender {
@@ -19,7 +19,7 @@ class StubIsolateHandler extends IsolateHandler {
     // ignore: avoid_print
     print('STUB ATTACHED!!!!!!');
   }
-  
+
   @override
   Future<void> start(
     Future<void> Function() entrypoint,

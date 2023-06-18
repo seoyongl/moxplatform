@@ -6,13 +6,21 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
   final _methodChannel = const MethodChannel('me.polynom.moxplatform_android');
 
   @override
-  Future<CryptographyResult?> encryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec) async {
-    final dynamic resultRaw = await _methodChannel.invokeMethod<dynamic>('encryptFile', [
+  Future<CryptographyResult?> encryptFile(
+    String sourcePath,
+    String destPath,
+    Uint8List key,
+    Uint8List iv,
+    CipherAlgorithm algorithm,
+    String hashSpec,
+  ) async {
+    final dynamic resultRaw =
+        await _methodChannel.invokeMethod<dynamic>('encryptFile', [
       sourcePath,
       destPath,
       key,
       iv,
-      algorithm.toInt(),
+      algorithm.value,
       hashSpec,
     ]);
     if (resultRaw == null) return null;
@@ -26,13 +34,21 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
   }
 
   @override
-  Future<CryptographyResult?> decryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec) async {
-    final dynamic resultRaw = await _methodChannel.invokeMethod<dynamic>('decryptFile', [
+  Future<CryptographyResult?> decryptFile(
+    String sourcePath,
+    String destPath,
+    Uint8List key,
+    Uint8List iv,
+    CipherAlgorithm algorithm,
+    String hashSpec,
+  ) async {
+    final dynamic resultRaw =
+        await _methodChannel.invokeMethod<dynamic>('decryptFile', [
       sourcePath,
       destPath,
       key,
       iv,
-      algorithm.toInt(),
+      algorithm.value,
       hashSpec,
     ]);
     if (resultRaw == null) return null;
@@ -47,7 +63,8 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
 
   @override
   Future<Uint8List?> hashFile(String path, String hashSpec) async {
-    final dynamic resultsRaw = await _methodChannel.invokeMethod<dynamic>('hashFile', [
+    final dynamic resultsRaw =
+        await _methodChannel.invokeMethod<dynamic>('hashFile', [
       path,
       hashSpec,
     ]);

@@ -10,7 +10,7 @@ abstract class MoxplatformInterface extends PlatformInterface {
   MoxplatformInterface() : super(token: _token);
 
   static final Object _token = Object();
-  
+
   static IsolateHandler handler = StubIsolateHandler();
   static MediaScannerImplementation media = StubMediaScannerImplementation();
   static CryptographyImplementation crypto = StubCryptographyImplementation();

@@ -1,4 +1,4 @@
-import 'package:moxlib/awaitabledatasender.dart';
+import 'package:moxlib/moxlib.dart';
 
 /// A class abstracting the interaction between the UI isolate and the background
 /// service, which is either a regular isolate or an Android foreground service.
@@ -18,7 +18,7 @@ abstract class IsolateHandler {
   Future<void> attach(
     Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
   );
-  
+
   /// Return true if the background service is running. False if it's not.
   Future<bool> isRunning();
 
