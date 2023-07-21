@@ -1,6 +1,7 @@
 package me.polynom.moxplatform_android;
 
 import static me.polynom.moxplatform_android.RecordSentMessageKt.recordSentMessage;
+import static me.polynom.moxplatform_android.CryptoKt.*;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -8,28 +9,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.Person;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.pm.ShortcutInfoCompat;
-import androidx.core.content.pm.ShortcutManagerCompat;
-import androidx.core.graphics.drawable.IconCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -169,7 +159,16 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
             int algorithm = (int) args.get(4);
             String hashSpec = (String) args.get(5);
 
-            result.success(encryptFile(src, dest, key, iv, algorithm, hashSpec));
+            result.success(
+                    encryptAndHash(
+                            src,
+                            dest,
+                            key,
+                            iv,
+                            getCipherSpecFromInteger(algorithm),
+                            hashSpec
+                    )
+            );
           }
         });
         encryptionThread.start();
@@ -186,7 +185,16 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
             int algorithm = (int) args.get(4);
             String hashSpec = (String) args.get(5);
 
-            result.success(decryptFile(src, dest, key, iv, algorithm, hashSpec));
+            result.success(
+                    decryptAndHash(
+                            src,
+                            dest,
+                            key,
+                            iv,
+                            getCipherSpecFromInteger(algorithm),
+                            hashSpec
+                    )
+            );
           }
         });
         decryptionThread.start();
@@ -253,120 +261,5 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
   public void onDetachedFromService() {
     Log.d(TAG, "Detached from service");
     this.service = null;
-  }
-
-  private String getCipherSpecFromInteger(int algorithm) {
-    switch (algorithm) {
-      case 0: return "AES_128/GCM/NoPadding";
-      case 1: return "AES_256/GCM/NoPadding";
-      case 2: return "AES_256/CBC/PKCS7PADDING";
-      default:
-        Log.d(TAG, "INVALID ALGORITHM");
-        return "";
-    }
-  }
-
-  public HashMap<String, byte[]> encryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm, String hashSpec) {
-    String spec = getCipherSpecFromInteger(algorithm);
-    if (spec.isEmpty()) {
-      return null;
-    }
-
-    // Shamelessly stolen from https://github.com/hugo-pcl/native-crypto-flutter/pull/3
-    byte[] buffer = new byte[8096];
-    SecretKeySpec sk = new SecretKeySpec(key, spec);
-    try {
-      MessageDigest md = MessageDigest.getInstance(hashSpec);
-      Cipher cipher = Cipher.getInstance(spec);
-      cipher.init(Cipher.ENCRYPT_MODE, sk, new IvParameterSpec(iv));
-      FileInputStream fin = new FileInputStream(src);
-      HashedFileOutputStream fout = new HashedFileOutputStream(dest, hashSpec);
-      CipherOutputStream cout = new CipherOutputStream(fout, cipher);
-      int len = 0;
-      int bufLen = 0;
-      while (true) {
-        len = fin.read(buffer);
-        if (len != 0 && len > 0) {
-          md.update(buffer, 0, len);
-          cout.write(buffer, 0, len);
-        } else {
-          break;
-        }
-      }
-      cout.flush();
-      cout.close();
-      fin.close();
-
-      return new HashMap<String, byte[]>() {{
-        put("plaintext_hash", md.digest());
-        put("ciphertext_hash", fout.getHash());
-      }};
-    } catch (Exception ex) {
-      Log.d(TAG, "ENC: " + ex.getMessage());
-      return null;
-    }
-  }
-
-  public HashMap<String, byte[]> decryptFile(String src, String dest, byte[] key, byte[] iv, int algorithm, String hashSpec) {
-    String spec = getCipherSpecFromInteger(algorithm);
-    if (spec.isEmpty()) {
-      return null;
-    }
-
-    // Shamelessly stolen from https://github.com/hugo-pcl/native-crypto-flutter/pull/3
-    byte[] buffer = new byte[8096];
-    SecretKeySpec sk = new SecretKeySpec(key, spec);
-    try {
-      Cipher cipher = Cipher.getInstance(spec);
-      cipher.init(Cipher.DECRYPT_MODE, sk, new IvParameterSpec(iv));
-      FileInputStream fin = new FileInputStream(src);
-      HashedFileOutputStream fout = new HashedFileOutputStream(dest, hashSpec);
-      CipherOutputStream cout = new CipherOutputStream(fout, cipher);
-      MessageDigest md = MessageDigest.getInstance(hashSpec);
-      Log.d(TAG, "Reading from " + src + ", writing to " + dest);
-      int len = 0;
-      while (true) {
-        len = fin.read(buffer);
-        if (len != 0 && len > 0) {
-          cout.write(buffer, 0, len);
-          md.update(buffer, 0, len);
-        } else {
-          break;
-        }
-      }
-      cout.flush();
-      cout.close();
-      fin.close();
-
-      return new HashMap<String, byte[]>() {{
-        put("plaintext_hash", md.digest());
-        put("ciphertext_hash", fout.getHash());
-      }};
-    } catch (Exception ex) {
-      Log.d(TAG, "DEC: " + ex.getMessage());
-      return null;
-    }
-  }
-
-  public byte[] hashFile(String src, String algorithm) {
-    byte[] buffer = new byte[8096];
-    try {
-      MessageDigest md = MessageDigest.getInstance(algorithm);
-      FileInputStream fin = new FileInputStream(src);
-      int len = 0;
-      while (true) {
-        len = fin.read(buffer);
-        if (len != 0 && len > 0) {
-          md.update(buffer, 0, len);
-        } else {
-          break;
-        }
-      }
-
-      return md.digest();
-    } catch (Exception ex) {
-      Log.d(TAG, "Hash: " + ex.getMessage());
-      return null;
-    }
   }
 }

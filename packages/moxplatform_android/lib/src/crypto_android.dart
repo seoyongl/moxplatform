@@ -28,8 +28,8 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
     // ignore: argument_type_not_assignable
     final result = Map<String, dynamic>.from(resultRaw);
     return CryptographyResult(
-      result['plaintext_hash']! as Uint8List,
-      result['ciphertext_hash']! as Uint8List,
+      result['plaintextHash']! as Uint8List,
+      result['ciphertextHash']! as Uint8List,
     );
   }
 
@@ -56,8 +56,8 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
     // ignore: argument_type_not_assignable
     final result = Map<String, dynamic>.from(resultRaw);
     return CryptographyResult(
-      result['plaintext_hash']! as Uint8List,
-      result['ciphertext_hash']! as Uint8List,
+      result['plaintextHash']! as Uint8List,
+      result['ciphertextHash']! as Uint8List,
     );
   }
 
