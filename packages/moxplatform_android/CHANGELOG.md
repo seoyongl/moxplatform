@@ -1,3 +1,8 @@
+## 0.1.17+1
+
+ - **FIX**: Accidentally used the name as the target's key. Oops.
+ - **FIX**: Fix minor things.
+
 ## 0.1.17
 
  - **FIX**: Fix typecasting issue.
