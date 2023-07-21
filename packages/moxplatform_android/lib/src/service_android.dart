@@ -34,7 +34,7 @@ class AndroidBackgroundService extends BackgroundService {
       event,
     );
     // NOTE: *S*erver to *F*oreground
-    _log.fine('S2F: ${data.toJson().toString()}');
+    _log.fine('S2F: ${data.toJson()}');
     channel.invokeMethod<void>('sendData', jsonEncode(data.toJson()));
   }
 
