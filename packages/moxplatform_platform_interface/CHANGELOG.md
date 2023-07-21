@@ -1,3 +1,11 @@
+## 0.1.17
+
+ - **FIX**: Fix typecasting issue.
+ - **FEAT**: Add an API for creating direct share shortcuts.
+ - **FEAT**: Migrate to moxlib 0.2.0.
+ - **FEAT**: I forgot to bump dependency versions.
+ - **FEAT**: Also hash the file on encryption and decryption.
+
 ## 0.1.11+2
 
  - **REFACTOR**: Make version constraints looser.
