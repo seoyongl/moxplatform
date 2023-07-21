@@ -135,6 +135,25 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+
+            ElevatedButton(
+              onPressed: () {
+                MoxplatformPlugin.contacts.recordSentMessage('Hallo', 'Welt');
+              },
+              child: Text('Test recordSentMessage (no fallback)'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                MoxplatformPlugin.contacts.recordSentMessage('Person', 'Person', fallbackIcon: FallbackIconType.person);
+              },
+              child: Text('Test recordSentMessage (person fallback)'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                MoxplatformPlugin.contacts.recordSentMessage('Notes', 'Notes', fallbackIcon: FallbackIconType.notes);
+              },
+              child: Text('Test recordSentMessage (notes fallback)'),
+            ),
           ],
         ),
       ),

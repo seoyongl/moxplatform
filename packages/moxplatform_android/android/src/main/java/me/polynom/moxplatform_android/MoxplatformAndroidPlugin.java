@@ -6,17 +6,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.Person;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -191,10 +202,77 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
         });
         hashingThread.start();
         break;
+      case "recordSentMessage":
+        ArrayList rargs = (ArrayList) call.arguments;
+        try {
+          recordSentMessage(
+                  (String) rargs.get(0),
+                  (String) rargs.get(1),
+                  (String) rargs.get(2),
+                  (int) rargs.get(3)
+          );
+        } catch (ClassNotFoundException ex) {
+          Log.e(TAG, "Failed to get classname");
+          Log.e(TAG, ex.getMessage());
+        }
+        result.success(true);
+        break;
       default:
         result.notImplemented();
         break;
     }
+  }
+
+  private void recordSentMessage(String name, String jid, String avatarPath, int fallbackIconType) throws ClassNotFoundException {
+    // Very much inspired (or copied) from https://github.com/ShoutSocial/share_handler
+    final String pkgName = context.getPackageName();
+    final Intent intent = new Intent(context, Class.forName(pkgName + ".MainActivity"));
+    intent.setAction(Intent.ACTION_SEND);
+
+    // Compatibility with share_handler
+    intent.putExtra("conversationIdentifier", jid);
+
+    final String shortcutTarget = pkgName + ".dynamic_share_target";
+    final ShortcutInfoCompat.Builder builder = new ShortcutInfoCompat.Builder(context, name);
+    builder
+            .setShortLabel(name)
+            .setIsConversation()
+            .setCategories(Set.of(shortcutTarget))
+            .setIntent(intent)
+            .setLongLived(true);
+
+    // TODO: This is dumb. Maybe just raise the minimum Android version
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+      final Person.Builder personBuilder = new Person.Builder()
+              .setKey(jid)
+              .setName(name);
+
+      if (avatarPath != null) {
+        final Bitmap bitmap = BitmapFactory.decodeFile(avatarPath);
+        final IconCompat icon = IconCompat.createWithAdaptiveBitmap(bitmap);
+        builder.setIcon(icon);
+        personBuilder.setIcon(icon);
+      } else {
+        if (fallbackIconType == 0 || fallbackIconType == 1) {
+          final int id = switch (fallbackIconType) {
+            default:
+            case 0: yield R.mipmap.person;
+            case 1: yield R.mipmap.notes;
+          };
+          final IconCompat personIcon = IconCompat.createWithResource(
+                  context,
+                  id
+          );
+          builder.setIcon(personIcon);
+          personBuilder.setIcon(personIcon);
+        }
+      }
+
+      builder.setPerson(personBuilder.build());
+    }
+
+    final ShortcutInfoCompat shortcut = builder.build();
+    ShortcutManagerCompat.addDynamicShortcuts(context, List.of(shortcut));
   }
 
   @Override

@@ -4,4 +4,5 @@ class MoxplatformPlugin {
   static IsolateHandler get handler => MoxplatformInterface.handler;
   static MediaScannerImplementation get media => MoxplatformInterface.media;
   static CryptographyImplementation get crypto => MoxplatformInterface.crypto;
+  static ContactsImplementation get contacts => MoxplatformInterface.contacts;
 }

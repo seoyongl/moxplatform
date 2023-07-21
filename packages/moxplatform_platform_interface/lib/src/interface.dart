@@ -1,3 +1,5 @@
+import 'package:moxplatform_platform_interface/src/contacts.dart';
+import 'package:moxplatform_platform_interface/src/contacts_stub.dart';
 import 'package:moxplatform_platform_interface/src/crypto.dart';
 import 'package:moxplatform_platform_interface/src/crypto_stub.dart';
 import 'package:moxplatform_platform_interface/src/isolate.dart';
@@ -14,6 +16,7 @@ abstract class MoxplatformInterface extends PlatformInterface {
   static IsolateHandler handler = StubIsolateHandler();
   static MediaScannerImplementation media = StubMediaScannerImplementation();
   static CryptographyImplementation crypto = StubCryptographyImplementation();
+  static ContactsImplementation contacts = StubContactsImplementation();
 
   /// Return the current platform name.
   Future<String?> getPlatformName();

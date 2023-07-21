@@ -1,5 +1,7 @@
 library moxplatform_platform_interface;
 
+export 'src/contacts.dart';
+export 'src/contacts_stub.dart';
 export 'src/crypto.dart';
 export 'src/crypto_stub.dart';
 export 'src/interface.dart';
