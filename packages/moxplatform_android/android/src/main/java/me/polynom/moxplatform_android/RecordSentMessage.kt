@@ -22,7 +22,7 @@ fun recordSentMessage(context: Context, name: String, jid: String, avatarPath: S
     }
 
     val shortcutTarget = "$pkgName.dynamic_share_target"
-    val shortcutBuilder = ShortcutInfoCompat.Builder(context, name).apply {
+    val shortcutBuilder = ShortcutInfoCompat.Builder(context, jid).apply {
         setShortLabel(name)
         setIsConversation()
         setCategories(setOf(shortcutTarget))
