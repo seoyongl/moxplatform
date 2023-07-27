@@ -9,4 +9,7 @@ export 'src/isolate.dart';
 export 'src/isolate_stub.dart';
 export 'src/media.dart';
 export 'src/media_stub.dart';
+export 'src/notifications.dart';
+export 'src/notifications.g.dart';
+export 'src/notifications_stub.dart';
 export 'src/service.dart';

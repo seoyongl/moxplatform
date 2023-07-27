@@ -35,7 +35,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        // What Moxxy currently uses
+        minSdkVersion 26
     }
 }
 

@@ -1,16 +1,48 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:moxplatform/moxplatform.dart';
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
+
+/// The id of the notification channel.
+const channelId = "me.polynom.moxplatform.testing3";
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class Sender {
+  const Sender(this.name, this.jid);
+
+  final String name;
+
+  final String jid;
+}
+
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    initStateAsync();
+  }
+
+  Future<void> initStateAsync() async {
+    await Permission.notification.request();
+
+    await MoxplatformPlugin.notifications.createNotificationChannel("Test notification channel", channelId, false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +51,23 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  MyHomePage({super.key});
+
+  /// List of "Message senders".
+  final List<Sender> senders = const [
+    Sender('Mash Kyrielight', 'mash@example.org'),
+    Sender('Rio Tsukatsuki', 'rio@millenium'),
+    Sender('Raiden Shogun', 'raiden@tevhat'),
+  ];
+
+  /// List of sent messages.
+  List<NotificationMessage> messages = List<NotificationMessage>.empty(growable: true);
 
   Future<void> _cryptoTest() async {
     final result = await FilePicker.platform.pickFiles();
@@ -97,6 +139,41 @@ class MyHomePage extends StatelessWidget {
                 MoxplatformPlugin.contacts.recordSentMessage('Notes', 'Notes', fallbackIcon: FallbackIconType.notes);
               },
               child: const Text('Test recordSentMessage (notes fallback)'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.image,
+                );
+                print('Picked file: ${result?.files.single.path}');
+
+                // Create a new message.
+                final senderIndex = Random().nextInt(senders.length);
+                final time = DateTime.now().millisecondsSinceEpoch;
+                messages.add(
+                  NotificationMessage(
+                    jid: senders[senderIndex].jid,
+                    sender: senders[senderIndex].name,
+                    content: NotificationMessageContent(
+                      body: result != null ? null : 'Message #${messages.length}',
+                      mime: 'image/jpeg',
+                      path: result?.files.single.path,
+                    ),
+                    timestamp: time,
+                  )
+                );
+
+                await Future<void>.delayed(const Duration(seconds: 4));
+                await MoxplatformPlugin.notifications.showMessagingNotification(
+                  MessagingNotification(
+                    id: 2343,
+                    title: 'Test conversation',
+                    messages: messages,
+                    channelId: channelId,
+                  ),
+                );
+              },
+              child: const Text('Show messaging notification'),
             ),
           ],
         ),
