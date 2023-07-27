@@ -127,8 +127,8 @@ class MessagingNotification {
   }
 }
 
-class _NotificationsImplementationApiCodec extends StandardMessageCodec {
-  const _NotificationsImplementationApiCodec();
+class _MoxplatformApiCodec extends StandardMessageCodec {
+  const _MoxplatformApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is MessagingNotification) {
@@ -160,19 +160,19 @@ class _NotificationsImplementationApiCodec extends StandardMessageCodec {
   }
 }
 
-class NotificationsImplementationApi {
-  /// Constructor for [NotificationsImplementationApi].  The [binaryMessenger] named argument is
+class MoxplatformApi {
+  /// Constructor for [MoxplatformApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NotificationsImplementationApi({BinaryMessenger? binaryMessenger})
+  MoxplatformApi({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _NotificationsImplementationApiCodec();
+  static const MessageCodec<Object?> codec = _MoxplatformApiCodec();
 
   Future<void> createNotificationChannel(String arg_title, String arg_id, bool arg_urgent) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.NotificationsImplementationApi.createNotificationChannel', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_title, arg_id, arg_urgent]) as List<Object?>?;
@@ -194,7 +194,7 @@ class NotificationsImplementationApi {
 
   Future<void> showMessagingNotification(MessagingNotification arg_notification) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.NotificationsImplementationApi.showMessagingNotification', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showMessagingNotification', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_notification]) as List<Object?>?;
@@ -211,6 +211,60 @@ class NotificationsImplementationApi {
       );
     } else {
       return;
+    }
+  }
+
+  Future<String> getPersistentDataPath() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<String> getCacheDataPath() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getCacheDataPath', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
     }
   }
 }

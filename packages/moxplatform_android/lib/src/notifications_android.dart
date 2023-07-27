@@ -1,7 +1,7 @@
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
 
 class AndroidNotificationsImplementation extends NotificationsImplementation {
-  final NotificationsImplementationApi _api = NotificationsImplementationApi();
+  final MoxplatformApi _api = MoxplatformApi();
 
 
   @override

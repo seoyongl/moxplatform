@@ -2,12 +2,12 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'packages/moxplatform_platform_interface/lib/src/notifications.g.dart',
+    dartOut: 'packages/moxplatform_platform_interface/lib/src/api.g.dart',
     //kotlinOut: 'packages/moxplatform_android/android/src/main/java/me/polynom/moxplatform_android/Notifications.g.kt',
     //kotlinOptions: KotlinOptions(
     //  package: 'me.polynom.moxplatform_android',
     //),
-    javaOut: 'packages/moxplatform_android/android/src/main/java/me/polynom/moxplatform_android/Notifications.java',
+    javaOut: 'packages/moxplatform_android/android/src/main/java/me/polynom/moxplatform_android/Api.java',
     javaOptions: JavaOptions(
       package: 'me.polynom.moxplatform_android',
     ),
@@ -70,8 +70,12 @@ class MessagingNotification {
 }
 
 @HostApi()
-abstract class NotificationsImplementationApi {
+abstract class MoxplatformApi {
   void createNotificationChannel(String title, String id, bool urgent);
 
   void showMessagingNotification(MessagingNotification notification);
+
+  String getPersistentDataPath();
+
+  String getCacheDataPath();
 }

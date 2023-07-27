@@ -175,6 +175,18 @@ class MyHomePage extends StatelessWidget {
               },
               child: const Text('Show messaging notification'),
             ),
+            ElevatedButton(
+              onPressed: () async {
+                print(await MoxplatformPlugin.platform.getPersistentDataPath());
+              },
+              child: const Text('Get data directory'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                print(await MoxplatformPlugin.platform.getCacheDataPath());
+              },
+              child: const Text('Get cache directory'),
+            ),
           ],
         ),
       ),

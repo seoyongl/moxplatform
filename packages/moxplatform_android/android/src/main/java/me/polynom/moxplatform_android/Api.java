@@ -21,7 +21,7 @@ import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
-public class Notifications {
+public class Api {
 
   /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
   public static class FlutterError extends RuntimeException {
@@ -416,10 +416,10 @@ public class Notifications {
     }
   }
 
-  private static class NotificationsImplementationApiCodec extends StandardMessageCodec {
-    public static final NotificationsImplementationApiCodec INSTANCE = new NotificationsImplementationApiCodec();
+  private static class MoxplatformApiCodec extends StandardMessageCodec {
+    public static final MoxplatformApiCodec INSTANCE = new MoxplatformApiCodec();
 
-    private NotificationsImplementationApiCodec() {}
+    private MoxplatformApiCodec() {}
 
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
@@ -453,22 +453,28 @@ public class Notifications {
   }
 
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-  public interface NotificationsImplementationApi {
+  public interface MoxplatformApi {
 
     void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
 
-    /** The codec used by NotificationsImplementationApi. */
+    @NonNull 
+    String getPersistentDataPath();
+
+    @NonNull 
+    String getCacheDataPath();
+
+    /** The codec used by MoxplatformApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return NotificationsImplementationApiCodec.INSTANCE;
+      return MoxplatformApiCodec.INSTANCE;
     }
-    /**Sets up an instance of `NotificationsImplementationApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable NotificationsImplementationApi api) {
+    /**Sets up an instance of `MoxplatformApi` to handle messages through the `binaryMessenger`. */
+    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable MoxplatformApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.NotificationsImplementationApi.createNotificationChannel", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -494,7 +500,7 @@ public class Notifications {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.NotificationsImplementationApi.showMessagingNotification", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showMessagingNotification", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -504,6 +510,50 @@ public class Notifications {
                 try {
                   api.showMessagingNotification(notificationArg);
                   wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  String output = api.getPersistentDataPath();
+                  wrapped.add(0, output);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getCacheDataPath", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  String output = api.getCacheDataPath();
+                  wrapped.add(0, output);
                 }
  catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

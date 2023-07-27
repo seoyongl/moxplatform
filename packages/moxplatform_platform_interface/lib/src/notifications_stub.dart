@@ -1,4 +1,4 @@
-import 'package:moxplatform_platform_interface/src/notifications.g.dart';
+import 'package:moxplatform_platform_interface/src/api.g.dart';
 import 'package:moxplatform_platform_interface/src/notifications.dart';
 
 class StubNotificationsImplementation extends NotificationsImplementation {

@@ -1,4 +1,4 @@
-import 'package:moxplatform_platform_interface/src/notifications.g.dart';
+import 'package:moxplatform_platform_interface/src/api.g.dart';
 
 abstract class NotificationsImplementation {
   Future<void> createNotificationChannel(String title, String id, bool urgent);
