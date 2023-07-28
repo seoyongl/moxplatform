@@ -335,6 +335,20 @@ public class Api {
       this.channelId = setterArg;
     }
 
+    /** The JID of the chat in which the notifications happen. */
+    private @NonNull String jid;
+
+    public @NonNull String getJid() {
+      return jid;
+    }
+
+    public void setJid(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"jid\" is null.");
+      }
+      this.jid = setterArg;
+    }
+
     /** Messages to show. */
     private @NonNull List<NotificationMessage> messages;
 
@@ -375,6 +389,13 @@ public class Api {
         return this;
       }
 
+      private @Nullable String jid;
+
+      public @NonNull Builder setJid(@NonNull String setterArg) {
+        this.jid = setterArg;
+        return this;
+      }
+
       private @Nullable List<NotificationMessage> messages;
 
       public @NonNull Builder setMessages(@NonNull List<NotificationMessage> setterArg) {
@@ -387,6 +408,7 @@ public class Api {
         pigeonReturn.setTitle(title);
         pigeonReturn.setId(id);
         pigeonReturn.setChannelId(channelId);
+        pigeonReturn.setJid(jid);
         pigeonReturn.setMessages(messages);
         return pigeonReturn;
       }
@@ -394,10 +416,11 @@ public class Api {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      ArrayList<Object> toListResult = new ArrayList<Object>(5);
       toListResult.add(title);
       toListResult.add(id);
       toListResult.add(channelId);
+      toListResult.add(jid);
       toListResult.add(messages);
       return toListResult;
     }
@@ -410,7 +433,9 @@ public class Api {
       pigeonResult.setId((id == null) ? null : ((id instanceof Integer) ? (Integer) id : (Long) id));
       Object channelId = list.get(2);
       pigeonResult.setChannelId((String) channelId);
-      Object messages = list.get(3);
+      Object jid = list.get(3);
+      pigeonResult.setJid((String) jid);
+      Object messages = list.get(4);
       pigeonResult.setMessages((List<NotificationMessage>) messages);
       return pigeonResult;
     }

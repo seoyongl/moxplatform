@@ -92,6 +92,7 @@ class MessagingNotification {
     required this.title,
     required this.id,
     required this.channelId,
+    required this.jid,
     required this.messages,
   });
 
@@ -104,6 +105,9 @@ class MessagingNotification {
   /// The id of the notification channel the notification should appear on.
   String channelId;
 
+  /// The JID of the chat in which the notifications happen.
+  String jid;
+
   /// Messages to show.
   List<NotificationMessage?> messages;
 
@@ -112,6 +116,7 @@ class MessagingNotification {
       title,
       id,
       channelId,
+      jid,
       messages,
     ];
   }
@@ -122,7 +127,8 @@ class MessagingNotification {
       title: result[0]! as String,
       id: result[1]! as int,
       channelId: result[2]! as String,
-      messages: (result[3] as List<Object?>?)!.cast<NotificationMessage?>(),
+      jid: result[3]! as String,
+      messages: (result[4] as List<Object?>?)!.cast<NotificationMessage?>(),
     );
   }
 }

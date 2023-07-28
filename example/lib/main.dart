@@ -170,6 +170,7 @@ class MyHomePage extends StatelessWidget {
                     title: 'Test conversation',
                     messages: messages,
                     channelId: channelId,
+                    jid: 'testjid',
                   ),
                 );
               },

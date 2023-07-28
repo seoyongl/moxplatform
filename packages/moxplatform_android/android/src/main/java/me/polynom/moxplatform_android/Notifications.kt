@@ -41,13 +41,26 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     val markAsReadIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = MARK_AS_READ_ACTION
         // TODO: Put the JID here
-        putExtra("title", notification.title)
+        putExtra("jid", notification.jid)
     }
     val markAsReadPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
         0,
         markAsReadIntent,
         0,
+    )
+
+    // -> Tap action
+    // Thanks https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L246
+    // TODO: Copy the interface of awesome_notifications
+    val tapIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!.apply {
+        putExtra("jid", notification.jid)
+    }
+    val tapPendingIntent = PendingIntent.getActivity(
+        context,
+        notification.id.toInt(),
+        tapIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
     )
 
     // Build the notification
@@ -97,6 +110,10 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         // TODO: I think this is wrong
         setSmallIcon(R.drawable.ic_service_icon)
 
+        // Tap action
+        setContentIntent(tapPendingIntent)
+
+        // Notification actions
         addAction(replyAction)
         addAction(
             // TODO: Wrong icon

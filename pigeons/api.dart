@@ -54,7 +54,7 @@ class NotificationMessage {
 }
 
 class MessagingNotification {
-  const MessagingNotification(this.title, this.id, this.messages, this.channelId);
+  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId);
 
   /// The title of the conversation.
   final String title;
@@ -64,6 +64,9 @@ class MessagingNotification {
 
   /// The id of the notification channel the notification should appear on.
   final String channelId;
+
+  /// The JID of the chat in which the notifications happen.
+  final String jid;
 
   /// Messages to show.
   final List<NotificationMessage?> messages;

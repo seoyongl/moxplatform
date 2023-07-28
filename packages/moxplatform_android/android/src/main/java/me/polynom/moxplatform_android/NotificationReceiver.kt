@@ -14,7 +14,7 @@ class NotificationReceiver : BroadcastReceiver() {
         // send a notification to the app.
         // TODO: Notify app
         if (intent.action == MARK_AS_READ_ACTION) {
-            Log.d("NotificationReceiver", "Marking ${intent.getStringExtra("title")} as read")
+            Log.d("NotificationReceiver", "Marking ${intent.getStringExtra("jid")} as read")
             NotificationManagerCompat.from(context).cancel(intent.getLongExtra(MARK_AS_READ_ID_KEY, -1).toInt())
             return
         }
