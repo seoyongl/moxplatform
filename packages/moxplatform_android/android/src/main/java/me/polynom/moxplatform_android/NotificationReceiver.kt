@@ -1,6 +1,7 @@
 package me.polynom.moxplatform_android
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,18 @@ import androidx.core.app.RemoteInput
 import me.polynom.moxplatform_android.Api.NotificationEvent
 
 class NotificationReceiver : BroadcastReceiver() {
+    private fun dismissNotification(context: Context, intent: Intent) {
+        // Dismiss the notification
+        val notificationId = intent.getLongExtra("notification_id", -1).toInt()
+        if (notificationId != -1) {
+            NotificationManagerCompat.from(context).cancel(
+                notificationId,
+            )
+        } else {
+            Log.e("NotificationReceiver", "No id specified. Cannot dismiss notification")
+        }
+    }
+
     private fun handleMarkAsRead(context: Context, intent: Intent) {
         Log.d("NotificationReceiver", "Marking ${intent.getStringExtra("jid")} as read")
         val jidWrapper = intent.getStringExtra("jid") ?: ""
@@ -24,15 +37,7 @@ class NotificationReceiver : BroadcastReceiver() {
             }.toList()
         )
 
-        // Dismiss the notification
-        val notificationId = intent.getLongExtra("notification_id", -1).toInt()
-        if (notificationId != -1) {
-            NotificationManagerCompat.from(context).cancel(
-                notificationId,
-            )
-        } else {
-            Log.e("NotificationReceiver", "No id specified. Cannot dismiss notification")
-        }
+        dismissNotification(context, intent);
     }
 
     private fun handleReply(context: Context, intent: Intent) {
@@ -52,6 +57,25 @@ class NotificationReceiver : BroadcastReceiver() {
         // TODO: Update the notification to prevent showing the spinner
     }
 
+    private fun handleTap(context: Context, intent: Intent) {
+        Log.d("NotificationReceiver", "Received a tap")
+
+        MoxplatformAndroidPlugin.notificationSink?.success(
+            NotificationEvent().apply {
+                jid = intent.getStringExtra("jid")!!
+                type = Api.NotificationEventType.OPEN
+                payload = null
+            }.toList()
+        )
+
+        // Bring the app into the foreground
+        val tapIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!
+        context.startActivity(tapIntent)
+
+        // Dismiss the notification
+        dismissNotification(context, intent)
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         // TODO: We need to be careful to ensure that the Flutter engine is running.
         //       If it's not, we have to start it. However, that's only an issue when we expect to
@@ -59,7 +83,7 @@ class NotificationReceiver : BroadcastReceiver() {
         when (intent.action) {
             MARK_AS_READ_ACTION -> handleMarkAsRead(context, intent)
             REPLY_ACTION -> handleReply(context, intent)
-            // TODO: Handle tap
+            TAP_ACTION -> handleTap(context, intent)
         }
     }
 }

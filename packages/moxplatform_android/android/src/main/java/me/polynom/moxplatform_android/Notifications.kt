@@ -39,6 +39,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         replyPendingIntent,
     ).apply {
         addRemoteInput(remoteInput)
+        setAllowGeneratedReplies(true)
     }.build()
 
     // -> Mark as read action
@@ -64,12 +65,13 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
 
     // -> Tap action
     // Thanks https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L246
-    // TODO: Copy the interface of awesome_notifications
-    val tapIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!.apply {
-        // TODO: Use a constant
+    val tapIntent = Intent(context, NotificationReceiver::class.java).apply {
+        action = TAP_ACTION
+        // TODO: Use constants
         putExtra("jid", notification.jid)
+        putExtra("notification_id", notification.id)
     }
-    val tapPendingIntent = PendingIntent.getActivity(
+    val tapPendingIntent = PendingIntent.getBroadcast(
         context,
         notification.id.toInt(),
         tapIntent,
