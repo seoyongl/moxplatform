@@ -6,5 +6,7 @@ abstract class NotificationsImplementation {
 
   Future<void> showMessagingNotification(MessagingNotification notification);
 
+  Future<void> setNotificationSelfAvatar(String path);
+
   Stream<NotificationEvent> getEventStream();
 }

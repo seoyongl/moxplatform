@@ -300,9 +300,9 @@ import kotlin.jvm.functions.Function1;
       manager.createNotificationChannel(channel);
 
       // Configure i18n
-      NotificationI18nManager.INSTANCE.setYou(i18n.getYou());
-      NotificationI18nManager.INSTANCE.setReply(i18n.getReply());
-      NotificationI18nManager.INSTANCE.setMarkAsRead(i18n.getMarkAsRead());
+      NotificationDataManager.INSTANCE.setYou(i18n.getYou());
+      NotificationDataManager.INSTANCE.setReply(i18n.getReply());
+      NotificationDataManager.INSTANCE.setMarkAsRead(i18n.getMarkAsRead());
   }
 
   @Override
@@ -310,7 +310,12 @@ import kotlin.jvm.functions.Function1;
     NotificationsKt.showMessagingNotification(context, notification);
   }
 
-  @NonNull
+    @Override
+    public void setNotificationSelfAvatar(@NonNull String path) {
+      NotificationDataManager.INSTANCE.setAvatarPath(path);
+    }
+
+    @NonNull
   @Override
   public String getPersistentDataPath() {
     return context.getFilesDir().getPath();

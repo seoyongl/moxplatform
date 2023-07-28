@@ -116,6 +116,8 @@ abstract class MoxplatformApi {
 
   void showMessagingNotification(MessagingNotification notification);
 
+  void setNotificationSelfAvatar(String path);
+
   String getPersistentDataPath();
 
   String getCacheDataPath();

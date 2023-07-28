@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -13,6 +15,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.IconCompat
 import me.polynom.moxplatform_android.Api.NotificationEvent
 import java.io.File
 import java.time.Instant
@@ -43,8 +46,6 @@ class NotificationReceiver : BroadcastReceiver() {
         NotificationManagerCompat.from(context).cancel(intent.getLongExtra(MARK_AS_READ_ID_KEY, -1).toInt())
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
-                // TODO: Use constant for key
-                // TODO: Fix
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.MARK_AS_READ
                 payload = null
@@ -59,7 +60,6 @@ class NotificationReceiver : BroadcastReceiver() {
         val replyPayload = remoteInput.getCharSequence(REPLY_TEXT_KEY)
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
-                // TODO: Use constant for key
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.REPLY
                 payload = replyPayload.toString()
@@ -80,10 +80,25 @@ class NotificationReceiver : BroadcastReceiver() {
 
         // Thanks https://medium.com/@sidorovroman3/android-how-to-use-messagingstyle-for-notifications-without-caching-messages-c414ef2b816c
         val recoveredStyle = NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(notification)!!
-        // TODO: Use a person and cache this data somewhere
-        val newStyle = Notification.MessagingStyle(NotificationI18nManager.you).apply {
+        val newStyle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            Notification.MessagingStyle(
+                android.app.Person.Builder().apply {
+                    setName(NotificationDataManager.you)
+
+                    // Set an avatar, if we have one
+                    if (NotificationDataManager.avatarPath != null) {
+                        setIcon(
+                            Icon.createWithAdaptiveBitmap(
+                                BitmapFactory.decodeFile(NotificationDataManager.avatarPath)
+                            )
+                        )
+                    }
+                }.build()
+            )
+        else Notification.MessagingStyle(NotificationDataManager.you)
+
+        newStyle.apply {
             conversationTitle = recoveredStyle.conversationTitle
-            // TODO: Use person
             recoveredStyle.messages.forEach {
                 // Check if we have to request (or refresh) the content URI to be able to still
                 // see the embedded image.

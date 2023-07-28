@@ -191,6 +191,17 @@ class MyHomePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.image,
+                );
+                if (result == null) return;
+
+                MoxplatformPlugin.notifications.setNotificationSelfAvatar(result.files.single.path!);
+              },
+              child: const Text('Set notification self-avatar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
                 print(await MoxplatformPlugin.platform.getPersistentDataPath());
               },
               child: const Text('Get data directory'),

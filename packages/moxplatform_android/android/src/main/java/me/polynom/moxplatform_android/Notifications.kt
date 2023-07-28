@@ -12,10 +12,11 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.IconCompat
 import java.io.File
 
-object NotificationI18nManager {
+object NotificationDataManager {
     var you: String = "You"
     var markAsRead: String = "Mark as read"
     var reply: String = "Reply"
+    var avatarPath: String? = null
 }
 
 /// Show a messaging style notification described by @notification.
@@ -23,7 +24,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     // Build the actions
     // -> Reply action
     val remoteInput = RemoteInput.Builder(REPLY_TEXT_KEY).apply {
-        setLabel(NotificationI18nManager.reply)
+        setLabel(NotificationDataManager.reply)
     }.build()
     val replyIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = REPLY_ACTION
@@ -39,7 +40,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     val replyAction = NotificationCompat.Action.Builder(
         // TODO: Wrong icon?
         R.drawable.ic_service_icon,
-        NotificationI18nManager.reply,
+        NotificationDataManager.reply,
         replyPendingIntent,
     ).apply {
         addRemoteInput(remoteInput)
@@ -61,8 +62,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     val markAsReadAction = NotificationCompat.Action.Builder(
         // TODO: Wrong icon
         R.drawable.ic_service_icon,
-        // TODO: i18n
-        NotificationI18nManager.markAsRead,
+        NotificationDataManager.markAsRead,
         markAsReadPendingIntent,
     ).build()
 
@@ -81,8 +81,19 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     )
 
     // Build the notification
-    // TODO: Use a person
-    val style = NotificationCompat.MessagingStyle(NotificationI18nManager.you);
+    val selfPerson = Person.Builder().apply {
+        setName(NotificationDataManager.you)
+
+        // Set an avatar, if we have one
+        if (NotificationDataManager.avatarPath != null) {
+            setIcon(
+                IconCompat.createWithAdaptiveBitmap(
+                    BitmapFactory.decodeFile(NotificationDataManager.avatarPath),
+                ),
+            )
+        }
+    }.build()
+    val style = NotificationCompat.MessagingStyle(selfPerson);
     for (message in notification.messages) {
         // Build the sender
         val sender = Person.Builder().apply {

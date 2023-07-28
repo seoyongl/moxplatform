@@ -26,6 +26,11 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
   }
 
   @override
+  Future<void> setNotificationSelfAvatar(String path) async {
+    return _api.setNotificationSelfAvatar(path);
+  } 
+
+  @override
   Stream<NotificationEvent> getEventStream() => _channel
       .receiveBroadcastStream()
       .cast<Object>()

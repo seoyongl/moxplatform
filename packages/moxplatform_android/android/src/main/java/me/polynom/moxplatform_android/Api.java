@@ -707,6 +707,8 @@ public class Api {
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
 
+    void setNotificationSelfAvatar(@NonNull String path);
+
     @NonNull 
     String getPersistentDataPath();
 
@@ -760,6 +762,30 @@ public class Api {
                 MessagingNotification notificationArg = (MessagingNotification) args.get(0);
                 try {
                   api.showMessagingNotification(notificationArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.setNotificationSelfAvatar", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String pathArg = (String) args.get(0);
+                try {
+                  api.setNotificationSelfAvatar(pathArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

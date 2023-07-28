@@ -10,6 +10,9 @@ class StubNotificationsImplementation extends NotificationsImplementation {
   Future<void> showMessagingNotification(MessagingNotification notification) async {}
 
   @override
+  Future<void> setNotificationSelfAvatar(String path) async {}
+
+  @override
   Stream<NotificationEvent> getEventStream() {
     return StreamController<NotificationEvent>().stream;
   }
