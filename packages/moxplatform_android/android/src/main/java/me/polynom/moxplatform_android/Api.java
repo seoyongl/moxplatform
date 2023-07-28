@@ -57,6 +57,18 @@ public class Api {
     return errorList;
   }
 
+  public enum NotificationEventType {
+    MARK_AS_READ(0),
+    REPLY(1),
+    OPEN(2);
+
+    final int index;
+
+    private NotificationEventType(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationMessageContent {
     /** The textual body of the message. */
@@ -441,6 +453,107 @@ public class Api {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class NotificationEvent {
+    /** The JID the notification was for. */
+    private @NonNull String jid;
+
+    public @NonNull String getJid() {
+      return jid;
+    }
+
+    public void setJid(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"jid\" is null.");
+      }
+      this.jid = setterArg;
+    }
+
+    /** The type of event. */
+    private @NonNull NotificationEventType type;
+
+    public @NonNull NotificationEventType getType() {
+      return type;
+    }
+
+    public void setType(@NonNull NotificationEventType setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"type\" is null.");
+      }
+      this.type = setterArg;
+    }
+
+    /**
+     * An optional payload.
+     * - type == NotificationType.reply: The reply message text.
+     * Otherwise: undefined.
+     */
+    private @Nullable String payload;
+
+    public @Nullable String getPayload() {
+      return payload;
+    }
+
+    public void setPayload(@Nullable String setterArg) {
+      this.payload = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    NotificationEvent() {}
+
+    public static final class Builder {
+
+      private @Nullable String jid;
+
+      public @NonNull Builder setJid(@NonNull String setterArg) {
+        this.jid = setterArg;
+        return this;
+      }
+
+      private @Nullable NotificationEventType type;
+
+      public @NonNull Builder setType(@NonNull NotificationEventType setterArg) {
+        this.type = setterArg;
+        return this;
+      }
+
+      private @Nullable String payload;
+
+      public @NonNull Builder setPayload(@Nullable String setterArg) {
+        this.payload = setterArg;
+        return this;
+      }
+
+      public @NonNull NotificationEvent build() {
+        NotificationEvent pigeonReturn = new NotificationEvent();
+        pigeonReturn.setJid(jid);
+        pigeonReturn.setType(type);
+        pigeonReturn.setPayload(payload);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(jid);
+      toListResult.add(type == null ? null : type.index);
+      toListResult.add(payload);
+      return toListResult;
+    }
+
+    static @NonNull NotificationEvent fromList(@NonNull ArrayList<Object> list) {
+      NotificationEvent pigeonResult = new NotificationEvent();
+      Object jid = list.get(0);
+      pigeonResult.setJid((String) jid);
+      Object type = list.get(1);
+      pigeonResult.setType(type == null ? null : NotificationEventType.values()[(int) type]);
+      Object payload = list.get(2);
+      pigeonResult.setPayload((String) payload);
+      return pigeonResult;
+    }
+  }
+
   private static class MoxplatformApiCodec extends StandardMessageCodec {
     public static final MoxplatformApiCodec INSTANCE = new MoxplatformApiCodec();
 
@@ -452,8 +565,10 @@ public class Api {
         case (byte) 128:
           return MessagingNotification.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationEvent.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
+          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
           return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -465,11 +580,14 @@ public class Api {
       if (value instanceof MessagingNotification) {
         stream.write(128);
         writeValue(stream, ((MessagingNotification) value).toList());
-      } else if (value instanceof NotificationMessage) {
+      } else if (value instanceof NotificationEvent) {
         stream.write(129);
+        writeValue(stream, ((NotificationEvent) value).toList());
+      } else if (value instanceof NotificationMessage) {
+        stream.write(130);
         writeValue(stream, ((NotificationMessage) value).toList());
       } else if (value instanceof NotificationMessageContent) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((NotificationMessageContent) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -489,6 +607,8 @@ public class Api {
 
     @NonNull 
     String getCacheDataPath();
+
+    void eventStub(@NonNull NotificationEvent event);
 
     /** The codec used by MoxplatformApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -579,6 +699,30 @@ public class Api {
                 try {
                   String output = api.getCacheDataPath();
                   wrapped.add(0, output);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.eventStub", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                NotificationEvent eventArg = (NotificationEvent) args.get(0);
+                try {
+                  api.eventStub(eventArg);
+                  wrapped.add(0, null);
                 }
  catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

@@ -20,7 +20,11 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         // TODO: i18n
         setLabel("Reply")
     }.build()
-    val replyIntent = Intent(context, NotificationReceiver::class.java)
+    val replyIntent = Intent(context, NotificationReceiver::class.java).apply {
+        action = REPLY_ACTION
+        // TODO: Use a constant
+        putExtra("jid", notification.jid)
+    }
     val replyPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
         0,
@@ -40,20 +44,29 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     // -> Mark as read action
     val markAsReadIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = MARK_AS_READ_ACTION
-        // TODO: Put the JID here
+        // TODO: Use a constant
         putExtra("jid", notification.jid)
+        putExtra("notification_id", notification.id)
     }
     val markAsReadPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
         0,
         markAsReadIntent,
-        0,
+        PendingIntent.FLAG_UPDATE_CURRENT,
     )
+    val markAsReadAction = NotificationCompat.Action.Builder(
+        // TODO: Wrong icon
+        R.drawable.ic_service_icon,
+        // TODO: i18n
+        "Mark as read",
+        markAsReadPendingIntent,
+    ).build()
 
     // -> Tap action
     // Thanks https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L246
     // TODO: Copy the interface of awesome_notifications
     val tapIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!.apply {
+        // TODO: Use a constant
         putExtra("jid", notification.jid)
     }
     val tapPendingIntent = PendingIntent.getActivity(
@@ -115,13 +128,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
 
         // Notification actions
         addAction(replyAction)
-        addAction(
-            // TODO: Wrong icon
-            R.drawable.ic_service_icon,
-            // TODO: i18n
-            "Mark as read",
-            markAsReadPendingIntent,
-        )
+        addAction(markAsReadAction)
     }.build()
 
     // Post the notification

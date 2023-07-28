@@ -25,6 +25,9 @@ import java.util.List;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.service.ServiceAware;
 import io.flutter.embedding.engine.plugins.service.ServicePluginBinding;
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.EventChannel.EventSink;
+import io.flutter.plugin.common.EventChannel.StreamHandler;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -34,7 +37,7 @@ import io.flutter.plugin.common.JSONMethodCodec;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, ServiceAware, MoxplatformApi {
+  public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ServiceAware, MoxplatformApi {
   public static final String entrypointKey = "entrypoint_handle";
   public static final String extraDataKey = "extra_data";
   private static final String autoStartAtBootKey = "auto_start_at_boot";
@@ -46,7 +49,10 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
   private static final List<MoxplatformAndroidPlugin> _instances = new ArrayList<>();
   private BackgroundService service;
   private MethodChannel channel;
-  private Context context;
+  private static EventChannel notificationChannel;
+  public static EventSink notificationSink;
+
+    private Context context;
 
   public MoxplatformAndroidPlugin() {
     _instances.add(this);
@@ -57,6 +63,12 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), methodChannelKey);
     channel.setMethodCallHandler(this);
     context = flutterPluginBinding.getApplicationContext();
+
+    notificationChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "me.polynom/notification_stream");
+    notificationChannel.setStreamHandler(
+            this
+    );
+
 
     LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this.context);
     localBroadcastManager.registerReceiver(this, new IntentFilter(methodChannelKey));
@@ -76,6 +88,18 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     plugin.channel = channel;
 
     Log.d(TAG, "Registered against registrar");
+  }
+
+  @Override
+  public void onCancel(Object arguments) {
+    Log.d(TAG, "Removed listener");
+    notificationSink = null;
+  }
+
+  @Override
+  public void onListen(Object arguments, EventChannel.EventSink eventSink) {
+    Log.d(TAG, "Attached listener");
+    notificationSink = eventSink;
   }
 
   /// Store the entrypoint handle and extra data for the background service.
@@ -291,5 +315,10 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
   @Override
   public String getCacheDataPath() {
     return context.getCacheDir().getPath();
+  }
+
+  @Override
+  public void eventStub(@NonNull NotificationEvent event) {
+    // Stub to trick pigeon into
   }
 }

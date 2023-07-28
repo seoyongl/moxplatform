@@ -8,6 +8,12 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+enum NotificationEventType {
+  markAsRead,
+  reply,
+  open,
+}
+
 class NotificationMessageContent {
   NotificationMessageContent({
     this.body,
@@ -133,6 +139,42 @@ class MessagingNotification {
   }
 }
 
+class NotificationEvent {
+  NotificationEvent({
+    required this.jid,
+    required this.type,
+    this.payload,
+  });
+
+  /// The JID the notification was for.
+  String jid;
+
+  /// The type of event.
+  NotificationEventType type;
+
+  /// An optional payload.
+  /// - type == NotificationType.reply: The reply message text.
+  /// Otherwise: undefined.
+  String? payload;
+
+  Object encode() {
+    return <Object?>[
+      jid,
+      type.index,
+      payload,
+    ];
+  }
+
+  static NotificationEvent decode(Object result) {
+    result as List<Object?>;
+    return NotificationEvent(
+      jid: result[0]! as String,
+      type: NotificationEventType.values[result[1]! as int],
+      payload: result[2] as String?,
+    );
+  }
+}
+
 class _MoxplatformApiCodec extends StandardMessageCodec {
   const _MoxplatformApiCodec();
   @override
@@ -140,11 +182,14 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
     if (value is MessagingNotification) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessage) {
+    } else if (value is NotificationEvent) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessageContent) {
+    } else if (value is NotificationMessage) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is NotificationMessageContent) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -157,8 +202,10 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
       case 128: 
         return MessagingNotification.decode(readValue(buffer)!);
       case 129: 
-        return NotificationMessage.decode(readValue(buffer)!);
+        return NotificationEvent.decode(readValue(buffer)!);
       case 130: 
+        return NotificationMessage.decode(readValue(buffer)!);
+      case 131: 
         return NotificationMessageContent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -271,6 +318,28 @@ class MoxplatformApi {
       );
     } else {
       return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<void> eventStub(NotificationEvent arg_event) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.eventStub', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_event]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }

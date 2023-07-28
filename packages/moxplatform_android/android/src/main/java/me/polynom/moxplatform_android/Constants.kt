@@ -6,6 +6,7 @@ const val TAG = "Moxplatform"
 // The size of the buffer to hashing, encryption, and decryption in bytes.
 const val BUFFER_SIZE = 8096
 
+const val REPLY_ACTION = "reply";
 // The data key for text entered in the notification's reply field
 const val REPLY_TEXT_KEY = "key_reply_text"
 

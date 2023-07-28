@@ -42,6 +42,10 @@ class MyAppState extends State<MyApp> {
     await Permission.notification.request();
 
     await MoxplatformPlugin.notifications.createNotificationChannel("Test notification channel", channelId, false);
+
+    MoxplatformPlugin.notifications.getEventStream().listen((event) {
+      print('NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload})');
+    });
   }
 
   @override

@@ -72,6 +72,31 @@ class MessagingNotification {
   final List<NotificationMessage?> messages;
 }
 
+enum NotificationEventType {
+  markAsRead,
+  reply,
+  open,
+}
+
+class NotificationEvent {
+  const NotificationEvent(
+    this.jid,
+    this.type,
+    this.payload,
+  );
+
+  /// The JID the notification was for.
+  final String jid;
+
+  /// The type of event.
+  final NotificationEventType type;
+
+  /// An optional payload.
+  /// - type == NotificationType.reply: The reply message text.
+  /// Otherwise: undefined.
+  final String? payload;
+}
+
 @HostApi()
 abstract class MoxplatformApi {
   void createNotificationChannel(String title, String id, bool urgent);
@@ -81,4 +106,6 @@ abstract class MoxplatformApi {
   String getPersistentDataPath();
 
   String getCacheDataPath();
+
+  void eventStub(NotificationEvent event);
 }
