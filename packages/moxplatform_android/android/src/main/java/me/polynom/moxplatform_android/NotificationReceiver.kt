@@ -12,7 +12,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
+import androidx.core.content.FileProvider
 import me.polynom.moxplatform_android.Api.NotificationEvent
+import java.io.File
 import java.time.Instant
 
 class NotificationReceiver : BroadcastReceiver() {
@@ -83,11 +85,37 @@ class NotificationReceiver : BroadcastReceiver() {
             conversationTitle = recoveredStyle.conversationTitle
             // TODO: Use person
             recoveredStyle.messages.forEach {
-                addMessage(Notification.MessagingStyle.Message(it.text, it.timestamp, it.sender))
+                // Check if we have to request (or refresh) the content URI to be able to still
+                // see the embedded image.
+                val mime = it.extras.getString(NOTIFICATION_MESSAGE_EXTRA_MIME)
+                val path = it.extras.getString(NOTIFICATION_MESSAGE_EXTRA_PATH)
+                val message = Notification.MessagingStyle.Message(it.text, it.timestamp, it.sender)
+                if (mime != null && path != null) {
+                    // Request a new URI from the file provider to ensure we can still see the image
+                    // in the notification
+                    val fileUri = FileProvider.getUriForFile(
+                        context,
+                        MOXPLATFORM_FILEPROVIDER_ID,
+                        File(path),
+                    )
+                    message.setData(
+                        mime,
+                        fileUri,
+                    )
+
+                    // As we're creating a new message, also recreate the additional metadata
+                    message.extras.apply {
+                        putString(NOTIFICATION_MESSAGE_EXTRA_MIME, mime)
+                        putString(NOTIFICATION_MESSAGE_EXTRA_PATH, path)
+                    }
+                }
+
+                // Append the old message
+                addMessage(message)
             }
         }
 
-        // TODO: Images get lost here? Do we have to request a new content URI?
+        // Append our new message
         newStyle.addMessage(
             Notification.MessagingStyle.Message(
                 replyPayload!!,
@@ -96,6 +124,7 @@ class NotificationReceiver : BroadcastReceiver() {
             )
         )
 
+        // Post the new notification
         val recoveredBuilder = Notification.Builder.recoverBuilder(context, notification).apply {
             style = newStyle
             setOnlyAlertOnce(true)

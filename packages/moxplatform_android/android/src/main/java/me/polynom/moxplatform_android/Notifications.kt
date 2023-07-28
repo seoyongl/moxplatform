@@ -110,10 +110,17 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         if (message.content.mime != null && message.content.path != null) {
             val fileUri = FileProvider.getUriForFile(
                 context,
-                "me.polynom.moxplatform_android.fileprovider",
+                MOXPLATFORM_FILEPROVIDER_ID,
                 File(message.content.path),
             )
-            msg.setData(message.content.mime, fileUri)
+            msg.apply {
+                setData(message.content.mime, fileUri)
+
+                extras.apply {
+                    putString(NOTIFICATION_MESSAGE_EXTRA_MIME, message.content.mime)
+                    putString(NOTIFICATION_MESSAGE_EXTRA_PATH, message.content.path)
+                }
+            }
         }
 
         // Append the message

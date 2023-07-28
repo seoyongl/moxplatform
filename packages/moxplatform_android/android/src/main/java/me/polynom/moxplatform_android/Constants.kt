@@ -13,13 +13,19 @@ const val REPLY_TEXT_KEY = "key_reply_text"
 const val MARK_AS_READ_ID_KEY = "notification_id"
 
 // Values for actions performed through the notification
-const val REPLY_ACTION = "reply";
+const val REPLY_ACTION = "reply"
 const val MARK_AS_READ_ACTION = "mark_as_read"
-const val TAP_ACTION = "tap";
+const val TAP_ACTION = "tap"
 
 // Extra data keys for the intents that reach the NotificationReceiver
-const val NOTIFICATION_EXTRA_JID_KEY = "jid";
-const val NOTIFICATION_EXTRA_ID_KEY = "notification_id";
+const val NOTIFICATION_EXTRA_JID_KEY = "jid"
+const val NOTIFICATION_EXTRA_ID_KEY = "notification_id"
+
+// Extra data keys for messages embedded inside the notification style
+const val NOTIFICATION_MESSAGE_EXTRA_MIME = "mime"
+const val NOTIFICATION_MESSAGE_EXTRA_PATH = "path"
+
+const val MOXPLATFORM_FILEPROVIDER_ID = "me.polynom.moxplatform_android.fileprovider"
 
 // TODO: Maybe try again to rewrite the entire plugin in Kotlin
 //const val METHOD_CHANNEL_KEY = "me.polynom.moxplatform_android"
