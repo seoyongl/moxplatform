@@ -554,6 +554,106 @@ public class Api {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class NotificationI18nData {
+    /** The content of the reply button. */
+    private @NonNull String reply;
+
+    public @NonNull String getReply() {
+      return reply;
+    }
+
+    public void setReply(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"reply\" is null.");
+      }
+      this.reply = setterArg;
+    }
+
+    /** The content of the "mark as read" button. */
+    private @NonNull String markAsRead;
+
+    public @NonNull String getMarkAsRead() {
+      return markAsRead;
+    }
+
+    public void setMarkAsRead(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"markAsRead\" is null.");
+      }
+      this.markAsRead = setterArg;
+    }
+
+    /** The text to show when *you* reply. */
+    private @NonNull String you;
+
+    public @NonNull String getYou() {
+      return you;
+    }
+
+    public void setYou(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"you\" is null.");
+      }
+      this.you = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    NotificationI18nData() {}
+
+    public static final class Builder {
+
+      private @Nullable String reply;
+
+      public @NonNull Builder setReply(@NonNull String setterArg) {
+        this.reply = setterArg;
+        return this;
+      }
+
+      private @Nullable String markAsRead;
+
+      public @NonNull Builder setMarkAsRead(@NonNull String setterArg) {
+        this.markAsRead = setterArg;
+        return this;
+      }
+
+      private @Nullable String you;
+
+      public @NonNull Builder setYou(@NonNull String setterArg) {
+        this.you = setterArg;
+        return this;
+      }
+
+      public @NonNull NotificationI18nData build() {
+        NotificationI18nData pigeonReturn = new NotificationI18nData();
+        pigeonReturn.setReply(reply);
+        pigeonReturn.setMarkAsRead(markAsRead);
+        pigeonReturn.setYou(you);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(reply);
+      toListResult.add(markAsRead);
+      toListResult.add(you);
+      return toListResult;
+    }
+
+    static @NonNull NotificationI18nData fromList(@NonNull ArrayList<Object> list) {
+      NotificationI18nData pigeonResult = new NotificationI18nData();
+      Object reply = list.get(0);
+      pigeonResult.setReply((String) reply);
+      Object markAsRead = list.get(1);
+      pigeonResult.setMarkAsRead((String) markAsRead);
+      Object you = list.get(2);
+      pigeonResult.setYou((String) you);
+      return pigeonResult;
+    }
+  }
+
   private static class MoxplatformApiCodec extends StandardMessageCodec {
     public static final MoxplatformApiCodec INSTANCE = new MoxplatformApiCodec();
 
@@ -567,8 +667,10 @@ public class Api {
         case (byte) 129:
           return NotificationEvent.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationI18nData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
+          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -583,11 +685,14 @@ public class Api {
       } else if (value instanceof NotificationEvent) {
         stream.write(129);
         writeValue(stream, ((NotificationEvent) value).toList());
-      } else if (value instanceof NotificationMessage) {
+      } else if (value instanceof NotificationI18nData) {
         stream.write(130);
+        writeValue(stream, ((NotificationI18nData) value).toList());
+      } else if (value instanceof NotificationMessage) {
+        stream.write(131);
         writeValue(stream, ((NotificationMessage) value).toList());
       } else if (value instanceof NotificationMessageContent) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((NotificationMessageContent) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -598,7 +703,7 @@ public class Api {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MoxplatformApi {
 
-    void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent);
+    void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent, @NonNull NotificationI18nData i18n);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
 
@@ -628,8 +733,9 @@ public class Api {
                 String titleArg = (String) args.get(0);
                 String idArg = (String) args.get(1);
                 Boolean urgentArg = (Boolean) args.get(2);
+                NotificationI18nData i18nArg = (NotificationI18nData) args.get(3);
                 try {
-                  api.createNotificationChannel(titleArg, idArg, urgentArg);
+                  api.createNotificationChannel(titleArg, idArg, urgentArg, i18nArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

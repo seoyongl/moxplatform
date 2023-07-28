@@ -97,9 +97,22 @@ class NotificationEvent {
   final String? payload;
 }
 
+class NotificationI18nData {
+  const NotificationI18nData(this.reply, this.markAsRead, this.you);
+
+  /// The content of the reply button.
+  final String reply;
+
+  /// The content of the "mark as read" button.
+  final String markAsRead;
+
+  /// The text to show when *you* reply.
+  final String you;
+}
+
 @HostApi()
 abstract class MoxplatformApi {
-  void createNotificationChannel(String title, String id, bool urgent);
+  void createNotificationChannel(String title, String id, bool urgent, NotificationI18nData i18n);
 
   void showMessagingNotification(MessagingNotification notification);
 

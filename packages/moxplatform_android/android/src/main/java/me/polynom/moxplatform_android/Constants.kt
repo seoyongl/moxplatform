@@ -6,16 +6,20 @@ const val TAG = "Moxplatform"
 // The size of the buffer to hashing, encryption, and decryption in bytes.
 const val BUFFER_SIZE = 8096
 
-const val REPLY_ACTION = "reply";
 // The data key for text entered in the notification's reply field
 const val REPLY_TEXT_KEY = "key_reply_text"
 
-// The action for pressing the "Mark as read" button on a notification
-const val MARK_AS_READ_ACTION = "mark_as_read"
 // The key for the notification id to mark as read
 const val MARK_AS_READ_ID_KEY = "notification_id"
 
+// Values for actions performed through the notification
+const val REPLY_ACTION = "reply";
+const val MARK_AS_READ_ACTION = "mark_as_read"
 const val TAP_ACTION = "tap";
+
+// Extra data keys for the intents that reach the NotificationReceiver
+const val NOTIFICATION_EXTRA_JID_KEY = "jid";
+const val NOTIFICATION_EXTRA_ID_KEY = "notification_id";
 
 // TODO: Maybe try again to rewrite the entire plugin in Kotlin
 //const val METHOD_CHANNEL_KEY = "me.polynom.moxplatform_android"

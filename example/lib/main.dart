@@ -41,7 +41,16 @@ class MyAppState extends State<MyApp> {
   Future<void> initStateAsync() async {
     await Permission.notification.request();
 
-    await MoxplatformPlugin.notifications.createNotificationChannel("Test notification channel", channelId, false);
+    await MoxplatformPlugin.notifications.createNotificationChannel(
+      "Test notification channel",
+      channelId,
+      false,
+      NotificationI18nData(
+        reply: "答える",
+        markAsRead: "読みた",
+        you: "あなた",
+      ),
+    );
 
     MoxplatformPlugin.notifications.getEventStream().listen((event) {
       print('NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload})');

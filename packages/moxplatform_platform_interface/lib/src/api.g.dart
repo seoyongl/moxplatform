@@ -175,6 +175,40 @@ class NotificationEvent {
   }
 }
 
+class NotificationI18nData {
+  NotificationI18nData({
+    required this.reply,
+    required this.markAsRead,
+    required this.you,
+  });
+
+  /// The content of the reply button.
+  String reply;
+
+  /// The content of the "mark as read" button.
+  String markAsRead;
+
+  /// The text to show when *you* reply.
+  String you;
+
+  Object encode() {
+    return <Object?>[
+      reply,
+      markAsRead,
+      you,
+    ];
+  }
+
+  static NotificationI18nData decode(Object result) {
+    result as List<Object?>;
+    return NotificationI18nData(
+      reply: result[0]! as String,
+      markAsRead: result[1]! as String,
+      you: result[2]! as String,
+    );
+  }
+}
+
 class _MoxplatformApiCodec extends StandardMessageCodec {
   const _MoxplatformApiCodec();
   @override
@@ -185,11 +219,14 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
     } else if (value is NotificationEvent) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessage) {
+    } else if (value is NotificationI18nData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessageContent) {
+    } else if (value is NotificationMessage) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is NotificationMessageContent) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -204,8 +241,10 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
       case 129: 
         return NotificationEvent.decode(readValue(buffer)!);
       case 130: 
-        return NotificationMessage.decode(readValue(buffer)!);
+        return NotificationI18nData.decode(readValue(buffer)!);
       case 131: 
+        return NotificationMessage.decode(readValue(buffer)!);
+      case 132: 
         return NotificationMessageContent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -223,12 +262,12 @@ class MoxplatformApi {
 
   static const MessageCodec<Object?> codec = _MoxplatformApiCodec();
 
-  Future<void> createNotificationChannel(String arg_title, String arg_id, bool arg_urgent) async {
+  Future<void> createNotificationChannel(String arg_title, String arg_id, bool arg_urgent, NotificationI18nData arg_i18n) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_title, arg_id, arg_urgent]) as List<Object?>?;
+        await channel.send(<Object?>[arg_title, arg_id, arg_urgent, arg_i18n]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

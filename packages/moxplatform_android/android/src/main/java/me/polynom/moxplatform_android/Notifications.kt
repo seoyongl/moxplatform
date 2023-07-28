@@ -12,18 +12,23 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.IconCompat
 import java.io.File
 
+object NotificationI18nManager {
+    var you: String = "You"
+    var markAsRead: String = "Mark as read"
+    var reply: String = "Reply"
+}
+
 /// Show a messaging style notification described by @notification.
 fun showMessagingNotification(context: Context, notification: Api.MessagingNotification) {
     // Build the actions
     // -> Reply action
     val remoteInput = RemoteInput.Builder(REPLY_TEXT_KEY).apply {
-        // TODO: i18n
-        setLabel("Reply")
+        setLabel(NotificationI18nManager.reply)
     }.build()
     val replyIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = REPLY_ACTION
-        // TODO: Use a constant
-        putExtra("jid", notification.jid)
+        putExtra(NOTIFICATION_EXTRA_JID_KEY, notification.jid)
+        putExtra(NOTIFICATION_EXTRA_ID_KEY, notification.id)
     }
     val replyPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
@@ -34,8 +39,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     val replyAction = NotificationCompat.Action.Builder(
         // TODO: Wrong icon?
         R.drawable.ic_service_icon,
-        // TODO: i18n
-        "Reply",
+        NotificationI18nManager.reply,
         replyPendingIntent,
     ).apply {
         addRemoteInput(remoteInput)
@@ -45,9 +49,8 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     // -> Mark as read action
     val markAsReadIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = MARK_AS_READ_ACTION
-        // TODO: Use a constant
-        putExtra("jid", notification.jid)
-        putExtra("notification_id", notification.id)
+        putExtra(NOTIFICATION_EXTRA_JID_KEY, notification.jid)
+        putExtra(NOTIFICATION_EXTRA_ID_KEY, notification.id)
     }
     val markAsReadPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
@@ -59,7 +62,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         // TODO: Wrong icon
         R.drawable.ic_service_icon,
         // TODO: i18n
-        "Mark as read",
+        NotificationI18nManager.markAsRead,
         markAsReadPendingIntent,
     ).build()
 
@@ -67,9 +70,8 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     // Thanks https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L246
     val tapIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = TAP_ACTION
-        // TODO: Use constants
-        putExtra("jid", notification.jid)
-        putExtra("notification_id", notification.id)
+        putExtra(NOTIFICATION_EXTRA_JID_KEY, notification.jid)
+        putExtra(NOTIFICATION_EXTRA_ID_KEY, notification.id)
     }
     val tapPendingIntent = PendingIntent.getBroadcast(
         context,
@@ -80,8 +82,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
 
     // Build the notification
     // TODO: Use a person
-    // TODO: i18n
-    val style = NotificationCompat.MessagingStyle("Me");
+    val style = NotificationCompat.MessagingStyle(NotificationI18nManager.you);
     for (message in notification.messages) {
         // Build the sender
         val sender = Person.Builder().apply {
@@ -131,6 +132,9 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         // Notification actions
         addAction(replyAction)
         addAction(markAsReadAction)
+
+        // Prevent no notification when we replied before
+        setOnlyAlertOnce(false)
     }.build()
 
     // Post the notification

@@ -1,19 +1,27 @@
 package me.polynom.moxplatform_android
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import me.polynom.moxplatform_android.Api.NotificationEvent
+import java.time.Instant
 
 class NotificationReceiver : BroadcastReceiver() {
+    /*
+     * Dismisses the notification through which we received @intent.
+     * */
     private fun dismissNotification(context: Context, intent: Intent) {
         // Dismiss the notification
-        val notificationId = intent.getLongExtra("notification_id", -1).toInt()
+        val notificationId = intent.getLongExtra(NOTIFICATION_EXTRA_ID_KEY, -1).toInt()
         if (notificationId != -1) {
             NotificationManagerCompat.from(context).cancel(
                 notificationId,
@@ -23,15 +31,19 @@ class NotificationReceiver : BroadcastReceiver() {
         }
     }
 
+    private fun findActiveNotification(context: Context, id: Int): Notification? {
+        return (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+            .activeNotifications
+            .find { it.id == id }?.notification
+    }
+
     private fun handleMarkAsRead(context: Context, intent: Intent) {
-        Log.d("NotificationReceiver", "Marking ${intent.getStringExtra("jid")} as read")
-        val jidWrapper = intent.getStringExtra("jid") ?: ""
         NotificationManagerCompat.from(context).cancel(intent.getLongExtra(MARK_AS_READ_ID_KEY, -1).toInt())
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
                 // TODO: Use constant for key
                 // TODO: Fix
-                jid = jidWrapper
+                jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.MARK_AS_READ
                 payload = null
             }.toList()
@@ -41,28 +53,60 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     private fun handleReply(context: Context, intent: Intent) {
-        val jidWrapper = intent.getStringExtra("jid") ?: ""
         val remoteInput = RemoteInput.getResultsFromIntent(intent) ?: return
-        Log.d("NotificationReceiver", "Got a reply for ${jidWrapper}")
-        // TODO: Notify app
+        val replyPayload = remoteInput.getCharSequence(REPLY_TEXT_KEY)
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
                 // TODO: Use constant for key
-                jid = jidWrapper
+                jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.REPLY
-                payload = remoteInput.getCharSequence(REPLY_TEXT_KEY).toString()
+                payload = replyPayload.toString()
             }.toList()
         )
 
-        // TODO: Update the notification to prevent showing the spinner
+        val id = intent.getLongExtra(NOTIFICATION_EXTRA_ID_KEY, -1).toInt()
+        if (id == -1) {
+            Log.e(TAG, "Failed to find notification id for reply")
+            return;
+        }
+
+        val notification = findActiveNotification(context, id)
+        if (notification == null) {
+            Log.e(TAG, "Failed to find notification for id ${id}")
+            return
+        }
+
+        // Thanks https://medium.com/@sidorovroman3/android-how-to-use-messagingstyle-for-notifications-without-caching-messages-c414ef2b816c
+        val recoveredStyle = NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(notification)!!
+        // TODO: Use a person and cache this data somewhere
+        val newStyle = Notification.MessagingStyle(NotificationI18nManager.you).apply {
+            conversationTitle = recoveredStyle.conversationTitle
+            // TODO: Use person
+            recoveredStyle.messages.forEach {
+                addMessage(Notification.MessagingStyle.Message(it.text, it.timestamp, it.sender))
+            }
+        }
+
+        // TODO: Images get lost here? Do we have to request a new content URI?
+        newStyle.addMessage(
+            Notification.MessagingStyle.Message(
+                replyPayload!!,
+                Instant.now().toEpochMilli(),
+                null as CharSequence?
+            )
+        )
+
+        val recoveredBuilder = Notification.Builder.recoverBuilder(context, notification).apply {
+            style = newStyle
+            setOnlyAlertOnce(true)
+        }
+        NotificationManagerCompat.from(context).notify(id, recoveredBuilder.build())
     }
 
     private fun handleTap(context: Context, intent: Intent) {
-        Log.d("NotificationReceiver", "Received a tap")
-
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
-                jid = intent.getStringExtra("jid")!!
+                jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.OPEN
                 payload = null
             }.toList()

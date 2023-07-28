@@ -288,7 +288,7 @@ import kotlin.jvm.functions.Function1;
   }
 
   @Override
-  public void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent) {
+  public void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent, @NonNull NotificationI18nData i18n) {
       final NotificationChannel channel = new NotificationChannel(
               id,
               title,
@@ -298,6 +298,11 @@ import kotlin.jvm.functions.Function1;
       channel.enableLights(true);
       final NotificationManager manager = getSystemService(context, NotificationManager.class);
       manager.createNotificationChannel(channel);
+
+      // Configure i18n
+      NotificationI18nManager.INSTANCE.setYou(i18n.getYou());
+      NotificationI18nManager.INSTANCE.setReply(i18n.getReply());
+      NotificationI18nManager.INSTANCE.setMarkAsRead(i18n.getMarkAsRead());
   }
 
   @Override

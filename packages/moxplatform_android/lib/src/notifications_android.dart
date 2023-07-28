@@ -13,8 +13,9 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
     String title,
     String id,
     bool urgent,
+    NotificationI18nData i18n,
   ) async {
-    return _api.createNotificationChannel(title, id, urgent);
+    return _api.createNotificationChannel(title, id, urgent, i18n);
   }
 
   @override
