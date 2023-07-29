@@ -1,6 +1,7 @@
 package me.polynom.moxplatform_android;
 
 import static androidx.core.content.ContextCompat.getSystemService;
+import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 import static me.polynom.moxplatform_android.RecordSentMessageKt.recordSentMessage;
 import static me.polynom.moxplatform_android.CryptoKt.*;
 import me.polynom.moxplatform_android.Api.*;
@@ -41,7 +42,6 @@ import kotlin.jvm.functions.Function1;
   public static final String entrypointKey = "entrypoint_handle";
   public static final String extraDataKey = "extra_data";
   private static final String autoStartAtBootKey = "auto_start_at_boot";
-  public static final String sharedPrefKey = "me.polynom.moxplatform_android";
   private static final String TAG = "moxplatform_android";
   public static final String methodChannelKey = "me.polynom.moxplatform_android";
   public static final String dataReceivedMethodName = "dataReceived";
@@ -104,7 +104,7 @@ import kotlin.jvm.functions.Function1;
 
   /// Store the entrypoint handle and extra data for the background service.
   private void configure(long entrypointHandle, String extraData) {
-    SharedPreferences prefs = context.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE);
+    SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     prefs.edit()
             .putLong(entrypointKey, entrypointHandle)
             .putString(extraDataKey, extraData)
@@ -112,21 +112,21 @@ import kotlin.jvm.functions.Function1;
   }
 
   public static long getHandle(Context c) {
-    return c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE).getLong(entrypointKey, 0);
+    return c.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).getLong(entrypointKey, 0);
   }
 
   public static String getExtraData(Context c) {
-    return c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE).getString(extraDataKey, "");
+    return c.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).getString(extraDataKey, "");
   }
 
   public static void setStartAtBoot(Context c, boolean value) {
-    c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE)
+    c.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(autoStartAtBootKey, value)
             .apply();
   }
   public static boolean getStartAtBoot(Context c) {
-    return c.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE).getBoolean(autoStartAtBootKey, false);
+    return c.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).getBoolean(autoStartAtBootKey, false);
   }
 
   private boolean isRunning() {
@@ -313,9 +313,9 @@ import kotlin.jvm.functions.Function1;
     @Override
     public void setNotificationI18n(@NonNull NotificationI18nData data) {
       // Configure i18n
-      NotificationDataManager.INSTANCE.setYou(data.getYou());
-      NotificationDataManager.INSTANCE.setReply(data.getReply());
-      NotificationDataManager.INSTANCE.setMarkAsRead(data.getMarkAsRead());
+      NotificationDataManager.INSTANCE.setYou(context, data.getYou());
+      NotificationDataManager.INSTANCE.setReply(context, data.getReply());
+      NotificationDataManager.INSTANCE.setMarkAsRead(context, data.getMarkAsRead());
     }
 
     @NonNull

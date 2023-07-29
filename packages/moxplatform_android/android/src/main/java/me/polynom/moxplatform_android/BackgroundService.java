@@ -1,5 +1,7 @@
 package me.polynom.moxplatform_android;
 
+import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
+
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -85,10 +87,10 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
     }
 
     public static boolean isManuallyStopped(Context context) {
-        return context.getSharedPreferences(MoxplatformAndroidPlugin.sharedPrefKey, MODE_PRIVATE).getBoolean(manuallyStoppedKey, false);
+        return context.getSharedPreferences(SHARED_PREFERENCES_KEY, MODE_PRIVATE).getBoolean(manuallyStoppedKey, false);
     }
     public void setManuallyStopped(Context context, boolean value) {
-        context.getSharedPreferences(MoxplatformAndroidPlugin.sharedPrefKey, MODE_PRIVATE)
+        context.getSharedPreferences(SHARED_PREFERENCES_KEY, MODE_PRIVATE)
                 .edit()
                 .putBoolean(manuallyStoppedKey, value)
                 .apply();
@@ -151,7 +153,7 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
                 FlutterInjector.instance().flutterLoader().startInitialization(getApplicationContext());
             }
 
-            long entrypointHandle = getSharedPreferences(MoxplatformAndroidPlugin.sharedPrefKey, MODE_PRIVATE)
+            long entrypointHandle = getSharedPreferences(SHARED_PREFERENCES_KEY, MODE_PRIVATE)
                     .getLong(MoxplatformAndroidPlugin.entrypointKey, 0);
             FlutterInjector.instance().flutterLoader().ensureInitializationComplete(getApplicationContext(), null);
             FlutterCallbackInformation callback = FlutterCallbackInformation.lookupCallbackInformation(entrypointHandle);

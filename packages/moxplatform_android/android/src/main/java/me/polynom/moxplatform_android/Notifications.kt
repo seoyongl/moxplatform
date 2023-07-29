@@ -14,11 +14,56 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.IconCompat
 import java.io.File
 
+/*
+ * Holds "persistent" data for notifications, like i18n strings. While not useful now, this is
+ * useful for when the app is dead and we receive a notification.
+ * */
 object NotificationDataManager {
-    var you: String = "You"
-    var markAsRead: String = "Mark as read"
-    var reply: String = "Reply"
+    private var you: String? = null
+    private var markAsRead: String? = null
+    private var reply: String? = null
     var avatarPath: String? = null
+
+    private fun getString(context: Context, key: String, fallback: String): String {
+        return context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)!!.getString(key, fallback)!!
+    }
+
+    private fun setString(context: Context, key: String, value: String) {
+        val prefs = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString(key, value)
+            .apply()
+    }
+
+    fun getYou(context: Context): String {
+        if (you == null) you = getString(context, SHARED_PREFERENCES_YOU_KEY, "You")
+        return you!!
+    }
+
+    fun setYou(context: Context, value: String) {
+        setString(context, SHARED_PREFERENCES_YOU_KEY, value)
+        you = value
+    }
+
+    fun getMarkAsRead(context: Context): String {
+        if (markAsRead == null) markAsRead = getString(context, SHARED_PREFERENCES_MARK_AS_READ_KEY, "Mark as read")
+        return markAsRead!!
+    }
+
+    fun setMarkAsRead(context: Context, value: String) {
+        setString(context, SHARED_PREFERENCES_MARK_AS_READ_KEY, value)
+        markAsRead = value
+    }
+
+    fun getReply(context: Context): String {
+        if (reply != null) reply = getString(context, SHARED_PREFERENCES_REPLY_KEY, "Reply")
+        return reply!!
+    }
+
+    fun setReply(context: Context, value: String) {
+        setString(context, SHARED_PREFERENCES_REPLY_KEY, value)
+        reply = value
+    }
 }
 
 /// Show a messaging style notification described by @notification.
@@ -26,7 +71,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     // Build the actions
     // -> Reply action
     val remoteInput = RemoteInput.Builder(REPLY_TEXT_KEY).apply {
-        setLabel(NotificationDataManager.reply)
+        setLabel(NotificationDataManager.getReply(context))
     }.build()
     val replyIntent = Intent(context, NotificationReceiver::class.java).apply {
         action = REPLY_ACTION
@@ -41,7 +86,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     )
     val replyAction = NotificationCompat.Action.Builder(
         R.drawable.reply,
-        NotificationDataManager.reply,
+        NotificationDataManager.getReply(context),
         replyPendingIntent,
     ).apply {
         addRemoteInput(remoteInput)
@@ -62,7 +107,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     )
     val markAsReadAction = NotificationCompat.Action.Builder(
         R.drawable.mark_as_read,
-        NotificationDataManager.markAsRead,
+        NotificationDataManager.getMarkAsRead(context),
         markAsReadPendingIntent,
     ).build()
 
@@ -82,7 +127,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
 
     // Build the notification
     val selfPerson = Person.Builder().apply {
-        setName(NotificationDataManager.you)
+        setName(NotificationDataManager.getYou(context))
 
         // Set an avatar, if we have one
         if (NotificationDataManager.avatarPath != null) {

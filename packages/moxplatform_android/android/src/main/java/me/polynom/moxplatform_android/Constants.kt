@@ -27,6 +27,12 @@ const val NOTIFICATION_MESSAGE_EXTRA_PATH = "path"
 
 const val MOXPLATFORM_FILEPROVIDER_ID = "me.polynom.moxplatform_android.fileprovider"
 
+// Shared preferences keys
+const val SHARED_PREFERENCES_KEY = "me.polynom.moxplatform_android"
+const val SHARED_PREFERENCES_YOU_KEY = "you"
+const val SHARED_PREFERENCES_MARK_AS_READ_KEY = "mark_as_read"
+const val SHARED_PREFERENCES_REPLY_KEY = "reply"
+
 // TODO: Maybe try again to rewrite the entire plugin in Kotlin
 //const val METHOD_CHANNEL_KEY = "me.polynom.moxplatform_android"
 //const val BACKGROUND_METHOD_CHANNEL_KEY = METHOD_CHANNEL_KEY + "_bg"

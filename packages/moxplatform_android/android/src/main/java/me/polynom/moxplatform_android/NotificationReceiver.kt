@@ -74,7 +74,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
         val notification = findActiveNotification(context, id)
         if (notification == null) {
-            Log.e(TAG, "Failed to find notification for id ${id}")
+            Log.e(TAG, "Failed to find notification for id $id")
             return
         }
 
@@ -83,7 +83,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val newStyle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             Notification.MessagingStyle(
                 android.app.Person.Builder().apply {
-                    setName(NotificationDataManager.you)
+                    setName(NotificationDataManager.getYou(context))
 
                     // Set an avatar, if we have one
                     if (NotificationDataManager.avatarPath != null) {
@@ -95,7 +95,7 @@ class NotificationReceiver : BroadcastReceiver() {
                     }
                 }.build()
             )
-        else Notification.MessagingStyle(NotificationDataManager.you)
+        else Notification.MessagingStyle(NotificationDataManager.getYou(context))
 
         newStyle.apply {
             conversationTitle = recoveredStyle.conversationTitle
