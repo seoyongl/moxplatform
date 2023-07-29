@@ -212,3 +212,19 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         finalNotification,
     )
 }
+
+fun showNotification(context: Context, notification: Api.RegularNotification) {
+    val builtNotification = NotificationCompat.Builder(context, notification.channelId).apply {
+        setContentTitle(notification.title)
+        setContentText(notification.body)
+
+        when (notification.icon) {
+            Api.NotificationIcon.ERROR -> setSmallIcon(R.drawable.error)
+            Api.NotificationIcon.WARNING -> setSmallIcon(R.drawable.warning)
+            Api.NotificationIcon.NONE -> {}
+        }
+    }.build()
+
+    // Post the notification
+    NotificationManagerCompat.from(context).notify(notification.id.toInt(), builtNotification)
+}

@@ -72,6 +72,31 @@ class MessagingNotification {
   final List<NotificationMessage?> messages;
 }
 
+enum NotificationIcon {
+  warning,
+  error,
+  none,
+}
+
+class RegularNotification {
+  const RegularNotification(this.title, this.body, this.channelId, this.id, this.icon);
+
+  /// The title of the notification.
+  final String title;
+
+  /// The body of the notification.
+  final String body;
+
+  /// The id of the channel to show the notification on.
+  final String channelId;
+
+  /// The id of the notification.
+  final int id;
+
+  /// The icon to use.
+  final NotificationIcon icon;
+}
+
 enum NotificationEventType {
   markAsRead,
   reply,
@@ -114,6 +139,7 @@ class NotificationI18nData {
 abstract class MoxplatformApi {
   void createNotificationChannel(String title, String id, bool urgent);
   void showMessagingNotification(MessagingNotification notification);
+  void showNotification(RegularNotification notification);
   void setNotificationSelfAvatar(String path);
   void setNotificationI18n(NotificationI18nData data);
   String getPersistentDataPath();

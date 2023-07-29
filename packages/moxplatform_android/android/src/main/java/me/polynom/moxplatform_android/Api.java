@@ -57,6 +57,18 @@ public class Api {
     return errorList;
   }
 
+  public enum NotificationIcon {
+    WARNING(0),
+    ERROR(1),
+    NONE(2);
+
+    final int index;
+
+    private NotificationIcon(final int index) {
+      this.index = index;
+    }
+  }
+
   public enum NotificationEventType {
     MARK_AS_READ(0),
     REPLY(1),
@@ -454,6 +466,156 @@ public class Api {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class RegularNotification {
+    /** The title of the notification. */
+    private @NonNull String title;
+
+    public @NonNull String getTitle() {
+      return title;
+    }
+
+    public void setTitle(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"title\" is null.");
+      }
+      this.title = setterArg;
+    }
+
+    /** The body of the notification. */
+    private @NonNull String body;
+
+    public @NonNull String getBody() {
+      return body;
+    }
+
+    public void setBody(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"body\" is null.");
+      }
+      this.body = setterArg;
+    }
+
+    /** The id of the channel to show the notification on. */
+    private @NonNull String channelId;
+
+    public @NonNull String getChannelId() {
+      return channelId;
+    }
+
+    public void setChannelId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"channelId\" is null.");
+      }
+      this.channelId = setterArg;
+    }
+
+    /** The id of the notification. */
+    private @NonNull Long id;
+
+    public @NonNull Long getId() {
+      return id;
+    }
+
+    public void setId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"id\" is null.");
+      }
+      this.id = setterArg;
+    }
+
+    /** The icon to use. */
+    private @NonNull NotificationIcon icon;
+
+    public @NonNull NotificationIcon getIcon() {
+      return icon;
+    }
+
+    public void setIcon(@NonNull NotificationIcon setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"icon\" is null.");
+      }
+      this.icon = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    RegularNotification() {}
+
+    public static final class Builder {
+
+      private @Nullable String title;
+
+      public @NonNull Builder setTitle(@NonNull String setterArg) {
+        this.title = setterArg;
+        return this;
+      }
+
+      private @Nullable String body;
+
+      public @NonNull Builder setBody(@NonNull String setterArg) {
+        this.body = setterArg;
+        return this;
+      }
+
+      private @Nullable String channelId;
+
+      public @NonNull Builder setChannelId(@NonNull String setterArg) {
+        this.channelId = setterArg;
+        return this;
+      }
+
+      private @Nullable Long id;
+
+      public @NonNull Builder setId(@NonNull Long setterArg) {
+        this.id = setterArg;
+        return this;
+      }
+
+      private @Nullable NotificationIcon icon;
+
+      public @NonNull Builder setIcon(@NonNull NotificationIcon setterArg) {
+        this.icon = setterArg;
+        return this;
+      }
+
+      public @NonNull RegularNotification build() {
+        RegularNotification pigeonReturn = new RegularNotification();
+        pigeonReturn.setTitle(title);
+        pigeonReturn.setBody(body);
+        pigeonReturn.setChannelId(channelId);
+        pigeonReturn.setId(id);
+        pigeonReturn.setIcon(icon);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(5);
+      toListResult.add(title);
+      toListResult.add(body);
+      toListResult.add(channelId);
+      toListResult.add(id);
+      toListResult.add(icon == null ? null : icon.index);
+      return toListResult;
+    }
+
+    static @NonNull RegularNotification fromList(@NonNull ArrayList<Object> list) {
+      RegularNotification pigeonResult = new RegularNotification();
+      Object title = list.get(0);
+      pigeonResult.setTitle((String) title);
+      Object body = list.get(1);
+      pigeonResult.setBody((String) body);
+      Object channelId = list.get(2);
+      pigeonResult.setChannelId((String) channelId);
+      Object id = list.get(3);
+      pigeonResult.setId((id == null) ? null : ((id instanceof Integer) ? (Integer) id : (Long) id));
+      Object icon = list.get(4);
+      pigeonResult.setIcon(icon == null ? null : NotificationIcon.values()[(int) icon]);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationEvent {
     /** The JID the notification was for. */
     private @NonNull String jid;
@@ -672,6 +834,8 @@ public class Api {
           return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
           return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return RegularNotification.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -694,6 +858,9 @@ public class Api {
       } else if (value instanceof NotificationMessageContent) {
         stream.write(132);
         writeValue(stream, ((NotificationMessageContent) value).toList());
+      } else if (value instanceof RegularNotification) {
+        stream.write(133);
+        writeValue(stream, ((RegularNotification) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -706,6 +873,8 @@ public class Api {
     void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
+
+    void showNotification(@NonNull RegularNotification notification);
 
     void setNotificationSelfAvatar(@NonNull String path);
 
@@ -763,6 +932,30 @@ public class Api {
                 MessagingNotification notificationArg = (MessagingNotification) args.get(0);
                 try {
                   api.showMessagingNotification(notificationArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showNotification", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                RegularNotification notificationArg = (RegularNotification) args.get(0);
+                try {
+                  api.showNotification(notificationArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

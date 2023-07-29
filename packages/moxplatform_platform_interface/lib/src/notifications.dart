@@ -9,6 +9,9 @@ abstract class NotificationsImplementation {
   /// Shows a notification [notification] in the messaging style with everyting it needs.
   Future<void> showMessagingNotification(MessagingNotification notification);
 
+  /// Shows a regular notification [notification].
+  Future<void> showNotification(RegularNotification notification);
+
   /// Sets the path to the self-avatar for in-notification replies.
   Future<void> setNotificationSelfAvatar(String path);
 

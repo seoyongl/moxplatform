@@ -10,6 +10,10 @@ class StubNotificationsImplementation extends NotificationsImplementation {
   Future<void> showMessagingNotification(MessagingNotification notification) async {}
 
   @override
+  Future<void> showNotification(RegularNotification notification) async {}
+
+
+  @override
   Future<void> setNotificationSelfAvatar(String path) async {}
 
   @override

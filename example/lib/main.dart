@@ -10,6 +10,7 @@ import 'package:file_picker/file_picker.dart';
 
 /// The id of the notification channel.
 const channelId = "me.polynom.moxplatform.testing3";
+const otherChannelId = "me.polynom.moxplatform.testing4";
 
 void main() {
   runApp(const MyApp());
@@ -44,6 +45,11 @@ class MyAppState extends State<MyApp> {
     await MoxplatformPlugin.notifications.createNotificationChannel(
       "Test notification channel",
       channelId,
+      false,
+    );
+    await MoxplatformPlugin.notifications.createNotificationChannel(
+      "Test notification channel for warnings",
+      otherChannelId,
       false,
     );
     await MoxplatformPlugin.notifications.setI18n(
@@ -189,6 +195,34 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: const Text('Show messaging notification'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                MoxplatformPlugin.notifications.showNotification(
+                  RegularNotification(
+                    id: 4384,
+                    title: 'Warning',
+                    body: 'Something brokey',
+                    channelId: otherChannelId,
+                    icon: NotificationIcon.warning,
+                  ),
+                );
+              },
+              child: const Text('Show warning notification'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                MoxplatformPlugin.notifications.showNotification(
+                  RegularNotification(
+                    id: 4384,
+                    title: 'Error',
+                    body: "Lol, you're on your own",
+                    channelId: otherChannelId,
+                    icon: NotificationIcon.error,
+                  ),
+                );
+              },
+              child: const Text('Show error notification'),
             ),
             ElevatedButton(
               onPressed: () async {

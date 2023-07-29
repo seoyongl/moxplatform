@@ -25,6 +25,11 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
   }
 
   @override
+  Future<void> showNotification(RegularNotification notification) async {
+    return _api.showNotification(notification);
+  }
+
+  @override
   Future<void> setNotificationSelfAvatar(String path) async {
     return _api.setNotificationSelfAvatar(path);
   }

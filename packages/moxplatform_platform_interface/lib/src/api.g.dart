@@ -8,6 +8,12 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+enum NotificationIcon {
+  warning,
+  error,
+  none,
+}
+
 enum NotificationEventType {
   markAsRead,
   reply,
@@ -139,6 +145,52 @@ class MessagingNotification {
   }
 }
 
+class RegularNotification {
+  RegularNotification({
+    required this.title,
+    required this.body,
+    required this.channelId,
+    required this.id,
+    required this.icon,
+  });
+
+  /// The title of the notification.
+  String title;
+
+  /// The body of the notification.
+  String body;
+
+  /// The id of the channel to show the notification on.
+  String channelId;
+
+  /// The id of the notification.
+  int id;
+
+  /// The icon to use.
+  NotificationIcon icon;
+
+  Object encode() {
+    return <Object?>[
+      title,
+      body,
+      channelId,
+      id,
+      icon.index,
+    ];
+  }
+
+  static RegularNotification decode(Object result) {
+    result as List<Object?>;
+    return RegularNotification(
+      title: result[0]! as String,
+      body: result[1]! as String,
+      channelId: result[2]! as String,
+      id: result[3]! as int,
+      icon: NotificationIcon.values[result[4]! as int],
+    );
+  }
+}
+
 class NotificationEvent {
   NotificationEvent({
     required this.jid,
@@ -228,6 +280,9 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
     } else if (value is NotificationMessageContent) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
+    } else if (value is RegularNotification) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -246,6 +301,8 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
         return NotificationMessage.decode(readValue(buffer)!);
       case 132: 
         return NotificationMessageContent.decode(readValue(buffer)!);
+      case 133: 
+        return RegularNotification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -287,6 +344,28 @@ class MoxplatformApi {
   Future<void> showMessagingNotification(MessagingNotification arg_notification) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showMessagingNotification', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_notification]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> showNotification(RegularNotification arg_notification) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showNotification', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_notification]) as List<Object?>?;
