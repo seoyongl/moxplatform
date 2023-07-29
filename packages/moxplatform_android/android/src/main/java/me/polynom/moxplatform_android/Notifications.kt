@@ -1,9 +1,11 @@
 package me.polynom.moxplatform_android
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
@@ -38,8 +40,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         PendingIntent.FLAG_UPDATE_CURRENT,
     )
     val replyAction = NotificationCompat.Action.Builder(
-        // TODO: Wrong icon?
-        R.drawable.ic_service_icon,
+        R.drawable.reply,
         NotificationDataManager.reply,
         replyPendingIntent,
     ).apply {
@@ -60,8 +61,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         PendingIntent.FLAG_UPDATE_CURRENT,
     )
     val markAsReadAction = NotificationCompat.Action.Builder(
-        // TODO: Wrong icon
-        R.drawable.ic_service_icon,
+        R.drawable.mark_as_read,
         NotificationDataManager.markAsRead,
         markAsReadPendingIntent,
     ).build()
@@ -141,8 +141,11 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
     // Assemble the notification
     val finalNotification = NotificationCompat.Builder(context, notification.channelId).apply {
         setStyle(style)
-        // TODO: I think this is wrong
+        // NOTE: It's okay to use the service icon here as I cannot get Android to display the
+        //       actual logo. So we'll have to make do with the silhouette and the color purple.
         setSmallIcon(R.drawable.ic_service_icon)
+        color = Color.argb(255, 207, 74, 255)
+        setColorized(true)
 
         // Tap action
         setContentIntent(tapPendingIntent)
@@ -150,6 +153,9 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         // Notification actions
         addAction(replyAction)
         addAction(markAsReadAction)
+
+        setAllowSystemGeneratedContextualActions(true)
+        setCategory(Notification.CATEGORY_MESSAGE)
 
         // Prevent no notification when we replied before
         setOnlyAlertOnce(false)

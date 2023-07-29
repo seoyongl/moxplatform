@@ -13,9 +13,8 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
     String title,
     String id,
     bool urgent,
-    NotificationI18nData i18n,
   ) async {
-    return _api.createNotificationChannel(title, id, urgent, i18n);
+    return _api.createNotificationChannel(title, id, urgent);
   }
 
   @override
@@ -28,7 +27,12 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
   @override
   Future<void> setNotificationSelfAvatar(String path) async {
     return _api.setNotificationSelfAvatar(path);
-  } 
+  }
+
+  @override
+  Future<void> setI18n(NotificationI18nData data) {
+    return _api.setNotificationI18n(data);
+  }
 
   @override
   Stream<NotificationEvent> getEventStream() => _channel

@@ -288,7 +288,7 @@ import kotlin.jvm.functions.Function1;
   }
 
   @Override
-  public void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent, @NonNull NotificationI18nData i18n) {
+  public void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent) {
       final NotificationChannel channel = new NotificationChannel(
               id,
               title,
@@ -298,11 +298,6 @@ import kotlin.jvm.functions.Function1;
       channel.enableLights(true);
       final NotificationManager manager = getSystemService(context, NotificationManager.class);
       manager.createNotificationChannel(channel);
-
-      // Configure i18n
-      NotificationDataManager.INSTANCE.setYou(i18n.getYou());
-      NotificationDataManager.INSTANCE.setReply(i18n.getReply());
-      NotificationDataManager.INSTANCE.setMarkAsRead(i18n.getMarkAsRead());
   }
 
   @Override
@@ -313,6 +308,14 @@ import kotlin.jvm.functions.Function1;
     @Override
     public void setNotificationSelfAvatar(@NonNull String path) {
       NotificationDataManager.INSTANCE.setAvatarPath(path);
+    }
+
+    @Override
+    public void setNotificationI18n(@NonNull NotificationI18nData data) {
+      // Configure i18n
+      NotificationDataManager.INSTANCE.setYou(data.getYou());
+      NotificationDataManager.INSTANCE.setReply(data.getReply());
+      NotificationDataManager.INSTANCE.setMarkAsRead(data.getMarkAsRead());
     }
 
     @NonNull

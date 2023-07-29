@@ -45,6 +45,8 @@ class MyAppState extends State<MyApp> {
       "Test notification channel",
       channelId,
       false,
+    );
+    await MoxplatformPlugin.notifications.setI18n(
       NotificationI18nData(
         reply: "答える",
         markAsRead: "読みた",
@@ -128,9 +130,8 @@ class MyHomePage extends StatelessWidget {
         title: const Text('Moxplatform Demo'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+        child: ListView(
+          children: [
             ElevatedButton(
               onPressed: _cryptoTest,
               child: const Text('Test cryptography'),

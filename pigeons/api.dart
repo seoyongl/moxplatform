@@ -112,15 +112,11 @@ class NotificationI18nData {
 
 @HostApi()
 abstract class MoxplatformApi {
-  void createNotificationChannel(String title, String id, bool urgent, NotificationI18nData i18n);
-
+  void createNotificationChannel(String title, String id, bool urgent);
   void showMessagingNotification(MessagingNotification notification);
-
   void setNotificationSelfAvatar(String path);
-
+  void setNotificationI18n(NotificationI18nData data);
   String getPersistentDataPath();
-
   String getCacheDataPath();
-
   void eventStub(NotificationEvent event);
 }

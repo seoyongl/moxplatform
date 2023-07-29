@@ -703,11 +703,13 @@ public class Api {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MoxplatformApi {
 
-    void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent, @NonNull NotificationI18nData i18n);
+    void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
 
     void setNotificationSelfAvatar(@NonNull String path);
+
+    void setNotificationI18n(@NonNull NotificationI18nData data);
 
     @NonNull 
     String getPersistentDataPath();
@@ -735,9 +737,8 @@ public class Api {
                 String titleArg = (String) args.get(0);
                 String idArg = (String) args.get(1);
                 Boolean urgentArg = (Boolean) args.get(2);
-                NotificationI18nData i18nArg = (NotificationI18nData) args.get(3);
                 try {
-                  api.createNotificationChannel(titleArg, idArg, urgentArg, i18nArg);
+                  api.createNotificationChannel(titleArg, idArg, urgentArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
@@ -786,6 +787,30 @@ public class Api {
                 String pathArg = (String) args.get(0);
                 try {
                   api.setNotificationSelfAvatar(pathArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.setNotificationI18n", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                NotificationI18nData dataArg = (NotificationI18nData) args.get(0);
+                try {
+                  api.setNotificationI18n(dataArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
