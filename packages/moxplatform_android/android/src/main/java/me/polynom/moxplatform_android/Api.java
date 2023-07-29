@@ -387,6 +387,17 @@ public class Api {
       this.messages = setterArg;
     }
 
+    /** Additional data to include. */
+    private @Nullable Map<String, String> extra;
+
+    public @Nullable Map<String, String> getExtra() {
+      return extra;
+    }
+
+    public void setExtra(@Nullable Map<String, String> setterArg) {
+      this.extra = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     MessagingNotification() {}
 
@@ -427,6 +438,13 @@ public class Api {
         return this;
       }
 
+      private @Nullable Map<String, String> extra;
+
+      public @NonNull Builder setExtra(@Nullable Map<String, String> setterArg) {
+        this.extra = setterArg;
+        return this;
+      }
+
       public @NonNull MessagingNotification build() {
         MessagingNotification pigeonReturn = new MessagingNotification();
         pigeonReturn.setTitle(title);
@@ -434,18 +452,20 @@ public class Api {
         pigeonReturn.setChannelId(channelId);
         pigeonReturn.setJid(jid);
         pigeonReturn.setMessages(messages);
+        pigeonReturn.setExtra(extra);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(5);
+      ArrayList<Object> toListResult = new ArrayList<Object>(6);
       toListResult.add(title);
       toListResult.add(id);
       toListResult.add(channelId);
       toListResult.add(jid);
       toListResult.add(messages);
+      toListResult.add(extra);
       return toListResult;
     }
 
@@ -461,6 +481,8 @@ public class Api {
       pigeonResult.setJid((String) jid);
       Object messages = list.get(4);
       pigeonResult.setMessages((List<NotificationMessage>) messages);
+      Object extra = list.get(5);
+      pigeonResult.setExtra((Map<String, String>) extra);
       return pigeonResult;
     }
   }
@@ -660,6 +682,17 @@ public class Api {
       this.payload = setterArg;
     }
 
+    /** Extra data. Only set when type == NotificationType.reply. */
+    private @Nullable Map<String, String> extra;
+
+    public @Nullable Map<String, String> getExtra() {
+      return extra;
+    }
+
+    public void setExtra(@Nullable Map<String, String> setterArg) {
+      this.extra = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     NotificationEvent() {}
 
@@ -686,21 +719,30 @@ public class Api {
         return this;
       }
 
+      private @Nullable Map<String, String> extra;
+
+      public @NonNull Builder setExtra(@Nullable Map<String, String> setterArg) {
+        this.extra = setterArg;
+        return this;
+      }
+
       public @NonNull NotificationEvent build() {
         NotificationEvent pigeonReturn = new NotificationEvent();
         pigeonReturn.setJid(jid);
         pigeonReturn.setType(type);
         pigeonReturn.setPayload(payload);
+        pigeonReturn.setExtra(extra);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      ArrayList<Object> toListResult = new ArrayList<Object>(4);
       toListResult.add(jid);
       toListResult.add(type == null ? null : type.index);
       toListResult.add(payload);
+      toListResult.add(extra);
       return toListResult;
     }
 
@@ -712,6 +754,8 @@ public class Api {
       pigeonResult.setType(type == null ? null : NotificationEventType.values()[(int) type]);
       Object payload = list.get(2);
       pigeonResult.setPayload((String) payload);
+      Object extra = list.get(3);
+      pigeonResult.setExtra((Map<String, String>) extra);
       return pigeonResult;
     }
   }

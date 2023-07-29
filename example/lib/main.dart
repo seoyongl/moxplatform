@@ -61,7 +61,7 @@ class MyAppState extends State<MyApp> {
     );
 
     MoxplatformPlugin.notifications.getEventStream().listen((event) {
-      print('NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload})');
+      print('NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload}, extras: ${event.extra})');
     });
   }
 
@@ -191,6 +191,11 @@ class MyHomePage extends StatelessWidget {
                     messages: messages,
                     channelId: channelId,
                     jid: 'testjid',
+                    extra: {
+                      'jid': 'testjid',
+                      'avatarPath': 'lol',
+                      'rio': 'cute',
+                    },
                   ),
                 );
               },

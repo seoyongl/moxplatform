@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
@@ -117,6 +118,10 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         action = TAP_ACTION
         putExtra(NOTIFICATION_EXTRA_JID_KEY, notification.jid)
         putExtra(NOTIFICATION_EXTRA_ID_KEY, notification.id)
+
+        notification.extra?.forEach {
+            putExtra("payload_${it.key}", it.value)
+        }
     }
     val tapPendingIntent = PendingIntent.getBroadcast(
         context,

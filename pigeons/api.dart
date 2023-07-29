@@ -54,7 +54,7 @@ class NotificationMessage {
 }
 
 class MessagingNotification {
-  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId);
+  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId, this.extra);
 
   /// The title of the conversation.
   final String title;
@@ -70,6 +70,9 @@ class MessagingNotification {
 
   /// Messages to show.
   final List<NotificationMessage?> messages;
+
+  /// Additional data to include.
+  final Map<String?, String?>? extra;
 }
 
 enum NotificationIcon {
@@ -120,6 +123,9 @@ class NotificationEvent {
   /// - type == NotificationType.reply: The reply message text.
   /// Otherwise: undefined.
   final String? payload;
+
+  /// Extra data. Only set when type == NotificationType.reply.
+  final Map<String?, String?>? extra;
 }
 
 class NotificationI18nData {

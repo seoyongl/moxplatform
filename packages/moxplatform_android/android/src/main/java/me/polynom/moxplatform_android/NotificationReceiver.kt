@@ -148,11 +148,19 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     private fun handleTap(context: Context, intent: Intent) {
+        val extras = mutableMapOf<String?, String?>()
+        intent.extras?.keySet()!!.forEach {
+            if (it.startsWith("payload_")) {
+                extras[it.substring(8)] = intent.extras!!.getString(it)
+            }
+        }
+
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.OPEN
                 payload = null
+                extra = extras
             }.toList()
         )
 

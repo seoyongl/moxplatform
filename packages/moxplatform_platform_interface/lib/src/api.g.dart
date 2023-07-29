@@ -106,6 +106,7 @@ class MessagingNotification {
     required this.channelId,
     required this.jid,
     required this.messages,
+    this.extra,
   });
 
   /// The title of the conversation.
@@ -123,6 +124,9 @@ class MessagingNotification {
   /// Messages to show.
   List<NotificationMessage?> messages;
 
+  /// Additional data to include.
+  Map<String?, String?>? extra;
+
   Object encode() {
     return <Object?>[
       title,
@@ -130,6 +134,7 @@ class MessagingNotification {
       channelId,
       jid,
       messages,
+      extra,
     ];
   }
 
@@ -141,6 +146,7 @@ class MessagingNotification {
       channelId: result[2]! as String,
       jid: result[3]! as String,
       messages: (result[4] as List<Object?>?)!.cast<NotificationMessage?>(),
+      extra: (result[5] as Map<Object?, Object?>?)?.cast<String?, String?>(),
     );
   }
 }
@@ -196,6 +202,7 @@ class NotificationEvent {
     required this.jid,
     required this.type,
     this.payload,
+    this.extra,
   });
 
   /// The JID the notification was for.
@@ -209,11 +216,15 @@ class NotificationEvent {
   /// Otherwise: undefined.
   String? payload;
 
+  /// Extra data. Only set when type == NotificationType.reply.
+  Map<String?, String?>? extra;
+
   Object encode() {
     return <Object?>[
       jid,
       type.index,
       payload,
+      extra,
     ];
   }
 
@@ -223,6 +234,7 @@ class NotificationEvent {
       jid: result[0]! as String,
       type: NotificationEventType.values[result[1]! as int],
       payload: result[2] as String?,
+      extra: (result[3] as Map<Object?, Object?>?)?.cast<String?, String?>(),
     );
   }
 }
