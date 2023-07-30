@@ -103,10 +103,11 @@ class NotificationReceiver : BroadcastReceiver() {
                     setName(NotificationDataManager.getYou(context))
 
                     // Set an avatar, if we have one
-                    if (NotificationDataManager.avatarPath != null) {
+                    val avatarPath = NotificationDataManager.getAvatarPath(context)
+                    if (avatarPath != null) {
                         setIcon(
                             Icon.createWithAdaptiveBitmap(
-                                BitmapFactory.decodeFile(NotificationDataManager.avatarPath)
+                                BitmapFactory.decodeFile(avatarPath)
                             )
                         )
                     }

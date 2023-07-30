@@ -285,7 +285,7 @@ import kotlin.jvm.functions.Function1;
 
     @Override
     public void setNotificationSelfAvatar(@NonNull String path) {
-        NotificationDataManager.INSTANCE.setAvatarPath(path);
+        NotificationDataManager.INSTANCE.setAvatarPath(context, path);
     }
 
     @Override

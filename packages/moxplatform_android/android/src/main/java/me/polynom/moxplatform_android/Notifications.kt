@@ -24,7 +24,9 @@ object NotificationDataManager {
     private var you: String? = null
     private var markAsRead: String? = null
     private var reply: String? = null
-    var avatarPath: String? = null
+
+    private var fetchedAvatarPath = false
+    private var avatarPath: String? = null
 
     private fun getString(context: Context, key: String, fallback: String): String {
         return context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)!!.getString(key, fallback)!!
@@ -65,6 +67,23 @@ object NotificationDataManager {
     fun setReply(context: Context, value: String) {
         setString(context, SHARED_PREFERENCES_REPLY_KEY, value)
         reply = value
+    }
+
+    fun getAvatarPath(context: Context): String? {
+        if (avatarPath == null && !fetchedAvatarPath) {
+            val path = getString(context, SHARED_PREFERENCES_AVATAR_KEY, "")
+            if (path.isNotEmpty()) {
+                avatarPath = path
+            }
+        }
+
+        return avatarPath
+    }
+
+    fun setAvatarPath(context: Context, value: String) {
+        setString(context, SHARED_PREFERENCES_AVATAR_KEY, value)
+        fetchedAvatarPath = true
+        avatarPath = value
     }
 }
 
@@ -144,10 +163,11 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         setName(NotificationDataManager.getYou(context))
 
         // Set an avatar, if we have one
-        if (NotificationDataManager.avatarPath != null) {
+        val avatarPath = NotificationDataManager.getAvatarPath(context)
+        if (avatarPath != null) {
             setIcon(
                 IconCompat.createWithAdaptiveBitmap(
-                    BitmapFactory.decodeFile(NotificationDataManager.avatarPath),
+                    BitmapFactory.decodeFile(avatarPath),
                 ),
             )
         }

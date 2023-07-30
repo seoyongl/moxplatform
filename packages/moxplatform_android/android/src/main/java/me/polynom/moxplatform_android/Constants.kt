@@ -32,6 +32,7 @@ const val SHARED_PREFERENCES_KEY = "me.polynom.moxplatform_android"
 const val SHARED_PREFERENCES_YOU_KEY = "you"
 const val SHARED_PREFERENCES_MARK_AS_READ_KEY = "mark_as_read"
 const val SHARED_PREFERENCES_REPLY_KEY = "reply"
+const val SHARED_PREFERENCES_AVATAR_KEY = "avatar_path"
 
 // TODO: Maybe try again to rewrite the entire plugin in Kotlin
 //const val METHOD_CHANNEL_KEY = "me.polynom.moxplatform_android"
