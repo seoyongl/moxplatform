@@ -11,10 +11,11 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
   @override
   Future<void> createNotificationChannel(
     String title,
+    String description,
     String id,
     bool urgent,
   ) async {
-    return _api.createNotificationChannel(title, id, urgent);
+    return _api.createNotificationChannel(title, description, id, urgent);
   }
 
   @override
@@ -27,6 +28,11 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
   @override
   Future<void> showNotification(RegularNotification notification) async {
     return _api.showNotification(notification);
+  }
+
+  @override
+  Future<void> dismissNotification(int id) async {
+    return _api.dismissNotification(id);
   }
 
   @override

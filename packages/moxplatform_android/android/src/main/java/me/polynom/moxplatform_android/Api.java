@@ -387,6 +387,20 @@ public class Api {
       this.messages = setterArg;
     }
 
+    /** Flag indicating whether this notification is from a groupchat or not. */
+    private @NonNull Boolean isGroupchat;
+
+    public @NonNull Boolean getIsGroupchat() {
+      return isGroupchat;
+    }
+
+    public void setIsGroupchat(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"isGroupchat\" is null.");
+      }
+      this.isGroupchat = setterArg;
+    }
+
     /** Additional data to include. */
     private @Nullable Map<String, String> extra;
 
@@ -438,6 +452,13 @@ public class Api {
         return this;
       }
 
+      private @Nullable Boolean isGroupchat;
+
+      public @NonNull Builder setIsGroupchat(@NonNull Boolean setterArg) {
+        this.isGroupchat = setterArg;
+        return this;
+      }
+
       private @Nullable Map<String, String> extra;
 
       public @NonNull Builder setExtra(@Nullable Map<String, String> setterArg) {
@@ -452,6 +473,7 @@ public class Api {
         pigeonReturn.setChannelId(channelId);
         pigeonReturn.setJid(jid);
         pigeonReturn.setMessages(messages);
+        pigeonReturn.setIsGroupchat(isGroupchat);
         pigeonReturn.setExtra(extra);
         return pigeonReturn;
       }
@@ -459,12 +481,13 @@ public class Api {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(6);
+      ArrayList<Object> toListResult = new ArrayList<Object>(7);
       toListResult.add(title);
       toListResult.add(id);
       toListResult.add(channelId);
       toListResult.add(jid);
       toListResult.add(messages);
+      toListResult.add(isGroupchat);
       toListResult.add(extra);
       return toListResult;
     }
@@ -481,7 +504,9 @@ public class Api {
       pigeonResult.setJid((String) jid);
       Object messages = list.get(4);
       pigeonResult.setMessages((List<NotificationMessage>) messages);
-      Object extra = list.get(5);
+      Object isGroupchat = list.get(5);
+      pigeonResult.setIsGroupchat((Boolean) isGroupchat);
+      Object extra = list.get(6);
       pigeonResult.setExtra((Map<String, String>) extra);
       return pigeonResult;
     }
@@ -914,11 +939,13 @@ public class Api {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MoxplatformApi {
 
-    void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent);
+    void createNotificationChannel(@NonNull String title, @NonNull String description, @NonNull String id, @NonNull Boolean urgent);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
 
     void showNotification(@NonNull RegularNotification notification);
+
+    void dismissNotification(@NonNull Long id);
 
     void setNotificationSelfAvatar(@NonNull String path);
 
@@ -948,10 +975,11 @@ public class Api {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String titleArg = (String) args.get(0);
-                String idArg = (String) args.get(1);
-                Boolean urgentArg = (Boolean) args.get(2);
+                String descriptionArg = (String) args.get(1);
+                String idArg = (String) args.get(2);
+                Boolean urgentArg = (Boolean) args.get(3);
                 try {
-                  api.createNotificationChannel(titleArg, idArg, urgentArg);
+                  api.createNotificationChannel(titleArg, descriptionArg, idArg, urgentArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
@@ -1000,6 +1028,30 @@ public class Api {
                 RegularNotification notificationArg = (RegularNotification) args.get(0);
                 try {
                   api.showNotification(notificationArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.dismissNotification", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number idArg = (Number) args.get(0);
+                try {
+                  api.dismissNotification((idArg == null) ? null : idArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

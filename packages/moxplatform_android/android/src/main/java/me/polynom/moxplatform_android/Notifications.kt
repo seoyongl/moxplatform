@@ -14,6 +14,7 @@ import androidx.core.app.RemoteInput
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.IconCompat
 import java.io.File
+import java.lang.Exception
 
 /*
  * Holds "persistent" data for notifications, like i18n strings. While not useful now, this is
@@ -78,6 +79,10 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         action = REPLY_ACTION
         putExtra(NOTIFICATION_EXTRA_JID_KEY, notification.jid)
         putExtra(NOTIFICATION_EXTRA_ID_KEY, notification.id)
+
+        notification.extra?.forEach {
+            putExtra("payload_${it.key}", it.value)
+        }
     }
     val replyPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
@@ -99,6 +104,10 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         action = MARK_AS_READ_ACTION
         putExtra(NOTIFICATION_EXTRA_JID_KEY, notification.jid)
         putExtra(NOTIFICATION_EXTRA_ID_KEY, notification.id)
+
+        notification.extra?.forEach {
+            putExtra("payload_${it.key}", it.value)
+        }
     }
     val markAsReadPendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
@@ -144,7 +153,14 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         }
     }.build()
     val style = NotificationCompat.MessagingStyle(selfPerson);
-    for (message in notification.messages) {
+    style.isGroupConversation = notification.isGroupchat
+    if (notification.isGroupchat) {
+        style.conversationTitle = notification.title
+    }
+
+    for (i in notification.messages.indices) {
+        val message = notification.messages[i]
+
         // Build the sender
         val sender = Person.Builder().apply {
             setName(message.sender)
@@ -152,11 +168,15 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
 
             // Set the avatar, if available
             if (message.avatarPath != null) {
-                setIcon(
-                    IconCompat.createWithAdaptiveBitmap(
-                        BitmapFactory.decodeFile(message.avatarPath),
-                    ),
-                )
+                try {
+                    setIcon(
+                        IconCompat.createWithAdaptiveBitmap(
+                            BitmapFactory.decodeFile(message.avatarPath),
+                        ),
+                    )
+                } catch (ex: Throwable) {
+                    Log.w(TAG, "Failed to open avatar at ${message.avatarPath}")
+                }
             }
         }.build()
 
@@ -203,6 +223,11 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         // Notification actions
         addAction(replyAction)
         addAction(markAsReadAction)
+
+        // Groupchat title
+        if (notification.isGroupchat) {
+            setContentTitle(notification.title)
+        }
 
         setAllowSystemGeneratedContextualActions(true)
         setCategory(Notification.CATEGORY_MESSAGE)

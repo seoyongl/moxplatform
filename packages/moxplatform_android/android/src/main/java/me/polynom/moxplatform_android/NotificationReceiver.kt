@@ -42,16 +42,30 @@ class NotificationReceiver : BroadcastReceiver() {
             .find { it.id == id }?.notification
     }
 
+    private fun extractPayloadMapFromIntent(intent: Intent): Map<String?, String?> {
+        val extras = mutableMapOf<String?, String?>()
+        intent.extras?.keySet()!!.forEach {
+            Log.d(TAG, "Checking $it -> ${intent.extras!!.get(it)}")
+            if (it.startsWith("payload_")) {
+                Log.d(TAG, "Adding $it")
+                extras[it.substring(8)] = intent.extras!!.getString(it)
+            }
+        }
+
+        return extras
+    }
+
     private fun handleMarkAsRead(context: Context, intent: Intent) {
-        NotificationManagerCompat.from(context).cancel(intent.getLongExtra(MARK_AS_READ_ID_KEY, -1).toInt())
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.MARK_AS_READ
                 payload = null
+                extra = extractPayloadMapFromIntent(intent)
             }.toList()
         )
 
+        NotificationManagerCompat.from(context).cancel(intent.getLongExtra(MARK_AS_READ_ID_KEY, -1).toInt())
         dismissNotification(context, intent);
     }
 
@@ -63,6 +77,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.REPLY
                 payload = replyPayload.toString()
+                extra = extractPayloadMapFromIntent(intent)
             }.toList()
         )
 
@@ -148,19 +163,12 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     private fun handleTap(context: Context, intent: Intent) {
-        val extras = mutableMapOf<String?, String?>()
-        intent.extras?.keySet()!!.forEach {
-            if (it.startsWith("payload_")) {
-                extras[it.substring(8)] = intent.extras!!.getString(it)
-            }
-        }
-
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.OPEN
                 payload = null
-                extra = extras
+                extra = extractPayloadMapFromIntent(intent)
             }.toList()
         )
 

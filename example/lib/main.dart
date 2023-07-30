@@ -44,11 +44,13 @@ class MyAppState extends State<MyApp> {
 
     await MoxplatformPlugin.notifications.createNotificationChannel(
       "Test notification channel",
+      "Test1",
       channelId,
       false,
     );
     await MoxplatformPlugin.notifications.createNotificationChannel(
       "Test notification channel for warnings",
+      "Test2",
       otherChannelId,
       false,
     );
@@ -191,6 +193,7 @@ class MyHomePage extends StatelessWidget {
                     messages: messages,
                     channelId: channelId,
                     jid: 'testjid',
+                    isGroupchat: true,
                     extra: {
                       'jid': 'testjid',
                       'avatarPath': 'lol',

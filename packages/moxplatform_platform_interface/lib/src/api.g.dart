@@ -106,6 +106,7 @@ class MessagingNotification {
     required this.channelId,
     required this.jid,
     required this.messages,
+    required this.isGroupchat,
     this.extra,
   });
 
@@ -124,6 +125,9 @@ class MessagingNotification {
   /// Messages to show.
   List<NotificationMessage?> messages;
 
+  /// Flag indicating whether this notification is from a groupchat or not.
+  bool isGroupchat;
+
   /// Additional data to include.
   Map<String?, String?>? extra;
 
@@ -134,6 +138,7 @@ class MessagingNotification {
       channelId,
       jid,
       messages,
+      isGroupchat,
       extra,
     ];
   }
@@ -146,7 +151,8 @@ class MessagingNotification {
       channelId: result[2]! as String,
       jid: result[3]! as String,
       messages: (result[4] as List<Object?>?)!.cast<NotificationMessage?>(),
-      extra: (result[5] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      isGroupchat: result[5]! as bool,
+      extra: (result[6] as Map<Object?, Object?>?)?.cast<String?, String?>(),
     );
   }
 }
@@ -331,12 +337,12 @@ class MoxplatformApi {
 
   static const MessageCodec<Object?> codec = _MoxplatformApiCodec();
 
-  Future<void> createNotificationChannel(String arg_title, String arg_id, bool arg_urgent) async {
+  Future<void> createNotificationChannel(String arg_title, String arg_description, String arg_id, bool arg_urgent) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_title, arg_id, arg_urgent]) as List<Object?>?;
+        await channel.send(<Object?>[arg_title, arg_description, arg_id, arg_urgent]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -381,6 +387,28 @@ class MoxplatformApi {
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_notification]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> dismissNotification(int arg_id) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.dismissNotification', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_id]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

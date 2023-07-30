@@ -54,7 +54,7 @@ class NotificationMessage {
 }
 
 class MessagingNotification {
-  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId, this.extra);
+  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId, this.isGroupchat, this.extra);
 
   /// The title of the conversation.
   final String title;
@@ -70,6 +70,9 @@ class MessagingNotification {
 
   /// Messages to show.
   final List<NotificationMessage?> messages;
+
+  /// Flag indicating whether this notification is from a groupchat or not.
+  final bool isGroupchat;
 
   /// Additional data to include.
   final Map<String?, String?>? extra;
@@ -111,6 +114,7 @@ class NotificationEvent {
     this.jid,
     this.type,
     this.payload,
+    this.extra,
   );
 
   /// The JID the notification was for.
@@ -143,9 +147,10 @@ class NotificationI18nData {
 
 @HostApi()
 abstract class MoxplatformApi {
-  void createNotificationChannel(String title, String id, bool urgent);
+  void createNotificationChannel(String title, String description, String id, bool urgent);
   void showMessagingNotification(MessagingNotification notification);
   void showNotification(RegularNotification notification);
+  void dismissNotification(int id);
   void setNotificationSelfAvatar(String path);
   void setNotificationI18n(NotificationI18nData data);
   String getPersistentDataPath();

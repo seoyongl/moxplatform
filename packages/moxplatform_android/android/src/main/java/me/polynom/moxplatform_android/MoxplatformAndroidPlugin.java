@@ -2,8 +2,8 @@ package me.polynom.moxplatform_android;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
-import static me.polynom.moxplatform_android.RecordSentMessageKt.recordSentMessage;
 import static me.polynom.moxplatform_android.CryptoKt.*;
+import static me.polynom.moxplatform_android.RecordSentMessageKt.*;
 
 import me.polynom.moxplatform_android.Api.*;
 
@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -39,7 +40,7 @@ import io.flutter.plugin.common.JSONMethodCodec;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ServiceAware, MoxplatformApi {
+    public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ServiceAware, MoxplatformApi {
     public static final String entrypointKey = "entrypoint_handle";
     public static final String extraDataKey = "extra_data";
     private static final String autoStartAtBootKey = "auto_start_at_boot";
@@ -258,10 +259,11 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     }
 
     @Override
-    public void createNotificationChannel(@NonNull String title, @NonNull String id, @NonNull Boolean urgent) {
+    public void createNotificationChannel(@NonNull String title, @NonNull String description, @NonNull String id, @NonNull Boolean urgent) {
         final NotificationChannel channel = new NotificationChannel(id, title, urgent ? NotificationManager.IMPORTANCE_HIGH : NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableVibration(true);
         channel.enableLights(true);
+        channel.setDescription(description);
         final NotificationManager manager = getSystemService(context, NotificationManager.class);
         manager.createNotificationChannel(channel);
     }
@@ -274,6 +276,11 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     @Override
     public void showNotification(@NonNull RegularNotification notification) {
         NotificationsKt.showNotification(context, notification);
+    }
+
+    @Override
+    public void dismissNotification(@NonNull Long id) {
+        NotificationManagerCompat.from(context).cancel(id.intValue());
     }
 
     @Override
