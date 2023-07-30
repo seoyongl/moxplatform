@@ -162,7 +162,12 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         val message = notification.messages[i]
 
         // Build the sender
-        val sender = Person.Builder().apply {
+        // NOTE: Note that we set it to null if message.sender == null because otherwise this results in
+        //       a bogus Person object which messes with the "self-message" display as Android expects
+        //       null in that case.
+        val sender = if (message.sender == null)
+            null
+        else Person.Builder().apply {
             setName(message.sender)
             setKey(message.jid)
 
