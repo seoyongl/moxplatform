@@ -55,18 +55,18 @@ class NotificationMessageContent {
 
 class NotificationMessage {
   NotificationMessage({
-    required this.sender,
-    required this.jid,
+    this.sender,
+    this.jid,
     required this.content,
     required this.timestamp,
     this.avatarPath,
   });
 
   /// The sender of the message.
-  String sender;
+  String? sender;
 
   /// The jid of the sender.
-  String jid;
+  String? jid;
 
   /// The body of the message.
   NotificationMessageContent content;
@@ -90,8 +90,8 @@ class NotificationMessage {
   static NotificationMessage decode(Object result) {
     result as List<Object?>;
     return NotificationMessage(
-      sender: result[0]! as String,
-      jid: result[1]! as String,
+      sender: result[0] as String?,
+      jid: result[1] as String?,
       content: NotificationMessageContent.decode(result[2]! as List<Object?>),
       timestamp: result[3]! as int,
       avatarPath: result[4] as String?,
@@ -205,11 +205,15 @@ class RegularNotification {
 
 class NotificationEvent {
   NotificationEvent({
+    required this.id,
     required this.jid,
     required this.type,
     this.payload,
     this.extra,
   });
+
+  /// The notification id.
+  int id;
 
   /// The JID the notification was for.
   String jid;
@@ -227,6 +231,7 @@ class NotificationEvent {
 
   Object encode() {
     return <Object?>[
+      id,
       jid,
       type.index,
       payload,
@@ -237,10 +242,11 @@ class NotificationEvent {
   static NotificationEvent decode(Object result) {
     result as List<Object?>;
     return NotificationEvent(
-      jid: result[0]! as String,
-      type: NotificationEventType.values[result[1]! as int],
-      payload: result[2] as String?,
-      extra: (result[3] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      id: result[0]! as int,
+      jid: result[1]! as String,
+      type: NotificationEventType.values[result[2]! as int],
+      payload: result[3] as String?,
+      extra: (result[4] as Map<Object?, Object?>?)?.cast<String?, String?>(),
     );
   }
 }

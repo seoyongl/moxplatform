@@ -38,10 +38,10 @@ class NotificationMessage {
   );
 
   /// The sender of the message.
-  final String sender;
+  final String? sender;
 
   /// The jid of the sender.
-  final String jid;
+  final String? jid;
 
   /// The body of the message.
   final NotificationMessageContent content;
@@ -111,11 +111,15 @@ enum NotificationEventType {
 
 class NotificationEvent {
   const NotificationEvent(
+    this.id,
     this.jid,
     this.type,
     this.payload,
     this.extra,
   );
+
+  /// The notification id.
+  final int id;
 
   /// The JID the notification was for.
   final String jid;

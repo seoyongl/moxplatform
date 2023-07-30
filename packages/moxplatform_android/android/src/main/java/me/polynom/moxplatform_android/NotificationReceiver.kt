@@ -58,6 +58,7 @@ class NotificationReceiver : BroadcastReceiver() {
     private fun handleMarkAsRead(context: Context, intent: Intent) {
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
+                id = intent.getLongExtra(NOTIFICATION_EXTRA_ID_KEY, -1)
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.MARK_AS_READ
                 payload = null
@@ -74,6 +75,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val replyPayload = remoteInput.getCharSequence(REPLY_TEXT_KEY)
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
+                id = intent.getLongExtra(NOTIFICATION_EXTRA_ID_KEY, -1)
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.REPLY
                 payload = replyPayload.toString()
@@ -165,6 +167,7 @@ class NotificationReceiver : BroadcastReceiver() {
     private fun handleTap(context: Context, intent: Intent) {
         MoxplatformAndroidPlugin.notificationSink?.success(
             NotificationEvent().apply {
+                id = intent.getLongExtra(NOTIFICATION_EXTRA_ID_KEY, -1)
                 jid = intent.getStringExtra(NOTIFICATION_EXTRA_JID_KEY)!!
                 type = Api.NotificationEventType.OPEN
                 payload = null

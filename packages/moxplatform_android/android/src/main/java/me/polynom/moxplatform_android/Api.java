@@ -171,30 +171,24 @@ public class Api {
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationMessage {
     /** The sender of the message. */
-    private @NonNull String sender;
+    private @Nullable String sender;
 
-    public @NonNull String getSender() {
+    public @Nullable String getSender() {
       return sender;
     }
 
-    public void setSender(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"sender\" is null.");
-      }
+    public void setSender(@Nullable String setterArg) {
       this.sender = setterArg;
     }
 
     /** The jid of the sender. */
-    private @NonNull String jid;
+    private @Nullable String jid;
 
-    public @NonNull String getJid() {
+    public @Nullable String getJid() {
       return jid;
     }
 
-    public void setJid(@NonNull String setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"jid\" is null.");
-      }
+    public void setJid(@Nullable String setterArg) {
       this.jid = setterArg;
     }
 
@@ -244,14 +238,14 @@ public class Api {
 
       private @Nullable String sender;
 
-      public @NonNull Builder setSender(@NonNull String setterArg) {
+      public @NonNull Builder setSender(@Nullable String setterArg) {
         this.sender = setterArg;
         return this;
       }
 
       private @Nullable String jid;
 
-      public @NonNull Builder setJid(@NonNull String setterArg) {
+      public @NonNull Builder setJid(@Nullable String setterArg) {
         this.jid = setterArg;
         return this;
       }
@@ -664,6 +658,20 @@ public class Api {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationEvent {
+    /** The notification id. */
+    private @NonNull Long id;
+
+    public @NonNull Long getId() {
+      return id;
+    }
+
+    public void setId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"id\" is null.");
+      }
+      this.id = setterArg;
+    }
+
     /** The JID the notification was for. */
     private @NonNull String jid;
 
@@ -723,6 +731,13 @@ public class Api {
 
     public static final class Builder {
 
+      private @Nullable Long id;
+
+      public @NonNull Builder setId(@NonNull Long setterArg) {
+        this.id = setterArg;
+        return this;
+      }
+
       private @Nullable String jid;
 
       public @NonNull Builder setJid(@NonNull String setterArg) {
@@ -753,6 +768,7 @@ public class Api {
 
       public @NonNull NotificationEvent build() {
         NotificationEvent pigeonReturn = new NotificationEvent();
+        pigeonReturn.setId(id);
         pigeonReturn.setJid(jid);
         pigeonReturn.setType(type);
         pigeonReturn.setPayload(payload);
@@ -763,7 +779,8 @@ public class Api {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      ArrayList<Object> toListResult = new ArrayList<Object>(5);
+      toListResult.add(id);
       toListResult.add(jid);
       toListResult.add(type == null ? null : type.index);
       toListResult.add(payload);
@@ -773,13 +790,15 @@ public class Api {
 
     static @NonNull NotificationEvent fromList(@NonNull ArrayList<Object> list) {
       NotificationEvent pigeonResult = new NotificationEvent();
-      Object jid = list.get(0);
+      Object id = list.get(0);
+      pigeonResult.setId((id == null) ? null : ((id instanceof Integer) ? (Integer) id : (Long) id));
+      Object jid = list.get(1);
       pigeonResult.setJid((String) jid);
-      Object type = list.get(1);
+      Object type = list.get(2);
       pigeonResult.setType(type == null ? null : NotificationEventType.values()[(int) type]);
-      Object payload = list.get(2);
+      Object payload = list.get(3);
       pigeonResult.setPayload((String) payload);
-      Object extra = list.get(3);
+      Object extra = list.get(4);
       pigeonResult.setExtra((Map<String, String>) extra);
       return pigeonResult;
     }
