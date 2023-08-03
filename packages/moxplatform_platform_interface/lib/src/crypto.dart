@@ -1,21 +1,5 @@
 import 'dart:typed_data';
-
-enum CipherAlgorithm {
-  aes128GcmNoPadding(0),
-  aes256GcmNoPadding(1),
-  aes256CbcPkcs7(2);
-
-  const CipherAlgorithm(this.value);
-
-  /// The "id" of the algorithm choice.
-  final int value;
-}
-
-class CryptographyResult {
-  const CryptographyResult(this.plaintextHash, this.ciphertextHash);
-  final Uint8List plaintextHash;
-  final Uint8List ciphertextHash;
-}
+import 'package:moxplatform_platform_interface/src/api.g.dart';
 
 /// Wrapper around platform-native cryptography APIs
 abstract class CryptographyImplementation {
@@ -47,9 +31,9 @@ abstract class CryptographyImplementation {
     String hashSpec,
   );
 
-  /// Hashes the file at [path] using the Hash function with name [hashSpec].
+  /// Hashes the file at [sourcePath] using the Hash function with name [hashSpec].
   /// Note that this function runs off-thread as to not block the UI thread.
   ///
   /// Returns the hash of the file.
-  Future<Uint8List?> hashFile(String path, String hashSpec);
+  Future<Uint8List?> hashFile(String sourcePath, String hashSpec);
 }

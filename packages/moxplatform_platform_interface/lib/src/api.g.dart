@@ -20,6 +20,12 @@ enum NotificationEventType {
   open,
 }
 
+enum CipherAlgorithm {
+  aes128GcmNoPadding,
+  aes256GcmNoPadding,
+  aes256CbcPkcs7,
+}
+
 class NotificationMessageContent {
   NotificationMessageContent({
     this.body,
@@ -285,27 +291,56 @@ class NotificationI18nData {
   }
 }
 
+class CryptographyResult {
+  CryptographyResult({
+    required this.plaintextHash,
+    required this.ciphertextHash,
+  });
+
+  Uint8List plaintextHash;
+
+  Uint8List ciphertextHash;
+
+  Object encode() {
+    return <Object?>[
+      plaintextHash,
+      ciphertextHash,
+    ];
+  }
+
+  static CryptographyResult decode(Object result) {
+    result as List<Object?>;
+    return CryptographyResult(
+      plaintextHash: result[0]! as Uint8List,
+      ciphertextHash: result[1]! as Uint8List,
+    );
+  }
+}
+
 class _MoxplatformApiCodec extends StandardMessageCodec {
   const _MoxplatformApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessagingNotification) {
+    if (value is CryptographyResult) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationEvent) {
+    } else if (value is MessagingNotification) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationI18nData) {
+    } else if (value is NotificationEvent) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessage) {
+    } else if (value is NotificationI18nData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessageContent) {
+    } else if (value is NotificationMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is RegularNotification) {
+    } else if (value is NotificationMessageContent) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is RegularNotification) {
+      buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -316,16 +351,18 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return MessagingNotification.decode(readValue(buffer)!);
+        return CryptographyResult.decode(readValue(buffer)!);
       case 129: 
-        return NotificationEvent.decode(readValue(buffer)!);
+        return MessagingNotification.decode(readValue(buffer)!);
       case 130: 
-        return NotificationI18nData.decode(readValue(buffer)!);
+        return NotificationEvent.decode(readValue(buffer)!);
       case 131: 
-        return NotificationMessage.decode(readValue(buffer)!);
+        return NotificationI18nData.decode(readValue(buffer)!);
       case 132: 
-        return NotificationMessageContent.decode(readValue(buffer)!);
+        return NotificationMessage.decode(readValue(buffer)!);
       case 133: 
+        return NotificationMessageContent.decode(readValue(buffer)!);
+      case 134: 
         return RegularNotification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -343,6 +380,7 @@ class MoxplatformApi {
 
   static const MessageCodec<Object?> codec = _MoxplatformApiCodec();
 
+  /// Notification APIs
   Future<void> createNotificationChannel(String arg_title, String arg_description, String arg_id, bool arg_urgent) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel', codec,
@@ -475,6 +513,7 @@ class MoxplatformApi {
     }
   }
 
+  /// Platform APIs
   Future<String> getPersistentDataPath() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath', codec,
@@ -529,6 +568,74 @@ class MoxplatformApi {
     }
   }
 
+  /// Cryptography APIs
+  Future<CryptographyResult?> encryptFile(String arg_sourcePath, String arg_destPath, Uint8List arg_key, Uint8List arg_iv, CipherAlgorithm arg_algorithm, String arg_hashSpec) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.encryptFile', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_sourcePath, arg_destPath, arg_key, arg_iv, arg_algorithm.index, arg_hashSpec]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as CryptographyResult?);
+    }
+  }
+
+  Future<CryptographyResult?> decryptFile(String arg_sourcePath, String arg_destPath, Uint8List arg_key, Uint8List arg_iv, CipherAlgorithm arg_algorithm, String arg_hashSpec) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.decryptFile', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_sourcePath, arg_destPath, arg_key, arg_iv, arg_algorithm.index, arg_hashSpec]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as CryptographyResult?);
+    }
+  }
+
+  Future<Uint8List?> hashFile(String arg_sourcePath, String arg_hashSpec) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.hashFile', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_sourcePath, arg_hashSpec]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as Uint8List?);
+    }
+  }
+
+  /// Stubs
   Future<void> eventStub(NotificationEvent arg_event) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.eventStub', codec,

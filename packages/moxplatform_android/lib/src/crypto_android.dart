@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
 
 class AndroidCryptographyImplementation extends CryptographyImplementation {
-  final _methodChannel = const MethodChannel('me.polynom.moxplatform_android');
+  final MoxplatformApi _api = MoxplatformApi();
 
   @override
   Future<CryptographyResult?> encryptFile(
@@ -13,22 +13,13 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
     CipherAlgorithm algorithm,
     String hashSpec,
   ) async {
-    final dynamic resultRaw =
-        await _methodChannel.invokeMethod<dynamic>('encryptFile', [
+    return _api.encryptFile(
       sourcePath,
       destPath,
       key,
       iv,
-      algorithm.value,
+      algorithm,
       hashSpec,
-    ]);
-    if (resultRaw == null) return null;
-
-    // ignore: argument_type_not_assignable
-    final result = Map<String, dynamic>.from(resultRaw);
-    return CryptographyResult(
-      result['plaintextHash']! as Uint8List,
-      result['ciphertextHash']! as Uint8List,
     );
   }
 
@@ -41,35 +32,18 @@ class AndroidCryptographyImplementation extends CryptographyImplementation {
     CipherAlgorithm algorithm,
     String hashSpec,
   ) async {
-    final dynamic resultRaw =
-        await _methodChannel.invokeMethod<dynamic>('decryptFile', [
+    return _api.decryptFile(
       sourcePath,
       destPath,
       key,
       iv,
-      algorithm.value,
+      algorithm,
       hashSpec,
-    ]);
-    if (resultRaw == null) return null;
-
-    // ignore: argument_type_not_assignable
-    final result = Map<String, dynamic>.from(resultRaw);
-    return CryptographyResult(
-      result['plaintextHash']! as Uint8List,
-      result['ciphertextHash']! as Uint8List,
     );
   }
 
   @override
-  Future<Uint8List?> hashFile(String path, String hashSpec) async {
-    final dynamic resultsRaw =
-        await _methodChannel.invokeMethod<dynamic>('hashFile', [
-      path,
-      hashSpec,
-    ]);
-
-    if (resultsRaw == null) return null;
-
-    return resultsRaw as Uint8List;
+  Future<Uint8List?> hashFile(String sourcePath, String hashSpec) async {
+    return _api.hashFile(sourcePath, hashSpec);
   }
 }

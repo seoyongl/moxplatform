@@ -40,7 +40,7 @@ import io.flutter.plugin.common.JSONMethodCodec;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-    public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ServiceAware, MoxplatformApi {
+public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ServiceAware, MoxplatformApi {
     public static final String entrypointKey = "entrypoint_handle";
     public static final String extraDataKey = "extra_data";
     private static final String autoStartAtBootKey = "auto_start_at_boot";
@@ -166,53 +166,6 @@ import kotlin.jvm.functions.Function1;
                 }
                 result.success(true);
                 break;
-            case "encryptFile":
-                Thread encryptionThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ArrayList args = (ArrayList) call.arguments;
-                        String src = (String) args.get(0);
-                        String dest = (String) args.get(1);
-                        byte[] key = (byte[]) args.get(2);
-                        byte[] iv = (byte[]) args.get(3);
-                        int algorithm = (int) args.get(4);
-                        String hashSpec = (String) args.get(5);
-
-                        result.success(encryptAndHash(src, dest, key, iv, getCipherSpecFromInteger(algorithm), hashSpec));
-                    }
-                });
-                encryptionThread.start();
-                break;
-            case "decryptFile":
-                Thread decryptionThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ArrayList args = (ArrayList) call.arguments;
-                        String src = (String) args.get(0);
-                        String dest = (String) args.get(1);
-                        byte[] key = (byte[]) args.get(2);
-                        byte[] iv = (byte[]) args.get(3);
-                        int algorithm = (int) args.get(4);
-                        String hashSpec = (String) args.get(5);
-
-                        result.success(decryptAndHash(src, dest, key, iv, getCipherSpecFromInteger(algorithm), hashSpec));
-                    }
-                });
-                decryptionThread.start();
-                break;
-            case "hashFile":
-                Thread hashingThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ArrayList args = (ArrayList) call.arguments;
-                        String src = (String) args.get(0);
-                        String hashSpec = (String) args.get(1);
-
-                        result.success(hashFile(src, hashSpec));
-                    }
-                });
-                hashingThread.start();
-                break;
             case "recordSentMessage":
                 ArrayList rargs = (ArrayList) call.arguments;
                 recordSentMessage(context, (String) rargs.get(0), (String) rargs.get(1), (String) rargs.get(2), (int) rargs.get(3));
@@ -306,6 +259,37 @@ import kotlin.jvm.functions.Function1;
     @Override
     public String getCacheDataPath() {
         return context.getCacheDir().getPath();
+    }
+
+    @Override
+    public void encryptFile(@NonNull String sourcePath, @NonNull String destPath, @NonNull byte[] key, @NonNull byte[] iv, @NonNull CipherAlgorithm algorithm, @NonNull String hashSpec, @NonNull Api.Result<CryptographyResult> result) {
+        CryptoKt.encryptAndHash(
+                sourcePath,
+                destPath,
+                key,
+                iv,
+                algorithm,
+                hashSpec,
+                result
+        );
+    }
+
+    @Override
+    public void decryptFile(@NonNull String sourcePath, @NonNull String destPath, @NonNull byte[] key, @NonNull byte[] iv, @NonNull CipherAlgorithm algorithm, @NonNull String hashSpec, @NonNull Api.Result<CryptographyResult> result) {
+        CryptoKt.decryptAndHash(
+                sourcePath,
+                destPath,
+                key,
+                iv,
+                algorithm,
+                hashSpec,
+                result
+        );
+    }
+
+    @Override
+    public void hashFile(@NonNull String sourcePath, @NonNull String hashSpec, @NonNull Api.Result<byte[]> result) {
+        CryptoKt.hashFile(sourcePath, hashSpec, result);
     }
 
     @Override

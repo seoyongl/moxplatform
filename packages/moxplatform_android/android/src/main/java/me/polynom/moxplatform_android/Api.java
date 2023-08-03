@@ -81,6 +81,18 @@ public class Api {
     }
   }
 
+  public enum CipherAlgorithm {
+    AES128GCM_NO_PADDING(0),
+    AES256GCM_NO_PADDING(1),
+    AES256CBC_PKCS7(2);
+
+    final int index;
+
+    private CipherAlgorithm(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationMessageContent {
     /** The textual body of the message. */
@@ -904,6 +916,86 @@ public class Api {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class CryptographyResult {
+    private @NonNull byte[] plaintextHash;
+
+    public @NonNull byte[] getPlaintextHash() {
+      return plaintextHash;
+    }
+
+    public void setPlaintextHash(@NonNull byte[] setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"plaintextHash\" is null.");
+      }
+      this.plaintextHash = setterArg;
+    }
+
+    private @NonNull byte[] ciphertextHash;
+
+    public @NonNull byte[] getCiphertextHash() {
+      return ciphertextHash;
+    }
+
+    public void setCiphertextHash(@NonNull byte[] setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"ciphertextHash\" is null.");
+      }
+      this.ciphertextHash = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    CryptographyResult() {}
+
+    public static final class Builder {
+
+      private @Nullable byte[] plaintextHash;
+
+      public @NonNull Builder setPlaintextHash(@NonNull byte[] setterArg) {
+        this.plaintextHash = setterArg;
+        return this;
+      }
+
+      private @Nullable byte[] ciphertextHash;
+
+      public @NonNull Builder setCiphertextHash(@NonNull byte[] setterArg) {
+        this.ciphertextHash = setterArg;
+        return this;
+      }
+
+      public @NonNull CryptographyResult build() {
+        CryptographyResult pigeonReturn = new CryptographyResult();
+        pigeonReturn.setPlaintextHash(plaintextHash);
+        pigeonReturn.setCiphertextHash(ciphertextHash);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(plaintextHash);
+      toListResult.add(ciphertextHash);
+      return toListResult;
+    }
+
+    static @NonNull CryptographyResult fromList(@NonNull ArrayList<Object> list) {
+      CryptographyResult pigeonResult = new CryptographyResult();
+      Object plaintextHash = list.get(0);
+      pigeonResult.setPlaintextHash((byte[]) plaintextHash);
+      Object ciphertextHash = list.get(1);
+      pigeonResult.setCiphertextHash((byte[]) ciphertextHash);
+      return pigeonResult;
+    }
+  }
+
+  public interface Result<T> {
+    @SuppressWarnings("UnknownNullness")
+    void success(T result);
+
+    void error(@NonNull Throwable error);
+  }
+
   private static class MoxplatformApiCodec extends StandardMessageCodec {
     public static final MoxplatformApiCodec INSTANCE = new MoxplatformApiCodec();
 
@@ -913,16 +1005,18 @@ public class Api {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return MessagingNotification.fromList((ArrayList<Object>) readValue(buffer));
+          return CryptographyResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return NotificationEvent.fromList((ArrayList<Object>) readValue(buffer));
+          return MessagingNotification.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return NotificationI18nData.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationEvent.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationI18nData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
+          return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
           return RegularNotification.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -931,23 +1025,26 @@ public class Api {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof MessagingNotification) {
+      if (value instanceof CryptographyResult) {
         stream.write(128);
+        writeValue(stream, ((CryptographyResult) value).toList());
+      } else if (value instanceof MessagingNotification) {
+        stream.write(129);
         writeValue(stream, ((MessagingNotification) value).toList());
       } else if (value instanceof NotificationEvent) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, ((NotificationEvent) value).toList());
       } else if (value instanceof NotificationI18nData) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((NotificationI18nData) value).toList());
       } else if (value instanceof NotificationMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((NotificationMessage) value).toList());
       } else if (value instanceof NotificationMessageContent) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((NotificationMessageContent) value).toList());
       } else if (value instanceof RegularNotification) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((RegularNotification) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -957,7 +1054,7 @@ public class Api {
 
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MoxplatformApi {
-
+    /** Notification APIs */
     void createNotificationChannel(@NonNull String title, @NonNull String description, @NonNull String id, @NonNull Boolean urgent);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
@@ -969,13 +1066,19 @@ public class Api {
     void setNotificationSelfAvatar(@NonNull String path);
 
     void setNotificationI18n(@NonNull NotificationI18nData data);
-
+    /** Platform APIs */
     @NonNull 
     String getPersistentDataPath();
 
     @NonNull 
     String getCacheDataPath();
+    /** Cryptography APIs */
+    void encryptFile(@NonNull String sourcePath, @NonNull String destPath, @NonNull byte[] key, @NonNull byte[] iv, @NonNull CipherAlgorithm algorithm, @NonNull String hashSpec, @NonNull Result<CryptographyResult> result);
 
+    void decryptFile(@NonNull String sourcePath, @NonNull String destPath, @NonNull byte[] key, @NonNull byte[] iv, @NonNull CipherAlgorithm algorithm, @NonNull String hashSpec, @NonNull Result<CryptographyResult> result);
+
+    void hashFile(@NonNull String sourcePath, @NonNull String hashSpec, @NonNull Result<byte[]> result);
+    /** Stubs */
     void eventStub(@NonNull NotificationEvent event);
 
     /** The codec used by MoxplatformApi. */
@@ -1170,6 +1273,104 @@ public class Api {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.encryptFile", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String sourcePathArg = (String) args.get(0);
+                String destPathArg = (String) args.get(1);
+                byte[] keyArg = (byte[]) args.get(2);
+                byte[] ivArg = (byte[]) args.get(3);
+                CipherAlgorithm algorithmArg = args.get(4) == null ? null : CipherAlgorithm.values()[(int) args.get(4)];
+                String hashSpecArg = (String) args.get(5);
+                Result<CryptographyResult> resultCallback =
+                    new Result<CryptographyResult>() {
+                      public void success(CryptographyResult result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.encryptFile(sourcePathArg, destPathArg, keyArg, ivArg, algorithmArg, hashSpecArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.decryptFile", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String sourcePathArg = (String) args.get(0);
+                String destPathArg = (String) args.get(1);
+                byte[] keyArg = (byte[]) args.get(2);
+                byte[] ivArg = (byte[]) args.get(3);
+                CipherAlgorithm algorithmArg = args.get(4) == null ? null : CipherAlgorithm.values()[(int) args.get(4)];
+                String hashSpecArg = (String) args.get(5);
+                Result<CryptographyResult> resultCallback =
+                    new Result<CryptographyResult>() {
+                      public void success(CryptographyResult result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.decryptFile(sourcePathArg, destPathArg, keyArg, ivArg, algorithmArg, hashSpecArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.hashFile", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String sourcePathArg = (String) args.get(0);
+                String hashSpecArg = (String) args.get(1);
+                Result<byte[]> resultCallback =
+                    new Result<byte[]>() {
+                      public void success(byte[] result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.hashFile(sourcePathArg, hashSpecArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

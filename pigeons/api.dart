@@ -149,15 +149,37 @@ class NotificationI18nData {
   final String you;
 }
 
+enum CipherAlgorithm {
+  aes128GcmNoPadding,
+  aes256GcmNoPadding,
+  aes256CbcPkcs7;
+}
+
+class CryptographyResult {
+  const CryptographyResult(this.plaintextHash, this.ciphertextHash);
+  final Uint8List plaintextHash;
+  final Uint8List ciphertextHash;
+}
+
 @HostApi()
 abstract class MoxplatformApi {
+  /// Notification APIs
   void createNotificationChannel(String title, String description, String id, bool urgent);
   void showMessagingNotification(MessagingNotification notification);
   void showNotification(RegularNotification notification);
   void dismissNotification(int id);
   void setNotificationSelfAvatar(String path);
   void setNotificationI18n(NotificationI18nData data);
+
+  /// Platform APIs
   String getPersistentDataPath();
   String getCacheDataPath();
+
+  /// Cryptography APIs
+  @async CryptographyResult? encryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec);
+  @async CryptographyResult? decryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec);
+  @async Uint8List? hashFile(String sourcePath, String hashSpec);
+
+  /// Stubs
   void eventStub(NotificationEvent event);
 }
