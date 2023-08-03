@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -166,11 +167,6 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
                 }
                 result.success(true);
                 break;
-            case "recordSentMessage":
-                ArrayList rargs = (ArrayList) call.arguments;
-                recordSentMessage(context, (String) rargs.get(0), (String) rargs.get(1), (String) rargs.get(2), (int) rargs.get(3));
-                result.success(true);
-                break;
             default:
                 result.notImplemented();
                 break;
@@ -259,6 +255,11 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     @Override
     public String getCacheDataPath() {
         return context.getCacheDir().getPath();
+    }
+
+    @Override
+    public void recordSentMessage(@NonNull String name, @NonNull String jid, @Nullable String avatarPath, @NonNull FallbackIconType fallbackIcon) {
+        systemRecordSentMessage(context, name, jid, avatarPath, fallbackIcon);
     }
 
     @Override

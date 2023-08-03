@@ -26,6 +26,12 @@ enum CipherAlgorithm {
   aes256CbcPkcs7,
 }
 
+enum FallbackIconType {
+  none,
+  person,
+  notes,
+}
+
 class NotificationMessageContent {
   NotificationMessageContent({
     this.body,
@@ -565,6 +571,29 @@ class MoxplatformApi {
       );
     } else {
       return (replyList[0] as String?)!;
+    }
+  }
+
+  /// Contacts APIs
+  Future<void> recordSentMessage(String arg_name, String arg_jid, String? arg_avatarPath, FallbackIconType arg_fallbackIcon) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.recordSentMessage', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_name, arg_jid, arg_avatarPath, arg_fallbackIcon.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
     }
   }
 

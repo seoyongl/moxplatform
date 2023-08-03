@@ -93,6 +93,18 @@ public class Api {
     }
   }
 
+  public enum FallbackIconType {
+    NONE(0),
+    PERSON(1),
+    NOTES(2);
+
+    final int index;
+
+    private FallbackIconType(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationMessageContent {
     /** The textual body of the message. */
@@ -1072,6 +1084,8 @@ public class Api {
 
     @NonNull 
     String getCacheDataPath();
+    /** Contacts APIs */
+    void recordSentMessage(@NonNull String name, @NonNull String jid, @Nullable String avatarPath, @NonNull FallbackIconType fallbackIcon);
     /** Cryptography APIs */
     void encryptFile(@NonNull String sourcePath, @NonNull String destPath, @NonNull byte[] key, @NonNull byte[] iv, @NonNull CipherAlgorithm algorithm, @NonNull String hashSpec, @NonNull Result<CryptographyResult> result);
 
@@ -1267,6 +1281,33 @@ public class Api {
                 try {
                   String output = api.getCacheDataPath();
                   wrapped.add(0, output);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.recordSentMessage", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String nameArg = (String) args.get(0);
+                String jidArg = (String) args.get(1);
+                String avatarPathArg = (String) args.get(2);
+                FallbackIconType fallbackIconArg = args.get(3) == null ? null : FallbackIconType.values()[(int) args.get(3)];
+                try {
+                  api.recordSentMessage(nameArg, jidArg, avatarPathArg, fallbackIconArg);
+                  wrapped.add(0, null);
                 }
  catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
