@@ -25,7 +25,7 @@ const val NOTIFICATION_EXTRA_ID_KEY = "notification_id"
 const val NOTIFICATION_MESSAGE_EXTRA_MIME = "mime"
 const val NOTIFICATION_MESSAGE_EXTRA_PATH = "path"
 
-const val MOXPLATFORM_FILEPROVIDER_ID = "me.polynom.moxplatform_android.fileprovider2"
+const val MOXPLATFORM_FILEPROVIDER_ID = "me.polynom.moxplatform_android.fileprovider"
 
 // Shared preferences keys
 const val SHARED_PREFERENCES_KEY = "me.polynom.moxplatform_android"
