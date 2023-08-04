@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-08-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`moxplatform_android` - `v0.1.19`](#moxplatform_android---v0119)
+ - [`moxplatform_platform_interface` - `v0.1.19`](#moxplatform_platform_interface---v0119)
+ - [`moxplatform` - `v0.1.17+3`](#moxplatform---v01173)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `moxplatform` - `v0.1.17+3`
+
+---
+
+#### `moxplatform_android` - `v0.1.19`
+
+ - **FEAT**(android,interface): Handle battery optimisation.
+
+#### `moxplatform_platform_interface` - `v0.1.19`
+
+ - **FEAT**(android,interface): Handle battery optimisation.
+
+
 ## 2023-08-04
 
 ### Changes
