@@ -1,8 +1,7 @@
-import 'package:flutter/services.dart';
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
 
 class AndroidContactsImplementation extends ContactsImplementation {
-  final _methodChannel = const MethodChannel('me.polynom.moxplatform_android');
+  final MoxplatformApi _api = MoxplatformApi();
 
   @override
   Future<void> recordSentMessage(
@@ -19,14 +18,11 @@ class AndroidContactsImplementation extends ContactsImplementation {
       );
     }
 
-    await _methodChannel.invokeMethod<void>(
-      'recordSentMessage',
-      [
-        name,
-        jid,
-        avatarPath,
-        fallbackIcon.id,
-      ],
+    return _api.recordSentMessage(
+      name,
+      jid,
+      avatarPath,
+      fallbackIcon,
     );
   }
 }

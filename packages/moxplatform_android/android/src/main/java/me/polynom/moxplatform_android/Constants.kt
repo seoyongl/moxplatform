@@ -6,6 +6,34 @@ const val TAG = "Moxplatform"
 // The size of the buffer to hashing, encryption, and decryption in bytes.
 const val BUFFER_SIZE = 8096
 
+// The data key for text entered in the notification's reply field
+const val REPLY_TEXT_KEY = "key_reply_text"
+
+// The key for the notification id to mark as read
+const val MARK_AS_READ_ID_KEY = "notification_id"
+
+// Values for actions performed through the notification
+const val REPLY_ACTION = "reply"
+const val MARK_AS_READ_ACTION = "mark_as_read"
+const val TAP_ACTION = "tap"
+
+// Extra data keys for the intents that reach the NotificationReceiver
+const val NOTIFICATION_EXTRA_JID_KEY = "jid"
+const val NOTIFICATION_EXTRA_ID_KEY = "notification_id"
+
+// Extra data keys for messages embedded inside the notification style
+const val NOTIFICATION_MESSAGE_EXTRA_MIME = "mime"
+const val NOTIFICATION_MESSAGE_EXTRA_PATH = "path"
+
+const val MOXPLATFORM_FILEPROVIDER_ID = "me.polynom.moxplatform_android.fileprovider"
+
+// Shared preferences keys
+const val SHARED_PREFERENCES_KEY = "me.polynom.moxplatform_android"
+const val SHARED_PREFERENCES_YOU_KEY = "you"
+const val SHARED_PREFERENCES_MARK_AS_READ_KEY = "mark_as_read"
+const val SHARED_PREFERENCES_REPLY_KEY = "reply"
+const val SHARED_PREFERENCES_AVATAR_KEY = "avatar_path"
+
 // TODO: Maybe try again to rewrite the entire plugin in Kotlin
 //const val METHOD_CHANNEL_KEY = "me.polynom.moxplatform_android"
 //const val BACKGROUND_METHOD_CHANNEL_KEY = METHOD_CHANNEL_KEY + "_bg"

@@ -1,3 +1,4 @@
+import 'package:moxplatform_platform_interface/src/api.g.dart';
 import 'package:moxplatform_platform_interface/src/contacts.dart';
 
 class StubContactsImplementation extends ContactsImplementation {

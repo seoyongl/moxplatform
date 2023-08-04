@@ -1,3 +1,7 @@
+## 0.1.17+2
+
+ - **FIX**: Format and lint.
+
 ## 0.1.17+1
 
  - Update a dependency to the latest release.

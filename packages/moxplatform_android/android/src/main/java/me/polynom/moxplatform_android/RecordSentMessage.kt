@@ -7,12 +7,15 @@ import androidx.core.app.Person
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
+import me.polynom.moxplatform_android.Api.FallbackIconType
 
 /*
  * Uses Android's direct share API to create dynamic share targets that are compatible
  * with share_handler's media handling.
+ * NOTE: The "system" prefix is to prevent confusion between pigeon's abstract recordSentMessage
+ *       method and this one.
  * */
-fun recordSentMessage(context: Context, name: String, jid: String, avatarPath: String?, fallbackIconType: Int) {
+fun systemRecordSentMessage(context: Context, name: String, jid: String, avatarPath: String?, fallbackIcon: FallbackIconType) {
     val pkgName = context.packageName
     val intent = Intent(context, Class.forName("$pkgName.MainActivity")).apply {
         action = Intent.ACTION_SEND
@@ -43,9 +46,9 @@ fun recordSentMessage(context: Context, name: String, jid: String, avatarPath: S
         shortcutBuilder.setIcon(icon)
         personBuilder.setIcon(icon)
     } else {
-        val resourceId = when(fallbackIconType) {
-            0 -> R.mipmap.person
-            1 -> R.mipmap.notes
+        val resourceId = when(fallbackIcon) {
+            FallbackIconType.PERSON -> R.mipmap.person
+            FallbackIconType.NOTES -> R.mipmap.notes
             // "Fallthrough"
             else -> R.mipmap.person
         }

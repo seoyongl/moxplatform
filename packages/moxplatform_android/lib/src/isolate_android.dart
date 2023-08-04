@@ -7,7 +7,6 @@ import 'package:logging/logging.dart';
 import 'package:moxlib/moxlib.dart';
 import 'package:moxplatform/moxplatform.dart';
 import 'package:moxplatform_android/src/service_android.dart';
-import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
 
 /// An [AwaitableDataSender] that uses flutter_background_service.
 class BackgroundServiceDataSender

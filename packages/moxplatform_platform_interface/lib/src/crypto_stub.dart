@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:moxplatform_platform_interface/src/api.g.dart';
 import 'package:moxplatform_platform_interface/src/crypto.dart';
 
 class StubCryptographyImplementation extends CryptographyImplementation {
@@ -27,7 +28,7 @@ class StubCryptographyImplementation extends CryptographyImplementation {
   }
 
   @override
-  Future<Uint8List?> hashFile(String path, String hashSpec) async {
+  Future<Uint8List?> hashFile(String sourcePath, String hashSpec) async {
     return null;
   }
 }

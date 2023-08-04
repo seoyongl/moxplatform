@@ -1,3 +1,16 @@
+## 0.1.18
+
+ - **FIX**: Format and lint.
+ - **FIX**: Add payload to all intents.
+ - **FEAT**: Move recordSentMessage to pigeon.
+ - **FEAT**: Move the crypto APIs to pigeon.
+ - **FEAT**: Allow the sender's data being null.
+ - **FEAT**: Allow attaching arbitrary data to the notification.
+ - **FEAT**: Allow showing regular notifications.
+ - **FEAT**: Color in the notification silhouette.
+ - **FEAT**: Allow setting the self-avatar.
+ - **FEAT**: Take care of i18n.
+
 ## 0.1.17+1
 
  - Update a dependency to the latest release.
