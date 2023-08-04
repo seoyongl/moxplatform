@@ -1,0 +1,14 @@
+[general]
+ignore=B5,B6,B7,B8
+
+[title-max-length]
+line-length=72
+
+[title-trailing-punctuation]
+[title-hard-tab]
+[title-match-regex]
+regex=^(feat|fix|chore|refactor)\((android|ios|linux|windows|macos|interface|base|repo)(,(android|ios|linux|windows|macos|interface|base))*\): [A-Z0-9].*$
+
+
+[body-trailing-whitespace]
+[body-first-line-empty]
