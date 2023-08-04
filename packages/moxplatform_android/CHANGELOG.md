@@ -1,3 +1,21 @@
+## 0.1.18
+
+ - **FIX**: Format and lint.
+ - **FIX**: Fix self-replies after receiving another message.
+ - **FIX**: Add payload to all intents.
+ - **FIX**: Fix images disappearing after replying.
+ - **FEAT**: Move recordSentMessage to pigeon.
+ - **FEAT**: Move the crypto APIs to pigeon.
+ - **FEAT**: Adjust to Moxxy changes.
+ - **FEAT**: Store the avatar path also in the shared preferences.
+ - **FEAT**: Allow the sender's data being null.
+ - **FEAT**: Allow attaching arbitrary data to the notification.
+ - **FEAT**: Allow showing regular notifications.
+ - **FEAT**: Make i18n data a bit more persistent.
+ - **FEAT**: Color in the notification silhouette.
+ - **FEAT**: Allow setting the self-avatar.
+ - **FEAT**: Take care of i18n.
+
 ## 0.1.17+1
 
  - **FIX**: Accidentally used the name as the target's key. Oops.
