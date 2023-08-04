@@ -4,7 +4,12 @@ import 'package:moxplatform_platform_interface/src/api.g.dart';
 abstract class NotificationsImplementation {
   /// Creates a notification channel with the name [title] and id [id]. If [urgent] is true, then
   /// it configures the channel as carrying urgent information.
-  Future<void> createNotificationChannel(String title, String description, String id, bool urgent);
+  Future<void> createNotificationChannel(
+    String title,
+    String description,
+    String id,
+    bool urgent,
+  );
 
   /// Shows a notification [notification] in the messaging style with everyting it needs.
   Future<void> showMessagingNotification(MessagingNotification notification);

@@ -4,9 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:moxplatform/moxplatform.dart';
-import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:file_picker/file_picker.dart';
 
 /// The id of the notification channel.
 const channelId = "me.polynom.moxplatform.testing3";
@@ -63,7 +61,10 @@ class MyAppState extends State<MyApp> {
     );
 
     MoxplatformPlugin.notifications.getEventStream().listen((event) {
-      print('NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload}, extras: ${event.extra})');
+      // ignore: avoid_print
+      print(
+        'NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload}, extras: ${event.extra})',
+      );
     });
   }
 
@@ -74,14 +75,19 @@ class MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
+class MyHomePageState extends State<MyHomePage> {
   /// List of "Message senders".
   final List<Sender> senders = const [
     Sender('Mash Kyrielight', 'mash@example.org'),
@@ -90,7 +96,8 @@ class MyHomePage extends StatelessWidget {
   ];
 
   /// List of sent messages.
-  List<NotificationMessage> messages = List<NotificationMessage>.empty(growable: true);
+  List<NotificationMessage> messages =
+      List<NotificationMessage>.empty(growable: true);
 
   Future<void> _cryptoTest() async {
     final result = await FilePicker.platform.pickFiles();
@@ -111,10 +118,13 @@ class MyHomePage extends StatelessWidget {
     final end = DateTime.now();
 
     final diff = end.millisecondsSinceEpoch - start.millisecondsSinceEpoch;
+    // ignore: avoid_print
     print('TIME: ${diff / 1000}s');
+    // ignore: avoid_print
     print('DONE (${enc != null})');
     final lengthEnc = await File('$path.enc').length();
     final lengthOrig = await File(path).length();
+    // ignore: avoid_print
     print('Encrypted file is $lengthEnc Bytes large (Orig $lengthOrig)');
 
     await MoxplatformPlugin.crypto.decryptFile(
@@ -125,9 +135,11 @@ class MyHomePage extends StatelessWidget {
       CipherAlgorithm.aes256CbcPkcs7,
       'SHA-256',
     );
+    // ignore: avoid_print
     print('DONE');
 
     final lengthDec = await File('$path.dec').length();
+    // ignore: avoid_print
     print('Decrypted file is $lengthDec Bytes large (Orig $lengthOrig)');
   }
 
@@ -152,13 +164,15 @@ class MyHomePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                MoxplatformPlugin.contacts.recordSentMessage('Person', 'Person', fallbackIcon: FallbackIconType.person);
+                MoxplatformPlugin.contacts.recordSentMessage('Person', 'Person',
+                    fallbackIcon: FallbackIconType.person);
               },
               child: const Text('Test recordSentMessage (person fallback)'),
             ),
             ElevatedButton(
               onPressed: () {
-                MoxplatformPlugin.contacts.recordSentMessage('Notes', 'Notes', fallbackIcon: FallbackIconType.notes);
+                MoxplatformPlugin.contacts.recordSentMessage('Notes', 'Notes',
+                    fallbackIcon: FallbackIconType.notes);
               },
               child: const Text('Test recordSentMessage (notes fallback)'),
             ),
@@ -167,23 +181,22 @@ class MyHomePage extends StatelessWidget {
                 final result = await FilePicker.platform.pickFiles(
                   type: FileType.image,
                 );
+                // ignore: avoid_print
                 print('Picked file: ${result?.files.single.path}');
 
                 // Create a new message.
                 final senderIndex = Random().nextInt(senders.length);
                 final time = DateTime.now().millisecondsSinceEpoch;
-                messages.add(
-                  NotificationMessage(
-                    jid: senders[senderIndex].jid,
-                    sender: senders[senderIndex].name,
-                    content: NotificationMessageContent(
-                      body: result != null ? null : 'Message #${messages.length}',
-                      mime: 'image/jpeg',
-                      path: result?.files.single.path,
-                    ),
-                    timestamp: time,
-                  )
-                );
+                messages.add(NotificationMessage(
+                  jid: senders[senderIndex].jid,
+                  sender: senders[senderIndex].name,
+                  content: NotificationMessageContent(
+                    body: result != null ? null : 'Message #${messages.length}',
+                    mime: 'image/jpeg',
+                    path: result?.files.single.path,
+                  ),
+                  timestamp: time,
+                ));
 
                 await Future<void>.delayed(const Duration(seconds: 4));
                 await MoxplatformPlugin.notifications.showMessagingNotification(
@@ -239,18 +252,21 @@ class MyHomePage extends StatelessWidget {
                 );
                 if (result == null) return;
 
-                MoxplatformPlugin.notifications.setNotificationSelfAvatar(result.files.single.path!);
+                MoxplatformPlugin.notifications
+                    .setNotificationSelfAvatar(result.files.single.path!);
               },
               child: const Text('Set notification self-avatar'),
             ),
             ElevatedButton(
               onPressed: () async {
+                // ignore: avoid_print
                 print(await MoxplatformPlugin.platform.getPersistentDataPath());
               },
               child: const Text('Get data directory'),
             ),
             ElevatedButton(
               onPressed: () async {
+                // ignore: avoid_print
                 print(await MoxplatformPlugin.platform.getCacheDataPath());
               },
               child: const Text('Get cache directory'),

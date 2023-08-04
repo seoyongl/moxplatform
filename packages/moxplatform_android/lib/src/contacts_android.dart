@@ -1,5 +1,4 @@
 import 'package:moxplatform_platform_interface/moxplatform_platform_interface.dart';
-import 'package:moxplatform_platform_interface/src/api.g.dart';
 
 class AndroidContactsImplementation extends ContactsImplementation {
   final MoxplatformApi _api = MoxplatformApi();

@@ -4,10 +4,17 @@ import 'package:moxplatform_platform_interface/src/notifications.dart';
 
 class StubNotificationsImplementation extends NotificationsImplementation {
   @override
-  Future<void> createNotificationChannel(String title, String description, String id, bool urgent) async {}
+  Future<void> createNotificationChannel(
+    String title,
+    String description,
+    String id,
+    bool urgent,
+  ) async {}
 
   @override
-  Future<void> showMessagingNotification(MessagingNotification notification) async {}
+  Future<void> showMessagingNotification(
+    MessagingNotification notification,
+  ) async {}
 
   @override
   Future<void> showNotification(RegularNotification notification) async {}

@@ -21,7 +21,8 @@ abstract class MoxplatformInterface extends PlatformInterface {
   static IsolateHandler handler = StubIsolateHandler();
   static CryptographyImplementation crypto = StubCryptographyImplementation();
   static ContactsImplementation contacts = StubContactsImplementation();
-  static NotificationsImplementation notifications = StubNotificationsImplementation();
+  static NotificationsImplementation notifications =
+      StubNotificationsImplementation();
   static PlatformImplementation platform = StubPlatformImplementation();
 
   /// Return the current platform name.
