@@ -15,6 +15,40 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`moxplatform_android` - `v0.1.20`](#moxplatform_android---v0120)
+ - [`moxplatform_platform_interface` - `v0.1.20`](#moxplatform_platform_interface---v0120)
+ - [`moxplatform` - `v0.1.17+4`](#moxplatform---v01174)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `moxplatform` - `v0.1.17+4`
+
+---
+
+#### `moxplatform_android` - `v0.1.20`
+
+ - **FIX**(android): Fix FileProvider id.
+ - **FEAT**(android,interface): Handle battery optimisation.
+
+#### `moxplatform_platform_interface` - `v0.1.20`
+
+ - **FEAT**(android,interface): Handle battery optimisation.
+
+
+## 2023-08-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`moxplatform_android` - `v0.1.19`](#moxplatform_android---v0119)
  - [`moxplatform_platform_interface` - `v0.1.19`](#moxplatform_platform_interface---v0119)
  - [`moxplatform` - `v0.1.17+3`](#moxplatform---v01173)

@@ -1,3 +1,7 @@
+## 0.1.20
+
+ - **FEAT**(android,interface): Handle battery optimisation.
+
 ## 0.1.19
 
  - **FEAT**(android,interface): Handle battery optimisation.
