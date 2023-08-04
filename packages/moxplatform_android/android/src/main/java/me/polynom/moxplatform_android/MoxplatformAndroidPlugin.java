@@ -1,6 +1,8 @@
 package me.polynom.moxplatform_android;
 
+import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 import static androidx.core.content.ContextCompat.getSystemService;
+import static androidx.core.content.ContextCompat.startActivity;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 import static me.polynom.moxplatform_android.CryptoKt.*;
 import static me.polynom.moxplatform_android.RecordSentMessageKt.*;
@@ -15,6 +17,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -255,6 +259,22 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     @Override
     public String getCacheDataPath() {
         return context.getCacheDir().getPath();
+    }
+
+    @Override
+    public void openBatteryOptimisationSettings() {
+        final Uri packageUri = Uri.parse("package:" + context.getPackageName());
+        Log.d(TAG, packageUri.toString());
+        final Intent intent = new Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, packageUri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    @NonNull
+    @Override
+    public Boolean isIgnoringBatteryOptimizations() {
+        final PowerManager pm = context.getSystemService(PowerManager.class);
+        return pm.isIgnoringBatteryOptimizations(context.getPackageName());
     }
 
     @Override

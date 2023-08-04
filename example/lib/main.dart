@@ -271,6 +271,21 @@ class MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Get cache directory'),
             ),
+            ElevatedButton(
+              onPressed: () async {
+                // ignore: avoid_print
+                print(await MoxplatformPlugin.platform
+                    .isIgnoringBatteryOptimizations());
+              },
+              child: const Text('Is battery optimised?'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await MoxplatformPlugin.platform
+                    .openBatteryOptimisationSettings();
+              },
+              child: const Text('Open battery optimisation page'),
+            ),
           ],
         ),
       ),

@@ -1084,6 +1084,11 @@ public class Api {
 
     @NonNull 
     String getCacheDataPath();
+
+    void openBatteryOptimisationSettings();
+
+    @NonNull 
+    Boolean isIgnoringBatteryOptimizations();
     /** Contacts APIs */
     void recordSentMessage(@NonNull String name, @NonNull String jid, @Nullable String avatarPath, @NonNull FallbackIconType fallbackIcon);
     /** Cryptography APIs */
@@ -1280,6 +1285,50 @@ public class Api {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   String output = api.getCacheDataPath();
+                  wrapped.add(0, output);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.openBatteryOptimisationSettings", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  api.openBatteryOptimisationSettings();
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.isIgnoringBatteryOptimizations", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Boolean output = api.isIgnoringBatteryOptimizations();
                   wrapped.add(0, output);
                 }
  catch (Throwable exception) {

@@ -181,6 +181,8 @@ abstract class MoxplatformApi {
   /// Platform APIs
   String getPersistentDataPath();
   String getCacheDataPath();
+  void openBatteryOptimisationSettings();
+  bool isIgnoringBatteryOptimizations();
 
   /// Contacts APIs
   void recordSentMessage(String name, String jid, String? avatarPath, FallbackIconType fallbackIcon);

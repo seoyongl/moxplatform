@@ -10,4 +10,14 @@ class AndroidPlatformImplementation extends PlatformImplementation {
   Future<String> getPersistentDataPath() {
     return MoxplatformInterface.api.getPersistentDataPath();
   }
+
+  @override
+  Future<bool> isIgnoringBatteryOptimizations() {
+    return MoxplatformInterface.api.isIgnoringBatteryOptimizations();
+  }
+
+  @override
+  Future<void> openBatteryOptimisationSettings() {
+    return MoxplatformInterface.api.openBatteryOptimisationSettings();
+  }
 }
