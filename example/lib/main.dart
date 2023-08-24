@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:moxplatform/moxplatform.dart';
+import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// The id of the notification channel.
@@ -286,6 +287,43 @@ class MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Open battery optimisation page'),
             ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.video,
+                );
+                if (result == null) return;
+
+                final path = result.files.single.path!;
+                final storagePath =
+                    await MoxplatformPlugin.platform.getPersistentDataPath();
+                final mediaPath = join(storagePath, 'media');
+                if (!Directory(mediaPath).existsSync()) {
+                  await Directory(mediaPath).create(recursive: true);
+                }
+
+                final internalPath = join(mediaPath, basename(path));
+                print('Copying file');
+                await File(path).copy(internalPath);
+
+                print('Generating thumbnail');
+                final thumbResult =
+                    await MoxplatformPlugin.platform.generateVideoThumbnail(
+                  internalPath,
+                  '$internalPath.thumbnail.jpg',
+                  720,
+                );
+                print('Success: $thumbResult');
+
+                await showDialog<void>(
+                  context: context,
+                  builder: (context) => Image.file(
+                    File('$internalPath.thumbnail.jpg'),
+                  ),
+                );
+              },
+              child: const Text('Thumbnail'),
+            )
           ],
         ),
       ),

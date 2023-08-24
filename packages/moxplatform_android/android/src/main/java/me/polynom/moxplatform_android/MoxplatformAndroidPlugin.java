@@ -3,9 +3,11 @@ package me.polynom.moxplatform_android;
 import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 import static androidx.core.content.ContextCompat.getSystemService;
 import static androidx.core.content.ContextCompat.startActivity;
+import static me.polynom.moxplatform_android.ConstantsKt.MOXPLATFORM_FILEPROVIDER_ID;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 import static me.polynom.moxplatform_android.CryptoKt.*;
 import static me.polynom.moxplatform_android.RecordSentMessageKt.*;
+import static me.polynom.moxplatform_android.ThumbnailsKt.generateVideoThumbnailImplementation;
 
 import me.polynom.moxplatform_android.Api.*;
 
@@ -13,20 +15,31 @@ import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -311,6 +324,12 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     @Override
     public void hashFile(@NonNull String sourcePath, @NonNull String hashSpec, @NonNull Api.Result<byte[]> result) {
         CryptoKt.hashFile(sourcePath, hashSpec, result);
+    }
+
+    @NonNull
+    @Override
+    public Boolean generateVideoThumbnail(@NonNull String src, @NonNull String dest, @NonNull Long maxWidth) {
+        return generateVideoThumbnailImplementation(src, dest, maxWidth);
     }
 
     @Override

@@ -14,4 +14,9 @@ class StubPlatformImplementation extends PlatformImplementation {
 
   @override
   Future<void> openBatteryOptimisationSettings() async {}
+
+  @override
+  Future<bool> generateVideoThumbnail(
+          String src, String dest, int width) async =>
+      false;
 }

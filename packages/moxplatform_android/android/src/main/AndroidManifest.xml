@@ -10,7 +10,7 @@
     <application>
         <provider
             android:name="me.polynom.moxplatform_android.MoxplatformFileProvider"
-            android:authorities="me.polynom.moxplatform_android.fileprovider"
+            android:authorities="me.polynom.moxplatform_android.fileprovider2"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

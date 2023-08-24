@@ -192,6 +192,9 @@ abstract class MoxplatformApi {
   @async CryptographyResult? decryptFile(String sourcePath, String destPath, Uint8List key, Uint8List iv, CipherAlgorithm algorithm, String hashSpec);
   @async Uint8List? hashFile(String sourcePath, String hashSpec);
 
+  /// Media APIs
+  bool generateVideoThumbnail(String src, String dest, int maxWidth);
+
   /// Stubs
   void eventStub(NotificationEvent event);
 }
