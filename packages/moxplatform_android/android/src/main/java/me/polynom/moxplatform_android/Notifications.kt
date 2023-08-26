@@ -107,7 +107,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         context.applicationContext,
         0,
         replyIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT,
+        PendingIntent.FLAG_MUTABLE,
     )
     val replyAction = NotificationCompat.Action.Builder(
         R.drawable.reply,
@@ -132,7 +132,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         context.applicationContext,
         0,
         markAsReadIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT,
+        PendingIntent.FLAG_IMMUTABLE,
     )
     val markAsReadAction = NotificationCompat.Action.Builder(
         R.drawable.mark_as_read,
@@ -155,7 +155,7 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         context,
         notification.id.toInt(),
         tapIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_IMMUTABLE
     )
 
     // Build the notification
