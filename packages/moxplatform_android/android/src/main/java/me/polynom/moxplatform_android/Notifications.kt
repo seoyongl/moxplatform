@@ -254,6 +254,9 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
             setContentTitle(notification.title)
         }
 
+        // Prevent grouping with the foreground service
+        setGroup(GROUP_KEY_MESSAGES)
+
         setAllowSystemGeneratedContextualActions(true)
         setCategory(Notification.CATEGORY_MESSAGE)
 
@@ -278,6 +281,8 @@ fun showNotification(context: Context, notification: Api.RegularNotification) {
             Api.NotificationIcon.WARNING -> setSmallIcon(R.drawable.warning)
             Api.NotificationIcon.NONE -> {}
         }
+
+        setGroup(GROUP_KEY_OTHER)
     }.build()
 
     // Post the notification

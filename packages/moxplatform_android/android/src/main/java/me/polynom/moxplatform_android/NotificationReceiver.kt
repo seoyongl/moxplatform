@@ -161,6 +161,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val recoveredBuilder = Notification.Builder.recoverBuilder(context, notification).apply {
             style = newStyle
             setOnlyAlertOnce(true)
+            setGroup(GROUP_KEY_MESSAGES)
         }
         NotificationManagerCompat.from(context).notify(id, recoveredBuilder.build())
     }

@@ -1,9 +1,13 @@
 package me.polynom.moxplatform_android;
 
+import static me.polynom.moxplatform_android.ConstantsKt.GROUP_KEY_FOREGROUND;
+import static me.polynom.moxplatform_android.ConstantsKt.GROUP_KEY_MESSAGES;
+import static me.polynom.moxplatform_android.ConstantsKt.GROUP_KEY_OTHER;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -98,14 +102,40 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Moxxy Background Service";
-            String description = "Executing Moxxy in the background";
-
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel("FOREGROUND_DEFAULT", name, importance);
-            channel.setDescription(description);
-
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
+            // Create a special notification group for the foreground service notification to prevent
+            // message notifications from getting grouped with it in >= Android 13.
+            notificationManager.createNotificationChannelGroup(
+                    new NotificationChannelGroup(
+                            GROUP_KEY_FOREGROUND,
+                            "The foreground notification"
+                    )
+            );
+            notificationManager.createNotificationChannelGroup(
+                    new NotificationChannelGroup(
+                            GROUP_KEY_MESSAGES,
+                            "Messages"
+                    )
+            );
+            notificationManager.createNotificationChannelGroup(
+                    new NotificationChannelGroup(
+                            GROUP_KEY_OTHER,
+                            "Other"
+                    )
+            );
+
+            NotificationChannel channel = new NotificationChannel(
+                    "FOREGROUND_DEFAULT",
+                    "Moxxy Background Service",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            channel.setDescription("Executing Moxxy in the background");
+            // Prevent showing a badge in the Launcher
+            channel.setShowBadge(false);
+            channel.setGroup("foreground");
+
+            // Create the channel
             notificationManager.createNotificationChannel(channel);
         }
     }
