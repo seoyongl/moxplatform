@@ -41,17 +41,27 @@ class MyAppState extends State<MyApp> {
   Future<void> initStateAsync() async {
     await Permission.notification.request();
 
-    await MoxplatformPlugin.notifications.createNotificationChannel(
-      "Test notification channel",
-      "Test1",
-      channelId,
-      false,
-    );
-    await MoxplatformPlugin.notifications.createNotificationChannel(
-      "Test notification channel for warnings",
-      "Test2",
-      otherChannelId,
-      false,
+    await MoxplatformPlugin.notifications.createNotificationChannels(
+      [
+        NotificationChannel(
+          id: channelId,
+          title: "Test1",
+          description: "Test notification channel",
+          importance: NotificationChannelImportance.MIN,
+          showBadge: true,
+          vibration: false,
+          enableLights: false,
+        ),
+        NotificationChannel(
+          id: otherChannelId,
+          title: "Test2",
+          description: "Test notification channel for warnings",
+          importance: NotificationChannelImportance.MIN,
+          showBadge: true,
+          vibration: false,
+          enableLights: false,
+        ),
+      ],
     );
     await MoxplatformPlugin.notifications.setI18n(
       NotificationI18nData(
@@ -303,9 +313,11 @@ class MyHomePageState extends State<MyHomePage> {
                 }
 
                 final internalPath = join(mediaPath, basename(path));
+                // ignore: avoid_print
                 print('Copying file');
                 await File(path).copy(internalPath);
 
+                // ignore: avoid_print
                 print('Generating thumbnail');
                 final thumbResult =
                     await MoxplatformPlugin.platform.generateVideoThumbnail(
@@ -313,8 +325,10 @@ class MyHomePageState extends State<MyHomePage> {
                   '$internalPath.thumbnail.jpg',
                   720,
                 );
+                // ignore: avoid_print
                 print('Success: $thumbResult');
 
+                // ignore: use_build_context_synchronously
                 await showDialog<void>(
                   context: context,
                   builder: (context) => Image.file(

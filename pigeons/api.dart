@@ -34,8 +34,12 @@ class NotificationMessage {
     this.content,
     this.jid,
     this.timestamp,
-    this.avatarPath,
-  );
+    this.avatarPath, {
+    this.groupId,
+  });
+
+  /// The grouping key for the notification.
+  final String? groupId;
 
   /// The sender of the message.
   final String? sender;
@@ -54,7 +58,7 @@ class NotificationMessage {
 }
 
 class MessagingNotification {
-  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId, this.isGroupchat, this.extra);
+  const MessagingNotification(this.title, this.id, this.jid, this.messages, this.channelId, this.isGroupchat, this.extra, {this.groupId});
 
   /// The title of the conversation.
   final String title;
@@ -74,6 +78,9 @@ class MessagingNotification {
   /// Flag indicating whether this notification is from a groupchat or not.
   final bool isGroupchat;
 
+  /// The id for notification grouping.
+  final String? groupId;
+
   /// Additional data to include.
   final Map<String?, String?>? extra;
 }
@@ -85,7 +92,7 @@ enum NotificationIcon {
 }
 
 class RegularNotification {
-  const RegularNotification(this.title, this.body, this.channelId, this.id, this.icon);
+  const RegularNotification(this.title, this.body, this.channelId, this.id, this.icon, {this.groupId});
 
   /// The title of the notification.
   final String title;
@@ -95,6 +102,9 @@ class RegularNotification {
 
   /// The id of the channel to show the notification on.
   final String channelId;
+
+  /// The id for notification grouping.
+  final String? groupId;
 
   /// The id of the notification.
   final int id;
@@ -168,10 +178,46 @@ enum FallbackIconType {
   notes;
 }
 
+class NotificationGroup {
+  const NotificationGroup(this.id, this.description);
+  final String id;
+  final String description;
+}
+
+enum NotificationChannelImportance {
+  MIN,
+  HIGH,
+  DEFAULT
+}
+
+class NotificationChannel {
+  const NotificationChannel(
+    this.id,
+    this.title,
+    this.description, {
+    this.importance = NotificationChannelImportance.DEFAULT,
+    this.showBadge = true,
+    this.groupId,
+    this.vibration = true,
+    this.enableLights = true,
+  });
+  final String title;
+  final String description;
+  final String id;
+  final NotificationChannelImportance importance;
+  final bool showBadge;
+  final String? groupId;
+  final bool vibration;
+  final bool enableLights;
+}
+
 @HostApi()
 abstract class MoxplatformApi {
   /// Notification APIs
-  void createNotificationChannel(String title, String description, String id, bool urgent);
+  void createNotificationGroups(List<NotificationGroup> groups);
+  void deleteNotificationGroups(List<String> ids);
+  void createNotificationChannels(List<NotificationChannel> channels);
+  void deleteNotificationChannels(List<String> ids);
   void showMessagingNotification(MessagingNotification notification);
   void showNotification(RegularNotification notification);
   void dismissNotification(int id);
