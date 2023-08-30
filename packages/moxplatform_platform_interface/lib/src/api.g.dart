@@ -32,6 +32,12 @@ enum FallbackIconType {
   notes,
 }
 
+enum NotificationChannelImportance {
+  MIN,
+  HIGH,
+  DEFAULT,
+}
+
 class NotificationMessageContent {
   NotificationMessageContent({
     this.body,
@@ -67,12 +73,16 @@ class NotificationMessageContent {
 
 class NotificationMessage {
   NotificationMessage({
+    this.groupId,
     this.sender,
     this.jid,
     required this.content,
     required this.timestamp,
     this.avatarPath,
   });
+
+  /// The grouping key for the notification.
+  String? groupId;
 
   /// The sender of the message.
   String? sender;
@@ -91,6 +101,7 @@ class NotificationMessage {
 
   Object encode() {
     return <Object?>[
+      groupId,
       sender,
       jid,
       content.encode(),
@@ -102,11 +113,12 @@ class NotificationMessage {
   static NotificationMessage decode(Object result) {
     result as List<Object?>;
     return NotificationMessage(
-      sender: result[0] as String?,
-      jid: result[1] as String?,
-      content: NotificationMessageContent.decode(result[2]! as List<Object?>),
-      timestamp: result[3]! as int,
-      avatarPath: result[4] as String?,
+      groupId: result[0] as String?,
+      sender: result[1] as String?,
+      jid: result[2] as String?,
+      content: NotificationMessageContent.decode(result[3]! as List<Object?>),
+      timestamp: result[4]! as int,
+      avatarPath: result[5] as String?,
     );
   }
 }
@@ -119,6 +131,7 @@ class MessagingNotification {
     required this.jid,
     required this.messages,
     required this.isGroupchat,
+    this.groupId,
     this.extra,
   });
 
@@ -140,6 +153,9 @@ class MessagingNotification {
   /// Flag indicating whether this notification is from a groupchat or not.
   bool isGroupchat;
 
+  /// The id for notification grouping.
+  String? groupId;
+
   /// Additional data to include.
   Map<String?, String?>? extra;
 
@@ -151,6 +167,7 @@ class MessagingNotification {
       jid,
       messages,
       isGroupchat,
+      groupId,
       extra,
     ];
   }
@@ -164,7 +181,8 @@ class MessagingNotification {
       jid: result[3]! as String,
       messages: (result[4] as List<Object?>?)!.cast<NotificationMessage?>(),
       isGroupchat: result[5]! as bool,
-      extra: (result[6] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      groupId: result[6] as String?,
+      extra: (result[7] as Map<Object?, Object?>?)?.cast<String?, String?>(),
     );
   }
 }
@@ -174,6 +192,7 @@ class RegularNotification {
     required this.title,
     required this.body,
     required this.channelId,
+    this.groupId,
     required this.id,
     required this.icon,
   });
@@ -187,6 +206,9 @@ class RegularNotification {
   /// The id of the channel to show the notification on.
   String channelId;
 
+  /// The id for notification grouping.
+  String? groupId;
+
   /// The id of the notification.
   int id;
 
@@ -198,6 +220,7 @@ class RegularNotification {
       title,
       body,
       channelId,
+      groupId,
       id,
       icon.index,
     ];
@@ -209,8 +232,9 @@ class RegularNotification {
       title: result[0]! as String,
       body: result[1]! as String,
       channelId: result[2]! as String,
-      id: result[3]! as int,
-      icon: NotificationIcon.values[result[4]! as int],
+      groupId: result[3] as String?,
+      id: result[4]! as int,
+      icon: NotificationIcon.values[result[5]! as int],
     );
   }
 }
@@ -323,6 +347,88 @@ class CryptographyResult {
   }
 }
 
+class NotificationGroup {
+  NotificationGroup({
+    required this.id,
+    required this.description,
+  });
+
+  String id;
+
+  String description;
+
+  Object encode() {
+    return <Object?>[
+      id,
+      description,
+    ];
+  }
+
+  static NotificationGroup decode(Object result) {
+    result as List<Object?>;
+    return NotificationGroup(
+      id: result[0]! as String,
+      description: result[1]! as String,
+    );
+  }
+}
+
+class NotificationChannel {
+  NotificationChannel({
+    required this.title,
+    required this.description,
+    required this.id,
+    required this.importance,
+    required this.showBadge,
+    this.groupId,
+    required this.vibration,
+    required this.enableLights,
+  });
+
+  String title;
+
+  String description;
+
+  String id;
+
+  NotificationChannelImportance importance;
+
+  bool showBadge;
+
+  String? groupId;
+
+  bool vibration;
+
+  bool enableLights;
+
+  Object encode() {
+    return <Object?>[
+      title,
+      description,
+      id,
+      importance.index,
+      showBadge,
+      groupId,
+      vibration,
+      enableLights,
+    ];
+  }
+
+  static NotificationChannel decode(Object result) {
+    result as List<Object?>;
+    return NotificationChannel(
+      title: result[0]! as String,
+      description: result[1]! as String,
+      id: result[2]! as String,
+      importance: NotificationChannelImportance.values[result[3]! as int],
+      showBadge: result[4]! as bool,
+      groupId: result[5] as String?,
+      vibration: result[6]! as bool,
+      enableLights: result[7]! as bool,
+    );
+  }
+}
+
 class _MoxplatformApiCodec extends StandardMessageCodec {
   const _MoxplatformApiCodec();
   @override
@@ -333,20 +439,26 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
     } else if (value is MessagingNotification) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationEvent) {
+    } else if (value is NotificationChannel) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationI18nData) {
+    } else if (value is NotificationEvent) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessage) {
+    } else if (value is NotificationGroup) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NotificationMessageContent) {
+    } else if (value is NotificationI18nData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is RegularNotification) {
+    } else if (value is NotificationMessage) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is NotificationMessageContent) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is RegularNotification) {
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -361,14 +473,18 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
       case 129:
         return MessagingNotification.decode(readValue(buffer)!);
       case 130:
-        return NotificationEvent.decode(readValue(buffer)!);
+        return NotificationChannel.decode(readValue(buffer)!);
       case 131:
-        return NotificationI18nData.decode(readValue(buffer)!);
+        return NotificationEvent.decode(readValue(buffer)!);
       case 132:
-        return NotificationMessage.decode(readValue(buffer)!);
+        return NotificationGroup.decode(readValue(buffer)!);
       case 133:
-        return NotificationMessageContent.decode(readValue(buffer)!);
+        return NotificationI18nData.decode(readValue(buffer)!);
       case 134:
+        return NotificationMessage.decode(readValue(buffer)!);
+      case 135:
+        return NotificationMessageContent.decode(readValue(buffer)!);
+      case 136:
         return RegularNotification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -387,15 +503,84 @@ class MoxplatformApi {
   static const MessageCodec<Object?> codec = _MoxplatformApiCodec();
 
   /// Notification APIs
-  Future<void> createNotificationChannel(String arg_title,
-      String arg_description, String arg_id, bool arg_urgent) async {
+  Future<void> createNotificationGroups(
+      List<NotificationGroup?> arg_groups) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel',
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationGroups',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-            .send(<Object?>[arg_title, arg_description, arg_id, arg_urgent])
-        as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_groups]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> deleteNotificationGroups(List<String?> arg_ids) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.deleteNotificationGroups',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_ids]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> createNotificationChannels(
+      List<NotificationChannel?> arg_channels) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannels',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_channels]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> deleteNotificationChannels(List<String?> arg_ids) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.deleteNotificationChannels',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_ids]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

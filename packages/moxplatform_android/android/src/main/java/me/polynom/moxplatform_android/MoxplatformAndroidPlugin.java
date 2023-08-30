@@ -6,6 +6,8 @@ import static androidx.core.content.ContextCompat.startActivity;
 import static me.polynom.moxplatform_android.ConstantsKt.MOXPLATFORM_FILEPROVIDER_ID;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 import static me.polynom.moxplatform_android.CryptoKt.*;
+import static me.polynom.moxplatform_android.NotificationsKt.createNotificationChannelsImpl;
+import static me.polynom.moxplatform_android.NotificationsKt.createNotificationGroupsImpl;
 import static me.polynom.moxplatform_android.RecordSentMessageKt.*;
 import static me.polynom.moxplatform_android.ThumbnailsKt.generateVideoThumbnailImplementation;
 
@@ -225,13 +227,29 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     }
 
     @Override
-    public void createNotificationChannel(@NonNull String title, @NonNull String description, @NonNull String id, @NonNull Boolean urgent) {
-        final NotificationChannel channel = new NotificationChannel(id, title, urgent ? NotificationManager.IMPORTANCE_HIGH : NotificationManager.IMPORTANCE_DEFAULT);
-        channel.enableVibration(true);
-        channel.enableLights(true);
-        channel.setDescription(description);
-        final NotificationManager manager = getSystemService(context, NotificationManager.class);
-        manager.createNotificationChannel(channel);
+    public void createNotificationGroups(@NonNull List<NotificationGroup> groups) {
+        createNotificationGroupsImpl(context, groups);
+    }
+
+    @Override
+    public void deleteNotificationGroups(@NonNull List<String> ids) {
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        for (final String id : ids) {
+            notificationManager.deleteNotificationChannelGroup(id);
+        }
+    }
+
+    @Override
+    public void createNotificationChannels(@NonNull List<Api.NotificationChannel> channels) {
+        createNotificationChannelsImpl(context, channels);
+    }
+
+    @Override
+    public void deleteNotificationChannels(@NonNull List<String> ids) {
+        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        for (final String id : ids) {
+            notificationManager.deleteNotificationChannel(id);
+        }
     }
 
     @Override

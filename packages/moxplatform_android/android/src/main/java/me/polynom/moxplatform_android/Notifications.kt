@@ -1,11 +1,15 @@
 package me.polynom.moxplatform_android
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationChannelGroup
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -14,7 +18,6 @@ import androidx.core.app.RemoteInput
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.IconCompat
 import java.io.File
-import java.lang.Exception
 
 /*
  * Holds "persistent" data for notifications, like i18n strings. While not useful now, this is
@@ -84,6 +87,37 @@ object NotificationDataManager {
         setString(context, SHARED_PREFERENCES_AVATAR_KEY, value)
         fetchedAvatarPath = true
         avatarPath = value
+    }
+}
+
+fun createNotificationGroupsImpl(context: Context, groups: List<Api.NotificationGroup>) {
+    val notificationManager = context.getSystemService(NotificationManager::class.java)
+    for (group in groups) {
+        notificationManager.createNotificationChannelGroup(
+            NotificationChannelGroup(group.id, group.description),
+        )
+    }
+}
+
+fun createNotificationChannelsImpl(context: Context, channels: List<Api.NotificationChannel>) {
+    val notificationManager = context.getSystemService(NotificationManager::class.java)
+    for (channel in channels) {
+        val importance = when(channel.importance) {
+            Api.NotificationChannelImportance.DEFAULT -> NotificationManager.IMPORTANCE_DEFAULT
+            Api.NotificationChannelImportance.MIN -> NotificationManager.IMPORTANCE_MIN
+            Api.NotificationChannelImportance.HIGH -> NotificationManager.IMPORTANCE_HIGH
+        }
+        val notificationChannel = NotificationChannel(channel.id, channel.title, importance).apply {
+            description = channel.description
+
+            enableVibration(channel.vibration)
+            enableLights(channel.enableLights)
+            setShowBadge(channel.showBadge)
+            if (channel.groupId != null) {
+                group = channel.groupId
+            }
+        }
+        notificationManager.createNotificationChannel(notificationChannel)
     }
 }
 
@@ -255,7 +289,9 @@ fun showMessagingNotification(context: Context, notification: Api.MessagingNotif
         }
 
         // Prevent grouping with the foreground service
-        setGroup(GROUP_KEY_MESSAGES)
+        if (notification.groupId != null) {
+            setGroup(notification.groupId)
+        }
 
         setAllowSystemGeneratedContextualActions(true)
         setCategory(Notification.CATEGORY_MESSAGE)
@@ -282,7 +318,9 @@ fun showNotification(context: Context, notification: Api.RegularNotification) {
             Api.NotificationIcon.NONE -> {}
         }
 
-        setGroup(GROUP_KEY_OTHER)
+        if (notification.groupId != null) {
+            setGroup(notification.groupId)
+        }
     }.build()
 
     // Post the notification

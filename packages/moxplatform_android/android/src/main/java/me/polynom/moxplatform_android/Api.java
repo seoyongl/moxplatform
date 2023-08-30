@@ -105,6 +105,18 @@ public class Api {
     }
   }
 
+  public enum NotificationChannelImportance {
+    MIN(0),
+    HIGH(1),
+    DEFAULT(2);
+
+    final int index;
+
+    private NotificationChannelImportance(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationMessageContent {
     /** The textual body of the message. */
@@ -194,6 +206,17 @@ public class Api {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class NotificationMessage {
+    /** The grouping key for the notification. */
+    private @Nullable String groupId;
+
+    public @Nullable String getGroupId() {
+      return groupId;
+    }
+
+    public void setGroupId(@Nullable String setterArg) {
+      this.groupId = setterArg;
+    }
+
     /** The sender of the message. */
     private @Nullable String sender;
 
@@ -260,6 +283,13 @@ public class Api {
 
     public static final class Builder {
 
+      private @Nullable String groupId;
+
+      public @NonNull Builder setGroupId(@Nullable String setterArg) {
+        this.groupId = setterArg;
+        return this;
+      }
+
       private @Nullable String sender;
 
       public @NonNull Builder setSender(@Nullable String setterArg) {
@@ -297,6 +327,7 @@ public class Api {
 
       public @NonNull NotificationMessage build() {
         NotificationMessage pigeonReturn = new NotificationMessage();
+        pigeonReturn.setGroupId(groupId);
         pigeonReturn.setSender(sender);
         pigeonReturn.setJid(jid);
         pigeonReturn.setContent(content);
@@ -308,7 +339,8 @@ public class Api {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(5);
+      ArrayList<Object> toListResult = new ArrayList<Object>(6);
+      toListResult.add(groupId);
       toListResult.add(sender);
       toListResult.add(jid);
       toListResult.add((content == null) ? null : content.toList());
@@ -319,15 +351,17 @@ public class Api {
 
     static @NonNull NotificationMessage fromList(@NonNull ArrayList<Object> list) {
       NotificationMessage pigeonResult = new NotificationMessage();
-      Object sender = list.get(0);
+      Object groupId = list.get(0);
+      pigeonResult.setGroupId((String) groupId);
+      Object sender = list.get(1);
       pigeonResult.setSender((String) sender);
-      Object jid = list.get(1);
+      Object jid = list.get(2);
       pigeonResult.setJid((String) jid);
-      Object content = list.get(2);
+      Object content = list.get(3);
       pigeonResult.setContent((content == null) ? null : NotificationMessageContent.fromList((ArrayList<Object>) content));
-      Object timestamp = list.get(3);
+      Object timestamp = list.get(4);
       pigeonResult.setTimestamp((timestamp == null) ? null : ((timestamp instanceof Integer) ? (Integer) timestamp : (Long) timestamp));
-      Object avatarPath = list.get(4);
+      Object avatarPath = list.get(5);
       pigeonResult.setAvatarPath((String) avatarPath);
       return pigeonResult;
     }
@@ -419,6 +453,17 @@ public class Api {
       this.isGroupchat = setterArg;
     }
 
+    /** The id for notification grouping. */
+    private @Nullable String groupId;
+
+    public @Nullable String getGroupId() {
+      return groupId;
+    }
+
+    public void setGroupId(@Nullable String setterArg) {
+      this.groupId = setterArg;
+    }
+
     /** Additional data to include. */
     private @Nullable Map<String, String> extra;
 
@@ -477,6 +522,13 @@ public class Api {
         return this;
       }
 
+      private @Nullable String groupId;
+
+      public @NonNull Builder setGroupId(@Nullable String setterArg) {
+        this.groupId = setterArg;
+        return this;
+      }
+
       private @Nullable Map<String, String> extra;
 
       public @NonNull Builder setExtra(@Nullable Map<String, String> setterArg) {
@@ -492,6 +544,7 @@ public class Api {
         pigeonReturn.setJid(jid);
         pigeonReturn.setMessages(messages);
         pigeonReturn.setIsGroupchat(isGroupchat);
+        pigeonReturn.setGroupId(groupId);
         pigeonReturn.setExtra(extra);
         return pigeonReturn;
       }
@@ -499,13 +552,14 @@ public class Api {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(7);
+      ArrayList<Object> toListResult = new ArrayList<Object>(8);
       toListResult.add(title);
       toListResult.add(id);
       toListResult.add(channelId);
       toListResult.add(jid);
       toListResult.add(messages);
       toListResult.add(isGroupchat);
+      toListResult.add(groupId);
       toListResult.add(extra);
       return toListResult;
     }
@@ -524,7 +578,9 @@ public class Api {
       pigeonResult.setMessages((List<NotificationMessage>) messages);
       Object isGroupchat = list.get(5);
       pigeonResult.setIsGroupchat((Boolean) isGroupchat);
-      Object extra = list.get(6);
+      Object groupId = list.get(6);
+      pigeonResult.setGroupId((String) groupId);
+      Object extra = list.get(7);
       pigeonResult.setExtra((Map<String, String>) extra);
       return pigeonResult;
     }
@@ -572,6 +628,17 @@ public class Api {
         throw new IllegalStateException("Nonnull field \"channelId\" is null.");
       }
       this.channelId = setterArg;
+    }
+
+    /** The id for notification grouping. */
+    private @Nullable String groupId;
+
+    public @Nullable String getGroupId() {
+      return groupId;
+    }
+
+    public void setGroupId(@Nullable String setterArg) {
+      this.groupId = setterArg;
     }
 
     /** The id of the notification. */
@@ -628,6 +695,13 @@ public class Api {
         return this;
       }
 
+      private @Nullable String groupId;
+
+      public @NonNull Builder setGroupId(@Nullable String setterArg) {
+        this.groupId = setterArg;
+        return this;
+      }
+
       private @Nullable Long id;
 
       public @NonNull Builder setId(@NonNull Long setterArg) {
@@ -647,6 +721,7 @@ public class Api {
         pigeonReturn.setTitle(title);
         pigeonReturn.setBody(body);
         pigeonReturn.setChannelId(channelId);
+        pigeonReturn.setGroupId(groupId);
         pigeonReturn.setId(id);
         pigeonReturn.setIcon(icon);
         return pigeonReturn;
@@ -655,10 +730,11 @@ public class Api {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(5);
+      ArrayList<Object> toListResult = new ArrayList<Object>(6);
       toListResult.add(title);
       toListResult.add(body);
       toListResult.add(channelId);
+      toListResult.add(groupId);
       toListResult.add(id);
       toListResult.add(icon == null ? null : icon.index);
       return toListResult;
@@ -672,9 +748,11 @@ public class Api {
       pigeonResult.setBody((String) body);
       Object channelId = list.get(2);
       pigeonResult.setChannelId((String) channelId);
-      Object id = list.get(3);
+      Object groupId = list.get(3);
+      pigeonResult.setGroupId((String) groupId);
+      Object id = list.get(4);
       pigeonResult.setId((id == null) ? null : ((id instanceof Integer) ? (Integer) id : (Long) id));
-      Object icon = list.get(4);
+      Object icon = list.get(5);
       pigeonResult.setIcon(icon == null ? null : NotificationIcon.values()[(int) icon]);
       return pigeonResult;
     }
@@ -1001,6 +1079,293 @@ public class Api {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class NotificationGroup {
+    private @NonNull String id;
+
+    public @NonNull String getId() {
+      return id;
+    }
+
+    public void setId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"id\" is null.");
+      }
+      this.id = setterArg;
+    }
+
+    private @NonNull String description;
+
+    public @NonNull String getDescription() {
+      return description;
+    }
+
+    public void setDescription(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"description\" is null.");
+      }
+      this.description = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    NotificationGroup() {}
+
+    public static final class Builder {
+
+      private @Nullable String id;
+
+      public @NonNull Builder setId(@NonNull String setterArg) {
+        this.id = setterArg;
+        return this;
+      }
+
+      private @Nullable String description;
+
+      public @NonNull Builder setDescription(@NonNull String setterArg) {
+        this.description = setterArg;
+        return this;
+      }
+
+      public @NonNull NotificationGroup build() {
+        NotificationGroup pigeonReturn = new NotificationGroup();
+        pigeonReturn.setId(id);
+        pigeonReturn.setDescription(description);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(id);
+      toListResult.add(description);
+      return toListResult;
+    }
+
+    static @NonNull NotificationGroup fromList(@NonNull ArrayList<Object> list) {
+      NotificationGroup pigeonResult = new NotificationGroup();
+      Object id = list.get(0);
+      pigeonResult.setId((String) id);
+      Object description = list.get(1);
+      pigeonResult.setDescription((String) description);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class NotificationChannel {
+    private @NonNull String title;
+
+    public @NonNull String getTitle() {
+      return title;
+    }
+
+    public void setTitle(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"title\" is null.");
+      }
+      this.title = setterArg;
+    }
+
+    private @NonNull String description;
+
+    public @NonNull String getDescription() {
+      return description;
+    }
+
+    public void setDescription(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"description\" is null.");
+      }
+      this.description = setterArg;
+    }
+
+    private @NonNull String id;
+
+    public @NonNull String getId() {
+      return id;
+    }
+
+    public void setId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"id\" is null.");
+      }
+      this.id = setterArg;
+    }
+
+    private @NonNull NotificationChannelImportance importance;
+
+    public @NonNull NotificationChannelImportance getImportance() {
+      return importance;
+    }
+
+    public void setImportance(@NonNull NotificationChannelImportance setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"importance\" is null.");
+      }
+      this.importance = setterArg;
+    }
+
+    private @NonNull Boolean showBadge;
+
+    public @NonNull Boolean getShowBadge() {
+      return showBadge;
+    }
+
+    public void setShowBadge(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"showBadge\" is null.");
+      }
+      this.showBadge = setterArg;
+    }
+
+    private @Nullable String groupId;
+
+    public @Nullable String getGroupId() {
+      return groupId;
+    }
+
+    public void setGroupId(@Nullable String setterArg) {
+      this.groupId = setterArg;
+    }
+
+    private @NonNull Boolean vibration;
+
+    public @NonNull Boolean getVibration() {
+      return vibration;
+    }
+
+    public void setVibration(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"vibration\" is null.");
+      }
+      this.vibration = setterArg;
+    }
+
+    private @NonNull Boolean enableLights;
+
+    public @NonNull Boolean getEnableLights() {
+      return enableLights;
+    }
+
+    public void setEnableLights(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"enableLights\" is null.");
+      }
+      this.enableLights = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    NotificationChannel() {}
+
+    public static final class Builder {
+
+      private @Nullable String title;
+
+      public @NonNull Builder setTitle(@NonNull String setterArg) {
+        this.title = setterArg;
+        return this;
+      }
+
+      private @Nullable String description;
+
+      public @NonNull Builder setDescription(@NonNull String setterArg) {
+        this.description = setterArg;
+        return this;
+      }
+
+      private @Nullable String id;
+
+      public @NonNull Builder setId(@NonNull String setterArg) {
+        this.id = setterArg;
+        return this;
+      }
+
+      private @Nullable NotificationChannelImportance importance;
+
+      public @NonNull Builder setImportance(@NonNull NotificationChannelImportance setterArg) {
+        this.importance = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean showBadge;
+
+      public @NonNull Builder setShowBadge(@NonNull Boolean setterArg) {
+        this.showBadge = setterArg;
+        return this;
+      }
+
+      private @Nullable String groupId;
+
+      public @NonNull Builder setGroupId(@Nullable String setterArg) {
+        this.groupId = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean vibration;
+
+      public @NonNull Builder setVibration(@NonNull Boolean setterArg) {
+        this.vibration = setterArg;
+        return this;
+      }
+
+      private @Nullable Boolean enableLights;
+
+      public @NonNull Builder setEnableLights(@NonNull Boolean setterArg) {
+        this.enableLights = setterArg;
+        return this;
+      }
+
+      public @NonNull NotificationChannel build() {
+        NotificationChannel pigeonReturn = new NotificationChannel();
+        pigeonReturn.setTitle(title);
+        pigeonReturn.setDescription(description);
+        pigeonReturn.setId(id);
+        pigeonReturn.setImportance(importance);
+        pigeonReturn.setShowBadge(showBadge);
+        pigeonReturn.setGroupId(groupId);
+        pigeonReturn.setVibration(vibration);
+        pigeonReturn.setEnableLights(enableLights);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(8);
+      toListResult.add(title);
+      toListResult.add(description);
+      toListResult.add(id);
+      toListResult.add(importance == null ? null : importance.index);
+      toListResult.add(showBadge);
+      toListResult.add(groupId);
+      toListResult.add(vibration);
+      toListResult.add(enableLights);
+      return toListResult;
+    }
+
+    static @NonNull NotificationChannel fromList(@NonNull ArrayList<Object> list) {
+      NotificationChannel pigeonResult = new NotificationChannel();
+      Object title = list.get(0);
+      pigeonResult.setTitle((String) title);
+      Object description = list.get(1);
+      pigeonResult.setDescription((String) description);
+      Object id = list.get(2);
+      pigeonResult.setId((String) id);
+      Object importance = list.get(3);
+      pigeonResult.setImportance(importance == null ? null : NotificationChannelImportance.values()[(int) importance]);
+      Object showBadge = list.get(4);
+      pigeonResult.setShowBadge((Boolean) showBadge);
+      Object groupId = list.get(5);
+      pigeonResult.setGroupId((String) groupId);
+      Object vibration = list.get(6);
+      pigeonResult.setVibration((Boolean) vibration);
+      Object enableLights = list.get(7);
+      pigeonResult.setEnableLights((Boolean) enableLights);
+      return pigeonResult;
+    }
+  }
+
   public interface Result<T> {
     @SuppressWarnings("UnknownNullness")
     void success(T result);
@@ -1021,14 +1386,18 @@ public class Api {
         case (byte) 129:
           return MessagingNotification.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return NotificationEvent.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationChannel.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return NotificationI18nData.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationEvent.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationGroup.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
+          return NotificationI18nData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
+          return NotificationMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
+          return NotificationMessageContent.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
           return RegularNotification.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -1043,20 +1412,26 @@ public class Api {
       } else if (value instanceof MessagingNotification) {
         stream.write(129);
         writeValue(stream, ((MessagingNotification) value).toList());
-      } else if (value instanceof NotificationEvent) {
+      } else if (value instanceof NotificationChannel) {
         stream.write(130);
-        writeValue(stream, ((NotificationEvent) value).toList());
-      } else if (value instanceof NotificationI18nData) {
+        writeValue(stream, ((NotificationChannel) value).toList());
+      } else if (value instanceof NotificationEvent) {
         stream.write(131);
+        writeValue(stream, ((NotificationEvent) value).toList());
+      } else if (value instanceof NotificationGroup) {
+        stream.write(132);
+        writeValue(stream, ((NotificationGroup) value).toList());
+      } else if (value instanceof NotificationI18nData) {
+        stream.write(133);
         writeValue(stream, ((NotificationI18nData) value).toList());
       } else if (value instanceof NotificationMessage) {
-        stream.write(132);
+        stream.write(134);
         writeValue(stream, ((NotificationMessage) value).toList());
       } else if (value instanceof NotificationMessageContent) {
-        stream.write(133);
+        stream.write(135);
         writeValue(stream, ((NotificationMessageContent) value).toList());
       } else if (value instanceof RegularNotification) {
-        stream.write(134);
+        stream.write(136);
         writeValue(stream, ((RegularNotification) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -1067,7 +1442,13 @@ public class Api {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MoxplatformApi {
     /** Notification APIs */
-    void createNotificationChannel(@NonNull String title, @NonNull String description, @NonNull String id, @NonNull Boolean urgent);
+    void createNotificationGroups(@NonNull List<NotificationGroup> groups);
+
+    void deleteNotificationGroups(@NonNull List<String> ids);
+
+    void createNotificationChannels(@NonNull List<NotificationChannel> channels);
+
+    void deleteNotificationChannels(@NonNull List<String> ids);
 
     void showMessagingNotification(@NonNull MessagingNotification notification);
 
@@ -1112,18 +1493,87 @@ public class Api {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannel", getCodec());
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationGroups", getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                String titleArg = (String) args.get(0);
-                String descriptionArg = (String) args.get(1);
-                String idArg = (String) args.get(2);
-                Boolean urgentArg = (Boolean) args.get(3);
+                List<NotificationGroup> groupsArg = (List<NotificationGroup>) args.get(0);
                 try {
-                  api.createNotificationChannel(titleArg, descriptionArg, idArg, urgentArg);
+                  api.createNotificationGroups(groupsArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.deleteNotificationGroups", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<String> idsArg = (List<String>) args.get(0);
+                try {
+                  api.deleteNotificationGroups(idsArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannels", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<NotificationChannel> channelsArg = (List<NotificationChannel>) args.get(0);
+                try {
+                  api.createNotificationChannels(channelsArg);
+                  wrapped.add(0, null);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.deleteNotificationChannels", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<String> idsArg = (List<String>) args.get(0);
+                try {
+                  api.deleteNotificationChannels(idsArg);
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {

@@ -9,13 +9,24 @@ class AndroidNotificationsImplementation extends NotificationsImplementation {
       const EventChannel('me.polynom/notification_stream');
 
   @override
-  Future<void> createNotificationChannel(
-    String title,
-    String description,
-    String id,
-    bool urgent,
-  ) async {
-    return _api.createNotificationChannel(title, description, id, urgent);
+  Future<void> createNotificationChannels(
+      List<NotificationChannel> channels) async {
+    return _api.createNotificationChannels(channels);
+  }
+
+  @override
+  Future<void> deleteNotificationChannels(List<String> ids) {
+    return _api.deleteNotificationChannels(ids);
+  }
+
+  @override
+  Future<void> createNotificationGroups(List<NotificationGroup> groups) async {
+    return _api.createNotificationGroups(groups);
+  }
+
+  @override
+  Future<void> deleteNotificationGroups(List<String> ids) {
+    return _api.deleteNotificationGroups(ids);
   }
 
   @override

@@ -100,46 +100,6 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
                 .apply();
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-
-            // Create a special notification group for the foreground service notification to prevent
-            // message notifications from getting grouped with it in >= Android 13.
-            notificationManager.createNotificationChannelGroup(
-                    new NotificationChannelGroup(
-                            GROUP_KEY_FOREGROUND,
-                            "The foreground notification"
-                    )
-            );
-            notificationManager.createNotificationChannelGroup(
-                    new NotificationChannelGroup(
-                            GROUP_KEY_MESSAGES,
-                            "Messages"
-                    )
-            );
-            notificationManager.createNotificationChannelGroup(
-                    new NotificationChannelGroup(
-                            GROUP_KEY_OTHER,
-                            "Other"
-                    )
-            );
-
-            NotificationChannel channel = new NotificationChannel(
-                    "FOREGROUND_DEFAULT",
-                    "Moxxy Background Service",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            channel.setDescription("Executing Moxxy in the background");
-            // Prevent showing a badge in the Launcher
-            channel.setShowBadge(false);
-            channel.setGroup("foreground");
-
-            // Create the channel
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
     protected void updateNotificationInfo() {
         String packageName = getApplicationContext().getPackageName();
         Intent i = getPackageManager().getLaunchIntentForPackage(packageName);
@@ -269,7 +229,6 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
     public void onCreate() {
         super.onCreate();
 
-        createNotificationChannel();
         notificationBody = "Preparing...";
         updateNotificationInfo();
     }
