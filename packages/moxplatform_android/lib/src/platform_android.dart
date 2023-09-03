@@ -24,7 +24,10 @@ class AndroidPlatformImplementation extends PlatformImplementation {
 
   @override
   Future<bool> generateVideoThumbnail(
-      String src, String dest, int width) async {
+    String src,
+    String dest,
+    int width,
+  ) async {
     return MoxplatformInterface.api.generateVideoThumbnail(src, dest, width);
   }
 }

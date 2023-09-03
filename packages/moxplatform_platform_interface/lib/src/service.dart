@@ -11,7 +11,8 @@ abstract class BackgroundService {
   /// [handleEvent] is a function that is called whenever the service receives
   /// data.
   void init(
-    Future<void> Function() entrypoint,
+    Future<void> Function(String initialLocale) entrypoint,
     Future<void> Function(Map<String, dynamic>? data) handleEvent,
+    String initialLocale,
   );
 }

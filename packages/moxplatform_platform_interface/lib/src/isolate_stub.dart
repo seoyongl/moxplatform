@@ -22,9 +22,10 @@ class StubIsolateHandler extends IsolateHandler {
 
   @override
   Future<void> start(
-    Future<void> Function() entrypoint,
+    Future<void> Function(String initialLocale) entrypoint,
     Future<void> Function(Map<String, dynamic>? data) handleUIEvent,
     Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
+    String initialLocale,
   ) async {
     // ignore: avoid_print
     print('STUB STARTED!!!!!!');

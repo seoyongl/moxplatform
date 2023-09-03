@@ -8,10 +8,12 @@ abstract class IsolateHandler {
   /// [entrypoint] is the entrypoint that is run inside the new isolate.
   /// [handleUIEvent] is a handler function that is called when the isolate receives data from the UI.
   /// [handleIsolateEvent] is a handler function that is called when the UI receives data from the service.
+  /// [initialLocale] the locale to pass to the background service when first starting.
   Future<void> start(
-    Future<void> Function() entrypoint,
+    Future<void> Function(String initialLocale) entrypoint,
     Future<void> Function(Map<String, dynamic>? data) handleUIEvent,
     Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
+    String initialLocale,
   );
 
   /// Make sure that the UI event handler is registered without starting the isolate.

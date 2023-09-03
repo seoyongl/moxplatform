@@ -114,7 +114,7 @@ public class BackgroundService extends Service implements MethodChannel.MethodCa
                         | (PendingIntent.FLAG_MUTABLE & (aboveS ? PendingIntent.FLAG_MUTABLE : 0))
         );
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "FOREGROUND_DEFAULT")
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "foreground_service")
                 .setSmallIcon(R.drawable.ic_service_icon)
                 .setAutoCancel(true)
                 .setOngoing(true)

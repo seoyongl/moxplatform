@@ -39,8 +39,9 @@ class AndroidBackgroundService extends BackgroundService {
 
   @override
   void init(
-    Future<void> Function() entrypoint,
+    Future<void> Function(String initialLocale) entrypoint,
     Future<void> Function(Map<String, dynamic>? data) handleEvent,
+    String initialLocale,
   ) {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -58,6 +59,6 @@ class AndroidBackgroundService extends BackgroundService {
 
     _log.finest('Running...');
 
-    entrypoint();
+    entrypoint(initialLocale);
   }
 }

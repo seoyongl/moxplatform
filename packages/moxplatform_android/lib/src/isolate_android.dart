@@ -52,8 +52,9 @@ Future<void> androidEntrypoint() async {
   final srv = AndroidBackgroundService();
   GetIt.I.registerSingleton<BackgroundService>(srv);
   srv.init(
-    entrypoint! as Future<void> Function(),
+    entrypoint! as Future<void> Function(String),
     handleUIEvent! as Future<void> Function(Map<String, dynamic>? data),
+    data['initialLocale']! as String,
   );
 }
 
@@ -80,9 +81,10 @@ class AndroidIsolateHandler extends IsolateHandler {
 
   @override
   Future<void> start(
-    Future<void> Function() entrypoint,
+    Future<void> Function(String initialLocale) entrypoint,
     Future<void> Function(Map<String, dynamic>? data) handleUIEvent,
     Future<void> Function(Map<String, dynamic>? data) handleIsolateEvent,
+    String initialLocale,
   ) async {
     _log.finest('Called start');
     WidgetsFlutterBinding.ensureInitialized();
@@ -96,7 +98,8 @@ class AndroidIsolateHandler extends IsolateHandler {
         'genericEntrypoint':
             PluginUtilities.getCallbackHandle(entrypoint)!.toRawHandle(),
         'eventHandle':
-            PluginUtilities.getCallbackHandle(handleUIEvent)!.toRawHandle()
+            PluginUtilities.getCallbackHandle(handleUIEvent)!.toRawHandle(),
+        'initialLocale': initialLocale,
       }),
     ]);
 
