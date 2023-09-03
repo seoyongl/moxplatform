@@ -32,10 +32,10 @@ dependencies:
 
   moxplatform:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: 0.1.17+5
+    version: 0.1.17+6
   moxplatform_android:
     hosted: https://git.polynom.me/api/packages/Moxxy/pub
-    version: 0.1.21
+    version: 0.1.22
 
   file_picker: 5.2.0+1
 

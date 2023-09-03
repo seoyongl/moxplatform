@@ -1,3 +1,10 @@
+## 0.1.22
+
+ - **FIX**(repo): Remove notification examples.
+ - **FEAT**(interface,android): Allow passing an initial locale to the service.
+ - **FEAT**(base,interface,android): Move more logic to Moxxy.
+ - **FEAT**(android,interface): Implement video thumbnail generation.
+
 ## 0.1.21
 
  - **FIX**(repo): Remove notification examples.

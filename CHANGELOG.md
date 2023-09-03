@@ -15,6 +15,46 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`moxplatform_android` - `v0.1.22`](#moxplatform_android---v0122)
+ - [`moxplatform_platform_interface` - `v0.1.22`](#moxplatform_platform_interface---v0122)
+ - [`moxplatform` - `v0.1.17+6`](#moxplatform---v01176)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `moxplatform` - `v0.1.17+6`
+
+---
+
+#### `moxplatform_android` - `v0.1.22`
+
+ - **FIX**(android): Fix notification grouping with the foreground notification.
+ - **FIX**(android): Fix creating notifications on Android 13.
+ - **FEAT**(interface,android): Allow passing an initial locale to the service.
+ - **FEAT**(base,interface,android): Move more logic to Moxxy.
+ - **FEAT**(android,interface): Implement video thumbnail generation.
+
+#### `moxplatform_platform_interface` - `v0.1.22`
+
+ - **FIX**(repo): Remove notification examples.
+ - **FEAT**(interface,android): Allow passing an initial locale to the service.
+ - **FEAT**(base,interface,android): Move more logic to Moxxy.
+ - **FEAT**(android,interface): Implement video thumbnail generation.
+
+
+## 2023-09-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`moxplatform_android` - `v0.1.21`](#moxplatform_android---v0121)
  - [`moxplatform_platform_interface` - `v0.1.21`](#moxplatform_platform_interface---v0121)
  - [`moxplatform` - `v0.1.17+5`](#moxplatform---v01175)
