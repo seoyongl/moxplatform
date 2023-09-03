@@ -1,3 +1,9 @@
+## 0.1.21
+
+ - **FIX**(repo): Remove notification examples.
+ - **FEAT**(base,interface,android): Move more logic to Moxxy.
+ - **FEAT**(android,interface): Implement video thumbnail generation.
+
 ## 0.1.20
 
  - **FEAT**(android,interface): Handle battery optimisation.

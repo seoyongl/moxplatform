@@ -1,3 +1,10 @@
+## 0.1.21
+
+ - **FIX**(android): Fix notification grouping with the foreground notification.
+ - **FIX**(android): Fix creating notifications on Android 13.
+ - **FEAT**(base,interface,android): Move more logic to Moxxy.
+ - **FEAT**(android,interface): Implement video thumbnail generation.
+
 ## 0.1.20
 
  - **FIX**(android): Fix FileProvider id.
