@@ -8,16 +8,6 @@
 
 
     <application>
-        <provider
-            android:name="me.polynom.moxplatform_android.MoxplatformFileProvider"
-            android:authorities="me.polynom.moxplatform_android.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
         <service
             android:enabled="true"
             android:exported="true"
@@ -38,7 +28,5 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".NotificationReceiver" />
     </application>
 </manifest>

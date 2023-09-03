@@ -8,18 +8,6 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-enum NotificationIcon {
-  warning,
-  error,
-  none,
-}
-
-enum NotificationEventType {
-  markAsRead,
-  reply,
-  open,
-}
-
 enum CipherAlgorithm {
   aes128GcmNoPadding,
   aes256GcmNoPadding,
@@ -30,295 +18,6 @@ enum FallbackIconType {
   none,
   person,
   notes,
-}
-
-enum NotificationChannelImportance {
-  MIN,
-  HIGH,
-  DEFAULT,
-}
-
-class NotificationMessageContent {
-  NotificationMessageContent({
-    this.body,
-    this.mime,
-    this.path,
-  });
-
-  /// The textual body of the message.
-  String? body;
-
-  /// The path and mime type of the media to show.
-  String? mime;
-
-  String? path;
-
-  Object encode() {
-    return <Object?>[
-      body,
-      mime,
-      path,
-    ];
-  }
-
-  static NotificationMessageContent decode(Object result) {
-    result as List<Object?>;
-    return NotificationMessageContent(
-      body: result[0] as String?,
-      mime: result[1] as String?,
-      path: result[2] as String?,
-    );
-  }
-}
-
-class NotificationMessage {
-  NotificationMessage({
-    this.groupId,
-    this.sender,
-    this.jid,
-    required this.content,
-    required this.timestamp,
-    this.avatarPath,
-  });
-
-  /// The grouping key for the notification.
-  String? groupId;
-
-  /// The sender of the message.
-  String? sender;
-
-  /// The jid of the sender.
-  String? jid;
-
-  /// The body of the message.
-  NotificationMessageContent content;
-
-  /// Milliseconds since epoch.
-  int timestamp;
-
-  /// The path to the avatar to use
-  String? avatarPath;
-
-  Object encode() {
-    return <Object?>[
-      groupId,
-      sender,
-      jid,
-      content.encode(),
-      timestamp,
-      avatarPath,
-    ];
-  }
-
-  static NotificationMessage decode(Object result) {
-    result as List<Object?>;
-    return NotificationMessage(
-      groupId: result[0] as String?,
-      sender: result[1] as String?,
-      jid: result[2] as String?,
-      content: NotificationMessageContent.decode(result[3]! as List<Object?>),
-      timestamp: result[4]! as int,
-      avatarPath: result[5] as String?,
-    );
-  }
-}
-
-class MessagingNotification {
-  MessagingNotification({
-    required this.title,
-    required this.id,
-    required this.channelId,
-    required this.jid,
-    required this.messages,
-    required this.isGroupchat,
-    this.groupId,
-    this.extra,
-  });
-
-  /// The title of the conversation.
-  String title;
-
-  /// The id of the notification.
-  int id;
-
-  /// The id of the notification channel the notification should appear on.
-  String channelId;
-
-  /// The JID of the chat in which the notifications happen.
-  String jid;
-
-  /// Messages to show.
-  List<NotificationMessage?> messages;
-
-  /// Flag indicating whether this notification is from a groupchat or not.
-  bool isGroupchat;
-
-  /// The id for notification grouping.
-  String? groupId;
-
-  /// Additional data to include.
-  Map<String?, String?>? extra;
-
-  Object encode() {
-    return <Object?>[
-      title,
-      id,
-      channelId,
-      jid,
-      messages,
-      isGroupchat,
-      groupId,
-      extra,
-    ];
-  }
-
-  static MessagingNotification decode(Object result) {
-    result as List<Object?>;
-    return MessagingNotification(
-      title: result[0]! as String,
-      id: result[1]! as int,
-      channelId: result[2]! as String,
-      jid: result[3]! as String,
-      messages: (result[4] as List<Object?>?)!.cast<NotificationMessage?>(),
-      isGroupchat: result[5]! as bool,
-      groupId: result[6] as String?,
-      extra: (result[7] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-    );
-  }
-}
-
-class RegularNotification {
-  RegularNotification({
-    required this.title,
-    required this.body,
-    required this.channelId,
-    this.groupId,
-    required this.id,
-    required this.icon,
-  });
-
-  /// The title of the notification.
-  String title;
-
-  /// The body of the notification.
-  String body;
-
-  /// The id of the channel to show the notification on.
-  String channelId;
-
-  /// The id for notification grouping.
-  String? groupId;
-
-  /// The id of the notification.
-  int id;
-
-  /// The icon to use.
-  NotificationIcon icon;
-
-  Object encode() {
-    return <Object?>[
-      title,
-      body,
-      channelId,
-      groupId,
-      id,
-      icon.index,
-    ];
-  }
-
-  static RegularNotification decode(Object result) {
-    result as List<Object?>;
-    return RegularNotification(
-      title: result[0]! as String,
-      body: result[1]! as String,
-      channelId: result[2]! as String,
-      groupId: result[3] as String?,
-      id: result[4]! as int,
-      icon: NotificationIcon.values[result[5]! as int],
-    );
-  }
-}
-
-class NotificationEvent {
-  NotificationEvent({
-    required this.id,
-    required this.jid,
-    required this.type,
-    this.payload,
-    this.extra,
-  });
-
-  /// The notification id.
-  int id;
-
-  /// The JID the notification was for.
-  String jid;
-
-  /// The type of event.
-  NotificationEventType type;
-
-  /// An optional payload.
-  /// - type == NotificationType.reply: The reply message text.
-  /// Otherwise: undefined.
-  String? payload;
-
-  /// Extra data. Only set when type == NotificationType.reply.
-  Map<String?, String?>? extra;
-
-  Object encode() {
-    return <Object?>[
-      id,
-      jid,
-      type.index,
-      payload,
-      extra,
-    ];
-  }
-
-  static NotificationEvent decode(Object result) {
-    result as List<Object?>;
-    return NotificationEvent(
-      id: result[0]! as int,
-      jid: result[1]! as String,
-      type: NotificationEventType.values[result[2]! as int],
-      payload: result[3] as String?,
-      extra: (result[4] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-    );
-  }
-}
-
-class NotificationI18nData {
-  NotificationI18nData({
-    required this.reply,
-    required this.markAsRead,
-    required this.you,
-  });
-
-  /// The content of the reply button.
-  String reply;
-
-  /// The content of the "mark as read" button.
-  String markAsRead;
-
-  /// The text to show when *you* reply.
-  String you;
-
-  Object encode() {
-    return <Object?>[
-      reply,
-      markAsRead,
-      you,
-    ];
-  }
-
-  static NotificationI18nData decode(Object result) {
-    result as List<Object?>;
-    return NotificationI18nData(
-      reply: result[0]! as String,
-      markAsRead: result[1]! as String,
-      you: result[2]! as String,
-    );
-  }
 }
 
 class CryptographyResult {
@@ -347,118 +46,12 @@ class CryptographyResult {
   }
 }
 
-class NotificationGroup {
-  NotificationGroup({
-    required this.id,
-    required this.description,
-  });
-
-  String id;
-
-  String description;
-
-  Object encode() {
-    return <Object?>[
-      id,
-      description,
-    ];
-  }
-
-  static NotificationGroup decode(Object result) {
-    result as List<Object?>;
-    return NotificationGroup(
-      id: result[0]! as String,
-      description: result[1]! as String,
-    );
-  }
-}
-
-class NotificationChannel {
-  NotificationChannel({
-    required this.title,
-    required this.description,
-    required this.id,
-    required this.importance,
-    required this.showBadge,
-    this.groupId,
-    required this.vibration,
-    required this.enableLights,
-  });
-
-  String title;
-
-  String description;
-
-  String id;
-
-  NotificationChannelImportance importance;
-
-  bool showBadge;
-
-  String? groupId;
-
-  bool vibration;
-
-  bool enableLights;
-
-  Object encode() {
-    return <Object?>[
-      title,
-      description,
-      id,
-      importance.index,
-      showBadge,
-      groupId,
-      vibration,
-      enableLights,
-    ];
-  }
-
-  static NotificationChannel decode(Object result) {
-    result as List<Object?>;
-    return NotificationChannel(
-      title: result[0]! as String,
-      description: result[1]! as String,
-      id: result[2]! as String,
-      importance: NotificationChannelImportance.values[result[3]! as int],
-      showBadge: result[4]! as bool,
-      groupId: result[5] as String?,
-      vibration: result[6]! as bool,
-      enableLights: result[7]! as bool,
-    );
-  }
-}
-
 class _MoxplatformApiCodec extends StandardMessageCodec {
   const _MoxplatformApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is CryptographyResult) {
       buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessagingNotification) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is NotificationChannel) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else if (value is NotificationEvent) {
-      buffer.putUint8(131);
-      writeValue(buffer, value.encode());
-    } else if (value is NotificationGroup) {
-      buffer.putUint8(132);
-      writeValue(buffer, value.encode());
-    } else if (value is NotificationI18nData) {
-      buffer.putUint8(133);
-      writeValue(buffer, value.encode());
-    } else if (value is NotificationMessage) {
-      buffer.putUint8(134);
-      writeValue(buffer, value.encode());
-    } else if (value is NotificationMessageContent) {
-      buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    } else if (value is RegularNotification) {
-      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -468,24 +61,8 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return CryptographyResult.decode(readValue(buffer)!);
-      case 129:
-        return MessagingNotification.decode(readValue(buffer)!);
-      case 130:
-        return NotificationChannel.decode(readValue(buffer)!);
-      case 131:
-        return NotificationEvent.decode(readValue(buffer)!);
-      case 132:
-        return NotificationGroup.decode(readValue(buffer)!);
-      case 133:
-        return NotificationI18nData.decode(readValue(buffer)!);
-      case 134:
-        return NotificationMessage.decode(readValue(buffer)!);
-      case 135:
-        return NotificationMessageContent.decode(readValue(buffer)!);
-      case 136:
-        return RegularNotification.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -502,224 +79,13 @@ class MoxplatformApi {
 
   static const MessageCodec<Object?> codec = _MoxplatformApiCodec();
 
-  /// Notification APIs
-  Future<void> createNotificationGroups(
-      List<NotificationGroup?> arg_groups) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationGroups',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_groups]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> deleteNotificationGroups(List<String?> arg_ids) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.deleteNotificationGroups',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_ids]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> createNotificationChannels(
-      List<NotificationChannel?> arg_channels) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.createNotificationChannels',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_channels]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> deleteNotificationChannels(List<String?> arg_ids) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.deleteNotificationChannels',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_ids]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> showMessagingNotification(
-      MessagingNotification arg_notification) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showMessagingNotification',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_notification]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> showNotification(RegularNotification arg_notification) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.showNotification',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_notification]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> dismissNotification(int arg_id) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.dismissNotification',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_id]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> setNotificationSelfAvatar(String arg_path) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.setNotificationSelfAvatar',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_path]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> setNotificationI18n(NotificationI18nData arg_data) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.setNotificationI18n',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_data]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
   /// Platform APIs
   Future<String> getPersistentDataPath() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -743,10 +109,10 @@ class MoxplatformApi {
 
   Future<String> getCacheDataPath() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getCacheDataPath',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getCacheDataPath', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -770,10 +136,10 @@ class MoxplatformApi {
 
   Future<void> openBatteryOptimisationSettings() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.openBatteryOptimisationSettings',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.openBatteryOptimisationSettings', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -792,10 +158,10 @@ class MoxplatformApi {
 
   Future<bool> isIgnoringBatteryOptimizations() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.isIgnoringBatteryOptimizations',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.isIgnoringBatteryOptimizations', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -818,18 +184,12 @@ class MoxplatformApi {
   }
 
   /// Contacts APIs
-  Future<void> recordSentMessage(String arg_name, String arg_jid,
-      String? arg_avatarPath, FallbackIconType arg_fallbackIcon) async {
+  Future<void> recordSentMessage(String arg_name, String arg_jid, String? arg_avatarPath, FallbackIconType arg_fallbackIcon) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.recordSentMessage',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.recordSentMessage', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(<Object?>[
-      arg_name,
-      arg_jid,
-      arg_avatarPath,
-      arg_fallbackIcon.index
-    ]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_name, arg_jid, arg_avatarPath, arg_fallbackIcon.index]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -847,25 +207,12 @@ class MoxplatformApi {
   }
 
   /// Cryptography APIs
-  Future<CryptographyResult?> encryptFile(
-      String arg_sourcePath,
-      String arg_destPath,
-      Uint8List arg_key,
-      Uint8List arg_iv,
-      CipherAlgorithm arg_algorithm,
-      String arg_hashSpec) async {
+  Future<CryptographyResult?> encryptFile(String arg_sourcePath, String arg_destPath, Uint8List arg_key, Uint8List arg_iv, CipherAlgorithm arg_algorithm, String arg_hashSpec) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.encryptFile',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.encryptFile', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(<Object?>[
-      arg_sourcePath,
-      arg_destPath,
-      arg_key,
-      arg_iv,
-      arg_algorithm.index,
-      arg_hashSpec
-    ]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_sourcePath, arg_destPath, arg_key, arg_iv, arg_algorithm.index, arg_hashSpec]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -882,25 +229,12 @@ class MoxplatformApi {
     }
   }
 
-  Future<CryptographyResult?> decryptFile(
-      String arg_sourcePath,
-      String arg_destPath,
-      Uint8List arg_key,
-      Uint8List arg_iv,
-      CipherAlgorithm arg_algorithm,
-      String arg_hashSpec) async {
+  Future<CryptographyResult?> decryptFile(String arg_sourcePath, String arg_destPath, Uint8List arg_key, Uint8List arg_iv, CipherAlgorithm arg_algorithm, String arg_hashSpec) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.decryptFile',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.decryptFile', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(<Object?>[
-      arg_sourcePath,
-      arg_destPath,
-      arg_key,
-      arg_iv,
-      arg_algorithm.index,
-      arg_hashSpec
-    ]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_sourcePath, arg_destPath, arg_key, arg_iv, arg_algorithm.index, arg_hashSpec]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -917,14 +251,12 @@ class MoxplatformApi {
     }
   }
 
-  Future<Uint8List?> hashFile(
-      String arg_sourcePath, String arg_hashSpec) async {
+  Future<Uint8List?> hashFile(String arg_sourcePath, String arg_hashSpec) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.hashFile',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.hashFile', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_sourcePath, arg_hashSpec]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_sourcePath, arg_hashSpec]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -942,14 +274,12 @@ class MoxplatformApi {
   }
 
   /// Media APIs
-  Future<bool> generateVideoThumbnail(
-      String arg_src, String arg_dest, int arg_maxWidth) async {
+  Future<bool> generateVideoThumbnail(String arg_src, String arg_dest, int arg_maxWidth) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.generateVideoThumbnail',
-        codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.generateVideoThumbnail', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_src, arg_dest, arg_maxWidth]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_src, arg_dest, arg_maxWidth]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -968,30 +298,6 @@ class MoxplatformApi {
       );
     } else {
       return (replyList[0] as bool?)!;
-    }
-  }
-
-  /// Stubs
-  Future<void> eventStub(NotificationEvent arg_event) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.eventStub',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_event]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
     }
   }
 }

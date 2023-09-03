@@ -6,13 +6,12 @@ import static androidx.core.content.ContextCompat.startActivity;
 import static me.polynom.moxplatform_android.ConstantsKt.MOXPLATFORM_FILEPROVIDER_ID;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 import static me.polynom.moxplatform_android.CryptoKt.*;
-import static me.polynom.moxplatform_android.NotificationsKt.createNotificationChannelsImpl;
-import static me.polynom.moxplatform_android.NotificationsKt.createNotificationGroupsImpl;
 import static me.polynom.moxplatform_android.RecordSentMessageKt.*;
 import static me.polynom.moxplatform_android.ThumbnailsKt.generateVideoThumbnailImplementation;
 
 import me.polynom.moxplatform_android.Api.*;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -60,7 +59,7 @@ import io.flutter.plugin.common.JSONMethodCodec;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ServiceAware, MoxplatformApi {
+public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, ServiceAware, MoxplatformApi {
     public static final String entrypointKey = "entrypoint_handle";
     public static final String extraDataKey = "extra_data";
     private static final String autoStartAtBootKey = "auto_start_at_boot";
@@ -71,8 +70,8 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     private static final List<MoxplatformAndroidPlugin> _instances = new ArrayList<>();
     private BackgroundService service;
     private MethodChannel channel;
-    private static EventChannel notificationChannel;
-    public static EventSink notificationSink;
+
+    public static Activity activity;
 
     private Context context;
 
@@ -86,10 +85,6 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
         channel.setMethodCallHandler(this);
         context = flutterPluginBinding.getApplicationContext();
 
-        notificationChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "me.polynom/notification_stream");
-        notificationChannel.setStreamHandler(this);
-
-
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this.context);
         localBroadcastManager.registerReceiver(this, new IntentFilter(methodChannelKey));
 
@@ -102,24 +97,13 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(registrar.context());
         final MoxplatformAndroidPlugin plugin = new MoxplatformAndroidPlugin();
         localBroadcastManager.registerReceiver(plugin, new IntentFilter(methodChannelKey));
+        activity = registrar.activity();
 
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "me.polynom/background_service_android", JSONMethodCodec.INSTANCE);
         channel.setMethodCallHandler(plugin);
         plugin.channel = channel;
 
         Log.d(TAG, "Registered against registrar");
-    }
-
-    @Override
-    public void onCancel(Object arguments) {
-        Log.d(TAG, "Removed listener");
-        notificationSink = null;
-    }
-
-    @Override
-    public void onListen(Object arguments, EventChannel.EventSink eventSink) {
-        Log.d(TAG, "Attached listener");
-        notificationSink = eventSink;
     }
 
     /// Store the entrypoint handle and extra data for the background service.
@@ -226,60 +210,6 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
         this.service = null;
     }
 
-    @Override
-    public void createNotificationGroups(@NonNull List<NotificationGroup> groups) {
-        createNotificationGroupsImpl(context, groups);
-    }
-
-    @Override
-    public void deleteNotificationGroups(@NonNull List<String> ids) {
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        for (final String id : ids) {
-            notificationManager.deleteNotificationChannelGroup(id);
-        }
-    }
-
-    @Override
-    public void createNotificationChannels(@NonNull List<Api.NotificationChannel> channels) {
-        createNotificationChannelsImpl(context, channels);
-    }
-
-    @Override
-    public void deleteNotificationChannels(@NonNull List<String> ids) {
-        final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        for (final String id : ids) {
-            notificationManager.deleteNotificationChannel(id);
-        }
-    }
-
-    @Override
-    public void showMessagingNotification(@NonNull MessagingNotification notification) {
-        NotificationsKt.showMessagingNotification(context, notification);
-    }
-
-    @Override
-    public void showNotification(@NonNull RegularNotification notification) {
-        NotificationsKt.showNotification(context, notification);
-    }
-
-    @Override
-    public void dismissNotification(@NonNull Long id) {
-        NotificationManagerCompat.from(context).cancel(id.intValue());
-    }
-
-    @Override
-    public void setNotificationSelfAvatar(@NonNull String path) {
-        NotificationDataManager.INSTANCE.setAvatarPath(context, path);
-    }
-
-    @Override
-    public void setNotificationI18n(@NonNull NotificationI18nData data) {
-        // Configure i18n
-        NotificationDataManager.INSTANCE.setYou(context, data.getYou());
-        NotificationDataManager.INSTANCE.setReply(context, data.getReply());
-        NotificationDataManager.INSTANCE.setMarkAsRead(context, data.getMarkAsRead());
-    }
-
     @NonNull
     @Override
     public String getPersistentDataPath() {
@@ -348,10 +278,5 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     @Override
     public Boolean generateVideoThumbnail(@NonNull String src, @NonNull String dest, @NonNull Long maxWidth) {
         return generateVideoThumbnailImplementation(src, dest, maxWidth);
-    }
-
-    @Override
-    public void eventStub(@NonNull NotificationEvent event) {
-        // Stub to trick pigeon into
     }
 }
