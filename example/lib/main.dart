@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:moxplatform/moxplatform.dart';
 import 'package:path/path.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// The id of the notification channel.
 const channelId = "me.polynom.moxplatform.testing3";
@@ -32,54 +30,6 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   @override
-  void initState() {
-    super.initState();
-
-    initStateAsync();
-  }
-
-  Future<void> initStateAsync() async {
-    await Permission.notification.request();
-
-    await MoxplatformPlugin.notifications.createNotificationChannels(
-      [
-        NotificationChannel(
-          id: channelId,
-          title: "Test1",
-          description: "Test notification channel",
-          importance: NotificationChannelImportance.MIN,
-          showBadge: true,
-          vibration: false,
-          enableLights: false,
-        ),
-        NotificationChannel(
-          id: otherChannelId,
-          title: "Test2",
-          description: "Test notification channel for warnings",
-          importance: NotificationChannelImportance.MIN,
-          showBadge: true,
-          vibration: false,
-          enableLights: false,
-        ),
-      ],
-    );
-    await MoxplatformPlugin.notifications.setI18n(
-      NotificationI18nData(
-        reply: "答える",
-        markAsRead: "読みた",
-        you: "あなた",
-      ),
-    );
-
-    MoxplatformPlugin.notifications.getEventStream().listen((event) {
-      // ignore: avoid_print
-      print(
-        'NotificationEvent(type: ${event.type}, jid: ${event.jid}, payload: ${event.payload}, extras: ${event.extra})',
-      );
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Moxplatform Demo',
@@ -105,10 +55,6 @@ class MyHomePageState extends State<MyHomePage> {
     Sender('Rio Tsukatsuki', 'rio@millenium'),
     Sender('Raiden Shogun', 'raiden@tevhat'),
   ];
-
-  /// List of sent messages.
-  List<NotificationMessage> messages =
-      List<NotificationMessage>.empty(growable: true);
 
   Future<void> _cryptoTest() async {
     final result = await FilePicker.platform.pickFiles();
@@ -186,87 +132,6 @@ class MyHomePageState extends State<MyHomePage> {
                     fallbackIcon: FallbackIconType.notes);
               },
               child: const Text('Test recordSentMessage (notes fallback)'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final result = await FilePicker.platform.pickFiles(
-                  type: FileType.image,
-                );
-                // ignore: avoid_print
-                print('Picked file: ${result?.files.single.path}');
-
-                // Create a new message.
-                final senderIndex = Random().nextInt(senders.length);
-                final time = DateTime.now().millisecondsSinceEpoch;
-                messages.add(NotificationMessage(
-                  jid: senders[senderIndex].jid,
-                  sender: senders[senderIndex].name,
-                  content: NotificationMessageContent(
-                    body: result != null ? null : 'Message #${messages.length}',
-                    mime: 'image/jpeg',
-                    path: result?.files.single.path,
-                  ),
-                  timestamp: time,
-                ));
-
-                await Future<void>.delayed(const Duration(seconds: 4));
-                await MoxplatformPlugin.notifications.showMessagingNotification(
-                  MessagingNotification(
-                    id: 2343,
-                    title: 'Test conversation',
-                    messages: messages,
-                    channelId: channelId,
-                    jid: 'testjid',
-                    isGroupchat: true,
-                    extra: {
-                      'jid': 'testjid',
-                      'avatarPath': 'lol',
-                      'rio': 'cute',
-                    },
-                  ),
-                );
-              },
-              child: const Text('Show messaging notification'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                MoxplatformPlugin.notifications.showNotification(
-                  RegularNotification(
-                    id: 4384,
-                    title: 'Warning',
-                    body: 'Something brokey',
-                    channelId: otherChannelId,
-                    icon: NotificationIcon.warning,
-                  ),
-                );
-              },
-              child: const Text('Show warning notification'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                MoxplatformPlugin.notifications.showNotification(
-                  RegularNotification(
-                    id: 4384,
-                    title: 'Error',
-                    body: "Lol, you're on your own",
-                    channelId: otherChannelId,
-                    icon: NotificationIcon.error,
-                  ),
-                );
-              },
-              child: const Text('Show error notification'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final result = await FilePicker.platform.pickFiles(
-                  type: FileType.image,
-                );
-                if (result == null) return;
-
-                MoxplatformPlugin.notifications
-                    .setNotificationSelfAvatar(result.files.single.path!);
-              },
-              child: const Text('Set notification self-avatar'),
             ),
             ElevatedButton(
               onPressed: () async {

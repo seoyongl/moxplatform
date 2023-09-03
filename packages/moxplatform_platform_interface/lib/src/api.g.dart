@@ -61,7 +61,7 @@ class _MoxplatformApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return CryptographyResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -82,10 +82,10 @@ class MoxplatformApi {
   /// Platform APIs
   Future<String> getPersistentDataPath() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getPersistentDataPath',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -109,10 +109,10 @@ class MoxplatformApi {
 
   Future<String> getCacheDataPath() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getCacheDataPath', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.getCacheDataPath',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -136,10 +136,10 @@ class MoxplatformApi {
 
   Future<void> openBatteryOptimisationSettings() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.openBatteryOptimisationSettings', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.openBatteryOptimisationSettings',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -158,10 +158,10 @@ class MoxplatformApi {
 
   Future<bool> isIgnoringBatteryOptimizations() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.isIgnoringBatteryOptimizations', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.isIgnoringBatteryOptimizations',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -184,12 +184,18 @@ class MoxplatformApi {
   }
 
   /// Contacts APIs
-  Future<void> recordSentMessage(String arg_name, String arg_jid, String? arg_avatarPath, FallbackIconType arg_fallbackIcon) async {
+  Future<void> recordSentMessage(String arg_name, String arg_jid,
+      String? arg_avatarPath, FallbackIconType arg_fallbackIcon) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.recordSentMessage', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.recordSentMessage',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_name, arg_jid, arg_avatarPath, arg_fallbackIcon.index]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_name,
+      arg_jid,
+      arg_avatarPath,
+      arg_fallbackIcon.index
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -207,12 +213,25 @@ class MoxplatformApi {
   }
 
   /// Cryptography APIs
-  Future<CryptographyResult?> encryptFile(String arg_sourcePath, String arg_destPath, Uint8List arg_key, Uint8List arg_iv, CipherAlgorithm arg_algorithm, String arg_hashSpec) async {
+  Future<CryptographyResult?> encryptFile(
+      String arg_sourcePath,
+      String arg_destPath,
+      Uint8List arg_key,
+      Uint8List arg_iv,
+      CipherAlgorithm arg_algorithm,
+      String arg_hashSpec) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.encryptFile', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.encryptFile',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_sourcePath, arg_destPath, arg_key, arg_iv, arg_algorithm.index, arg_hashSpec]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_sourcePath,
+      arg_destPath,
+      arg_key,
+      arg_iv,
+      arg_algorithm.index,
+      arg_hashSpec
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -229,12 +248,25 @@ class MoxplatformApi {
     }
   }
 
-  Future<CryptographyResult?> decryptFile(String arg_sourcePath, String arg_destPath, Uint8List arg_key, Uint8List arg_iv, CipherAlgorithm arg_algorithm, String arg_hashSpec) async {
+  Future<CryptographyResult?> decryptFile(
+      String arg_sourcePath,
+      String arg_destPath,
+      Uint8List arg_key,
+      Uint8List arg_iv,
+      CipherAlgorithm arg_algorithm,
+      String arg_hashSpec) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.decryptFile', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.decryptFile',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_sourcePath, arg_destPath, arg_key, arg_iv, arg_algorithm.index, arg_hashSpec]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_sourcePath,
+      arg_destPath,
+      arg_key,
+      arg_iv,
+      arg_algorithm.index,
+      arg_hashSpec
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -251,12 +283,14 @@ class MoxplatformApi {
     }
   }
 
-  Future<Uint8List?> hashFile(String arg_sourcePath, String arg_hashSpec) async {
+  Future<Uint8List?> hashFile(
+      String arg_sourcePath, String arg_hashSpec) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.hashFile', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.hashFile',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_sourcePath, arg_hashSpec]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_sourcePath, arg_hashSpec]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -274,12 +308,14 @@ class MoxplatformApi {
   }
 
   /// Media APIs
-  Future<bool> generateVideoThumbnail(String arg_src, String arg_dest, int arg_maxWidth) async {
+  Future<bool> generateVideoThumbnail(
+      String arg_src, String arg_dest, int arg_maxWidth) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.generateVideoThumbnail', codec,
+        'dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.generateVideoThumbnail',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_src, arg_dest, arg_maxWidth]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_src, arg_dest, arg_maxWidth]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
