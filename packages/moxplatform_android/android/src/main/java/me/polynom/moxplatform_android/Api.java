@@ -81,6 +81,19 @@ public class Api {
     }
   }
 
+  public enum FilePickerType {
+    IMAGE(0),
+    VIDEO(1),
+    IMAGE_AND_VIDEO(2),
+    GENERIC(3);
+
+    final int index;
+
+    private FilePickerType(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class CryptographyResult {
     private @NonNull byte[] plaintextHash;
@@ -211,6 +224,8 @@ public class Api {
     /** Media APIs */
     @NonNull 
     Boolean generateVideoThumbnail(@NonNull String src, @NonNull String dest, @NonNull Long maxWidth);
+    /** Picker */
+    void pickFiles(@NonNull FilePickerType type, @NonNull Boolean pickMultiple, @NonNull Result<List<String>> result);
 
     /** The codec used by MoxplatformApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -452,6 +467,36 @@ public class Api {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.moxplatform_platform_interface.MoxplatformApi.pickFiles", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                FilePickerType typeArg = args.get(0) == null ? null : FilePickerType.values()[(int) args.get(0)];
+                Boolean pickMultipleArg = (Boolean) args.get(1);
+                Result<List<String>> resultCallback =
+                    new Result<List<String>>() {
+                      public void success(List<String> result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.pickFiles(typeArg, pickMultipleArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

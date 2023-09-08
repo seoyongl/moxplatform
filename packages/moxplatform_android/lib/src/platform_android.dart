@@ -30,4 +30,10 @@ class AndroidPlatformImplementation extends PlatformImplementation {
   ) async {
     return MoxplatformInterface.api.generateVideoThumbnail(src, dest, width);
   }
+
+  @override
+  Future<List<String>> pickFiles(FilePickerType type, bool pickMultiple) async {
+    final result = await MoxplatformInterface.api.pickFiles(type, pickMultiple);
+    return result.cast<String>();
+  }
 }

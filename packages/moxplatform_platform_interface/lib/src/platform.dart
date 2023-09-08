@@ -1,3 +1,5 @@
+import 'package:moxplatform_platform_interface/src/api.g.dart';
+
 abstract class PlatformImplementation {
   /// Returns the path where persistent data should be stored.
   Future<String> getPersistentDataPath();
@@ -17,4 +19,6 @@ abstract class PlatformImplementation {
   /// aspect ratio in tact to [width], and write it to [dest]. If we were successful, returns true.
   /// If no thumbnail was generated, returns false.
   Future<bool> generateVideoThumbnail(String src, String dest, int width);
+
+  Future<List<String>> pickFiles(FilePickerType type, bool pickMultiple);
 }

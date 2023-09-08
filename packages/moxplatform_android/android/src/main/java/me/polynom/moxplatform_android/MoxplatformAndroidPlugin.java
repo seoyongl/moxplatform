@@ -6,6 +6,8 @@ import static androidx.core.content.ContextCompat.startActivity;
 import static me.polynom.moxplatform_android.ConstantsKt.MOXPLATFORM_FILEPROVIDER_ID;
 import static me.polynom.moxplatform_android.ConstantsKt.SHARED_PREFERENCES_KEY;
 import static me.polynom.moxplatform_android.CryptoKt.*;
+import static me.polynom.moxplatform_android.PickerKt.filePickerRequest;
+import static me.polynom.moxplatform_android.PickerKt.onActivityResultImpl;
 import static me.polynom.moxplatform_android.RecordSentMessageKt.*;
 import static me.polynom.moxplatform_android.ThumbnailsKt.generateVideoThumbnailImplementation;
 
@@ -31,6 +33,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
@@ -42,7 +46,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.service.ServiceAware;
@@ -55,11 +63,14 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.JSONMethodCodec;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, ServiceAware, MoxplatformApi {
+public class MoxplatformAndroidPlugin extends BroadcastReceiver implements FlutterPlugin, MethodCallHandler, ServiceAware, ActivityAware, PluginRegistry.ActivityResultListener, MoxplatformApi {
     public static final String entrypointKey = "entrypoint_handle";
     public static final String extraDataKey = "extra_data";
     private static final String autoStartAtBootKey = "auto_start_at_boot";
@@ -72,11 +83,15 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     private MethodChannel channel;
 
     public static Activity activity;
-
     private Context context;
 
     public MoxplatformAndroidPlugin() {
         _instances.add(this);
+    }
+
+    @Override
+    public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        return onActivityResultImpl(context, requestCode, resultCode, data);
     }
 
     @Override
@@ -279,4 +294,25 @@ public class MoxplatformAndroidPlugin extends BroadcastReceiver implements Flutt
     public Boolean generateVideoThumbnail(@NonNull String src, @NonNull String dest, @NonNull Long maxWidth) {
         return generateVideoThumbnailImplementation(src, dest, maxWidth);
     }
+
+    @Override
+    public void pickFiles(@NonNull FilePickerType type, @NonNull Boolean pickMultiple, @NonNull Api.Result<List<String>> result) {
+        filePickerRequest(context, activity, type, pickMultiple, result);
+    }
+
+    @Override
+    public void onAttachedToActivity(ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+        binding.addActivityResultListener(this);
+        Log.d(TAG, "Activity attached");
+    }
+
+    @Override
+    public void onDetachedFromActivity() {}
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {}
+
+    @Override
+    public void onReattachedToActivityForConfigChanges​(ActivityPluginBinding binding) {}
 }

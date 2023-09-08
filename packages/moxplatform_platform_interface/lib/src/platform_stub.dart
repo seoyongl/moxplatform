@@ -1,3 +1,4 @@
+import 'package:moxplatform_platform_interface/src/api.g.dart';
 import 'package:moxplatform_platform_interface/src/platform.dart';
 
 class StubPlatformImplementation extends PlatformImplementation {
@@ -22,4 +23,7 @@ class StubPlatformImplementation extends PlatformImplementation {
     int width,
   ) async =>
       false;
+
+  @override
+  Future<List<String>> pickFiles(FilePickerType type, bool pickMultiple) async => [];
 }

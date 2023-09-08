@@ -202,7 +202,35 @@ class MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: const Text('Thumbnail'),
-            )
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await MoxplatformPlugin.platform.pickFiles(FilePickerType.image, false);
+                print('Picked files $result');
+              },
+              child: const Text('Pick image'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await MoxplatformPlugin.platform.pickFiles(FilePickerType.image, true);
+                print('Picked files $result');
+              },
+              child: const Text('Pick multiple images'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await MoxplatformPlugin.platform.pickFiles(FilePickerType.imageAndVideo, true);
+                print('Picked files $result');
+              },
+              child: const Text('Pick multiple images and videos'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await MoxplatformPlugin.platform.pickFiles(FilePickerType.generic, true);
+                print('Picked files $result');
+              },
+              child: const Text('Pick multiple generic files'),
+            ),
           ],
         ),
       ),

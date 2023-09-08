@@ -32,6 +32,13 @@ enum FallbackIconType {
   notes;
 }
 
+enum FilePickerType {
+  image,
+  video,
+  imageAndVideo,
+  generic,
+}
+
 @HostApi()
 abstract class MoxplatformApi {
   /// Platform APIs
@@ -50,4 +57,8 @@ abstract class MoxplatformApi {
 
   /// Media APIs
   bool generateVideoThumbnail(String src, String dest, int maxWidth);
+
+  /// Picker
+  @async
+  List<String> pickFiles(FilePickerType type, bool pickMultiple);
 }
